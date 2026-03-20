@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proposal Tracker — Power of Public</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCVtM9NP3VmP6y0zCCaXNO1PbqRRMfOrcs",
+    authDomain: "time-entry-tracker.firebaseapp.com",
+    databaseURL: "https://time-entry-tracker-default-rtdb.firebaseio.com",
+    projectId: "time-entry-tracker",
+    storageBucket: "time-entry-tracker.firebasestorage.app",
+    messagingSenderId: "991742086851",
+    appId: "1:991742086851:web:47d3813f5c1e3b10d5dc76"
+  };
+
+  const ALLOWED_EMAIL = 'cwatkinsrobinson@gmail.com';
+  const app  = initializeApp(firebaseConfig);
+  const db   = getDatabase(app);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+
+  window._fbSet    = (path, val) => set(ref(db, path), val);
+  window._fbPush   = (path, val) => push(ref(db, path), val);
+  window._fbRemove = (path) => remove(ref(db, path));
+  window._fbListen = (path, cb) => onValue(ref(db, path), snap => cb(snap.val()));
+  window._fbSignIn  = () => signInWithPopup(auth, provider).catch(() => alert('Sign-in failed.'));
+  window._fbSignOut = () => signOut(auth);
+
+  onAuthStateChanged(auth, user => {
+    if (user && user.email === ALLOWED_EMAIL) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      document.getElementById('auth-name').textContent = user.displayName || user.email;
+      window._fbReady = true;
+      initData();
+    } else if (user) {
+      signOut(auth);
+      alert('Access denied.');
+    } else {
+      document.getElementById('login-screen').style.display = 'flex';
+      document.getElementById('app').style.display = 'none';
+    }
+  }, () => {
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+  });
+
+  function initData() {
+    // Listen to proposals
+    window._fbListen('proposals', data => {
+      window._proposals = data
+        ? Object.entries(data).map(([k,v]) => ({fbKey:k,...v}))
+        : [];
+      renderTable();
+    });
+
+    // Listen to gonogo for GO decisions to import
+    window._fbListen('gonogo', data => {
+      window._gonogo = data
+        ? Object.entries(data).map(([k,v]) => ({fbKey:k,...v})).filter(r => r.decision === 'GO')
+        : [];
+    });
+  }
+</script>
+
+<style>
+:root {
+  --navy:    #1A1A2E;
+  --pink:    #E8187A;
+  --amber:   #D4A017;
+  --emerald: #1A8C5B;
+  --orange:  #F07020;
+  --cream:   #F5F0E8;
+  --tan:     #EDE8DC;
+  --bg:      #E8E3DA;
+  --surface: #FFFFFF;
+  --border:  #D5CCBC;
+  --muted:   #6B6560;
+  --charcoal:#2D2D2D;
+}
+
+* { box-sizing:border-box; margin:0; padding:0; }
+body { background:var(--bg); font-family:'Plus Jakarta Sans',sans-serif; color:var(--charcoal); min-height:100vh; font-size:14px; }
+
+/* LOGIN */
+#login-screen {
+  position:fixed; inset:0; background:var(--navy);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:28px; z-index:9999;
+}
+.login-logo-main { font-family:'Playfair Display',serif; font-size:36px; font-weight:900; color:#fff; text-align:center; }
+.login-logo-sub  { font-size:11px; color:rgba(255,255,255,0.35); text-transform:uppercase; letter-spacing:0.12em; text-align:center; margin-top:4px; }
+.login-card { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:18px; padding:40px 48px; text-align:center; max-width:380px; width:90%; }
+.login-card h2 { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:#fff; margin-bottom:8px; }
+.login-card p  { font-size:13px; color:rgba(255,255,255,0.4); margin-bottom:28px; line-height:1.6; }
+.login-btn { background:var(--pink); color:#fff; border:none; border-radius:10px; padding:14px 24px; font-family:'Plus Jakarta Sans',sans-serif; font-size:14px; font-weight:600; cursor:pointer; width:100%; transition:background 0.2s; }
+.login-btn:hover { background:#c41268; }
+
+/* APP */
+#app { display:none; }
+
+/* HEADER */
+header { background:var(--navy); border-bottom:3px solid transparent; border-image:linear-gradient(90deg,var(--pink),var(--amber),var(--emerald)) 1; }
+.header-inner { max-width:1200px; margin:0 auto; padding:0 32px; height:64px; display:flex; align-items:center; justify-content:space-between; }
+.logo { font-family:'Playfair Display',serif; font-size:20px; font-weight:900; color:#fff; }
+.logo span { color:var(--pink); }
+.header-right { display:flex; align-items:center; gap:10px; }
+.user-pill { font-size:11px; color:rgba(255,255,255,0.45); background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12); border-radius:20px; padding:4px 12px; }
+.hdr-btn { background:transparent; border:1px solid rgba(255,255,255,0.2); color:rgba(255,255,255,0.5); border-radius:6px; padding:5px 12px; font-size:11px; font-family:'Plus Jakarta Sans',sans-serif; cursor:pointer; text-decoration:none; display:inline-block; transition:all 0.15s; }
+.hdr-btn:hover { border-color:rgba(255,255,255,0.4); color:rgba(255,255,255,0.8); }
+
+/* HERO */
+.hero { background:var(--navy); padding:40px 32px 44px; }
+.hero-inner { max-width:1200px; margin:0 auto; }
+.hero-eyebrow { font-size:11px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--amber); margin-bottom:10px; }
+.hero-title { font-family:'Playfair Display',serif; font-size:36px; font-weight:900; color:#fff; line-height:1.15; margin-bottom:8px; }
+.hero-title em { color:var(--pink); font-style:normal; }
+.hero-sub { font-size:14px; color:rgba(255,255,255,0.4); max-width:480px; line-height:1.65; }
+
+/* MAIN */
+main { max-width:1200px; margin:0 auto; padding:32px 32px 80px; }
+
+/* TOOLBAR */
+.toolbar { display:flex; align-items:center; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+.toolbar-left { display:flex; align-items:center; gap:10px; flex:1; flex-wrap:wrap; }
+.search-wrap { position:relative; flex:1; min-width:200px; max-width:320px; }
+.search-wrap input { width:100%; background:#fff; border:1.5px solid var(--border); border-radius:8px; padding:8px 12px 8px 34px; font-family:'Plus Jakarta Sans',sans-serif; font-size:13px; color:var(--charcoal); outline:none; transition:border-color 0.15s; }
+.search-wrap input:focus { border-color:var(--navy); }
+.search-icon { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:14px; pointer-events:none; }
+.filter-select { background:#fff; border:1.5px solid var(--border); border-radius:8px; padding:8px 12px; font-family:'Plus Jakarta Sans',sans-serif; font-size:13px; color:var(--charcoal); outline:none; cursor:pointer; }
+.btn { background:var(--surface); border:1.5px solid var(--border); color:var(--charcoal); font-family:'Plus Jakarta Sans',sans-serif; font-size:12.5px; font-weight:500; padding:8px 16px; border-radius:8px; cursor:pointer; transition:all 0.15s; display:inline-flex; align-items:center; gap:6px; }
+.btn:hover { border-color:var(--pink); color:var(--pink); background:#fff8fc; }
+.btn-primary { background:var(--pink); color:#fff; border-color:var(--pink); font-weight:600; }
+.btn-primary:hover { background:#c41268; color:#fff; border-color:#c41268; }
+.btn-amber { background:var(--amber); color:#fff; border-color:var(--amber); font-weight:600; }
+.btn-amber:hover { background:#b8890f; color:#fff; }
+
+/* STAT PILLS */
+.stat-row { display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+.stat-pill { background:var(--surface); border:1.5px solid var(--border); border-radius:10px; padding:10px 18px; display:flex; align-items:center; gap:10px; }
+.stat-pill-val { font-family:'Playfair Display',serif; font-size:24px; font-weight:900; color:var(--navy); line-height:1; }
+.stat-pill-lbl { font-size:11px; color:var(--muted); font-weight:500; }
+.stat-pill.pursuing .stat-pill-val { color:var(--navy); }
+.stat-pill.submitted .stat-pill-val { color:var(--amber); }
+.stat-pill.won .stat-pill-val { color:var(--emerald); }
+.stat-pill.lost .stat-pill-val { color:var(--pink); }
+
+/* TABLE */
+.table-wrap { background:var(--surface); border:1.5px solid var(--border); border-radius:14px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.06); }
+table { width:100%; border-collapse:collapse; }
+thead th { background:#F5F0E8; padding:11px 14px; text-align:left; font-size:10.5px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); border-bottom:1.5px solid var(--border); white-space:nowrap; }
+tbody tr { cursor:pointer; transition:background 0.12s; border-bottom:1px solid var(--border); }
+tbody tr:last-child { border-bottom:none; }
+tbody tr:hover td { background:#fdf8fc; }
+td { padding:13px 14px; vertical-align:middle; font-size:13px; }
+.td-org { font-weight:600; color:var(--navy); max-width:200px; }
+.td-org small { display:block; font-weight:400; font-size:11px; color:var(--muted); margin-top:2px; }
+.td-dead { font-size:12px; color:var(--charcoal); white-space:nowrap; }
+.td-dead.urgent { color:var(--pink); font-weight:600; }
+.td-dead.soon   { color:var(--amber); font-weight:600; }
+.days-badge { display:inline-block; font-size:10px; font-weight:700; padding:2px 7px; border-radius:10px; margin-left:6px; }
+.days-badge.urgent { background:#FEECF0; color:var(--pink); }
+.days-badge.soon   { background:#FEF7E8; color:#9A7312; }
+.days-badge.ok     { background:#EBF7F2; color:var(--emerald); }
+.days-badge.past   { background:#F5F5F5; color:var(--muted); }
+
+/* STATUS BADGE */
+.status-badge { display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:700; padding:4px 10px; border-radius:20px; letter-spacing:0.04em; text-transform:uppercase; white-space:nowrap; }
+.s-pursuing  { background:#EEF2FF; color:#4338CA; }
+.s-submitted { background:#FEF7E8; color:#9A7312; }
+.s-won       { background:#EBF7F2; color:var(--emerald); }
+.s-lost      { background:#FEECF0; color:var(--pink); }
+
+/* ROLE TAGS */
+.role-tags { display:flex; flex-wrap:wrap; gap:4px; }
+.role-tag { font-size:10px; font-weight:500; padding:2px 8px; border-radius:12px; background:var(--tan); color:var(--muted); border:1px solid var(--border); white-space:nowrap; }
+
+/* FUNDING */
+.td-funding { font-family:'Playfair Display',serif; font-size:14px; font-weight:700; color:var(--emerald); white-space:nowrap; }
+
+/* EMPTY STATE */
+.empty-state { text-align:center; padding:64px 24px; color:var(--muted); }
+.empty-state .icon { font-size:48px; margin-bottom:14px; }
+.empty-state h3 { font-family:'Playfair Display',serif; font-size:20px; color:var(--navy); margin-bottom:8px; }
+.empty-state p { font-size:13px; line-height:1.6; max-width:340px; margin:0 auto; }
+
+/* MODAL */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:200; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
+.modal-overlay.open { display:flex; }
+.modal { background:var(--surface); border:1.5px solid var(--border); border-radius:18px; padding:32px; width:620px; max-height:90vh; overflow-y:auto; box-shadow:0 8px 40px rgba(0,0,0,0.15); }
+.modal-title { font-family:'Playfair Display',serif; font-size:22px; font-weight:900; margin-bottom:24px; color:var(--navy); }
+.form-group { margin-bottom:14px; }
+.form-label { display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:6px; }
+.form-input { width:100%; background:#faf9f7; border:1.5px solid var(--border); color:var(--charcoal); font-family:'Plus Jakarta Sans',sans-serif; font-size:13px; padding:9px 12px; border-radius:8px; outline:none; transition:border-color 0.15s; }
+.form-input:focus { border-color:var(--navy); box-shadow:0 0 0 3px rgba(26,26,46,0.06); }
+textarea.form-input { resize:vertical; min-height:72px; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.form-row-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+.modal-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:24px; padding-top:20px; border-top:1px solid var(--border); }
+
+/* ROLE CHECKBOXES */
+.role-checks { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:4px; }
+.role-check-item { display:flex; align-items:flex-start; gap:8px; background:#faf9f7; border:1.5px solid var(--border); border-radius:8px; padding:10px 12px; cursor:pointer; transition:all 0.15s; }
+.role-check-item:hover { border-color:var(--navy); }
+.role-check-item input { margin-top:2px; accent-color:var(--navy); }
+.role-check-label { font-size:12px; font-weight:500; color:var(--charcoal); }
+.role-check-input { margin-top:6px; }
+
+/* TOAST */
+.toast { position:fixed; bottom:24px; right:24px; background:var(--navy); color:#fff; padding:12px 20px; border-radius:10px; font-size:13px; font-weight:500; z-index:999; transform:translateY(80px); opacity:0; transition:all 0.3s cubic-bezier(.4,0,.2,1); box-shadow:0 4px 16px rgba(26,26,46,0.3); }
+.toast.show { transform:translateY(0); opacity:1; }
+.toast.green { background:var(--emerald); }
+
+/* IMPORT MODAL */
+.gonogo-item { display:flex; align-items:center; gap:12px; padding:10px 12px; border:1.5px solid var(--border); border-radius:8px; margin-bottom:8px; cursor:pointer; transition:all 0.15s; background:#faf9f7; }
+.gonogo-item:hover { border-color:var(--navy); background:#fff; }
+.gonogo-item.selected { border-color:var(--emerald); background:#EBF7F2; }
+.gonogo-item-info { flex:1; min-width:0; }
+.gonogo-item-org { font-weight:600; font-size:13px; color:var(--navy); }
+.gonogo-item-meta { font-size:11px; color:var(--muted); margin-top:2px; }
+
+@media (max-width:768px) {
+  .hero { padding:28px 20px 32px; }
+  .hero-title { font-size:26px; }
+  main { padding:24px 16px 60px; }
+  .header-inner { padding:0 16px; }
+  .form-row, .form-row-3 { grid-template-columns:1fr; }
+  .modal { width:95%; padding:24px; }
+  table { font-size:12px; }
+  td, th { padding:10px 10px; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div>
+    <div class="login-logo-main">Power of Public</div>
+    <div class="login-logo-sub">Operations Hub</div>
+  </div>
+  <div class="login-card">
+    <div style="font-size:36px;margin-bottom:14px;">📁</div>
+    <h2>Proposal Tracker</h2>
+    <p>Sign in with your authorised Google account to access your proposals.</p>
+    <button class="login-btn" onclick="window._fbSignIn()">Sign in with Google</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+<header>
+  <div class="header-inner">
+    <div class="logo">Power <span>of Public</span></div>
+    <div class="header-right">
+      <div class="user-pill" id="auth-name"></div>
+      <a href="index.html" class="hdr-btn">← Hub</a>
+      <button class="hdr-btn" onclick="window._fbSignOut()">Sign out</button>
+    </div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Power of Public · Business Development</div>
+    <h1 class="hero-title">Proposal <em>Tracker</em></h1>
+    <p class="hero-sub">Track active proposals, deadlines, team assignments, and submission status across all open opportunities.</p>
+  </div>
+</div>
+
+<main>
+
+  <!-- STATS -->
+  <div class="stat-row" id="stat-row"></div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search-input" placeholder="Search proposals…" oninput="renderTable()">
+      </div>
+      <select class="filter-select" id="filter-status" onchange="renderTable()">
+        <option value="">All Statuses</option>
+        <option value="Pursuing">Pursuing / In Progress</option>
+        <option value="Submitted">Submitted</option>
+        <option value="Won">Won</option>
+        <option value="Lost">Lost / No Award</option>
+      </select>
+    </div>
+    <button class="btn btn-amber" onclick="openImportModal()">⬇ Import from Go/No-Go</button>
+    <button class="btn btn-primary" onclick="openModal()">＋ Add Proposal</button>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Organization / Opportunity</th>
+          <th>Submission Deadline</th>
+          <th>Funding</th>
+          <th>Status</th>
+          <th>Team Roles</th>
+          <th>Notes</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="proposals-body"></tbody>
+    </table>
+  </div>
+
+</main>
+
+<!-- ADD / EDIT MODAL -->
+<div class="modal-overlay" id="modal-proposal">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">Add Proposal</div>
+    <input type="hidden" id="edit-key">
+
+    <div class="form-group">
+      <label class="form-label">Organization / Agency Name *</label>
+      <input type="text" class="form-input" id="f-org" placeholder="e.g. Department of Health and Human Services">
+    </div>
+    <div class="form-group">
+      <label class="form-label">RFP / Solicitation Number</label>
+      <input type="text" class="form-input" id="f-rfp" placeholder="e.g. RFP-2025-HHS-001">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Scope / Opportunity Description</label>
+      <textarea class="form-input" id="f-scope" placeholder="Brief description of the work…"></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Submission Deadline</label>
+        <input type="date" class="form-input" id="f-deadline">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Funding Value (Total)</label>
+        <input type="text" class="form-input" id="f-funding" placeholder="e.g. $2,500,000">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Status *</label>
+        <select class="form-input" id="f-status">
+          <option value="Pursuing">Pursuing / In Progress</option>
+          <option value="Submitted">Submitted</option>
+          <option value="Won">Won</option>
+          <option value="Lost">Lost / No Award</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Probability of Win (Pwin)</label>
+        <input type="text" class="form-input" id="f-pwin" placeholder="e.g. 45%">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Team Role Assignments</label>
+      <div class="role-checks">
+        <label class="role-check-item">
+          <input type="checkbox" id="role-lead">
+          <div>
+            <div class="role-check-label">Proposal Lead</div>
+            <input type="text" class="form-input role-check-input" id="role-lead-name" placeholder="Name">
+          </div>
+        </label>
+        <label class="role-check-item">
+          <input type="checkbox" id="role-writer">
+          <div>
+            <div class="role-check-label">Technical Writer</div>
+            <input type="text" class="form-input role-check-input" id="role-writer-name" placeholder="Name">
+          </div>
+        </label>
+        <label class="role-check-item">
+          <input type="checkbox" id="role-pricing">
+          <div>
+            <div class="role-check-label">Pricing / Budget</div>
+            <input type="text" class="form-input role-check-input" id="role-pricing-name" placeholder="Name">
+          </div>
+        </label>
+        <label class="role-check-item">
+          <input type="checkbox" id="role-partner">
+          <div>
+            <div class="role-check-label">Subcontractor / Teaming Partner</div>
+            <input type="text" class="form-input role-check-input" id="role-partner-name" placeholder="Name or org">
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Notes</label>
+      <textarea class="form-input" id="f-notes" rows="2" placeholder="Any additional context, strategy notes, or action items…"></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn" id="delete-btn" style="margin-right:auto;display:none;border-color:#fca5a5;color:#dc2626;" onclick="deleteProposal()">Delete</button>
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveProposal()">Save Proposal</button>
+    </div>
+  </div>
+</div>
+
+<!-- IMPORT FROM GO/NO-GO MODAL -->
+<div class="modal-overlay" id="modal-import">
+  <div class="modal">
+    <div class="modal-title">Import from Go / No-Go</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.6;">Select a GO decision to pre-fill a new proposal. Only GO decisions that haven't already been imported are shown.</p>
+    <div id="gonogo-list"><div style="color:var(--muted);font-size:13px;">Loading…</div></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeImportModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmImport()">Import Selected →</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let _editKey = null;
+let _selectedGoNoGo = null;
+
+function td() { return new Date().toISOString().split('T')[0]; }
+
+function daysUntil(dateStr) {
+  if (!dateStr || dateStr === '—') return null;
+  const diff = Math.ceil((new Date(dateStr + 'T12:00:00') - new Date()) / 86400000);
+  return diff;
+}
+
+function fmtDate(ds) {
+  if (!ds || ds === '—') return '—';
+  return new Date(ds + 'T12:00:00').toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+}
+
+function statusClass(s) {
+  if (s === 'Pursuing') return 's-pursuing';
+  if (s === 'Submitted') return 's-submitted';
+  if (s === 'Won') return 's-won';
+  if (s === 'Lost') return 's-lost';
+  return 's-pursuing';
+}
+
+function statusLabel(s) {
+  if (s === 'Pursuing') return '● Pursuing';
+  if (s === 'Submitted') return '▶ Submitted';
+  if (s === 'Won') return '✓ Won';
+  if (s === 'Lost') return '✕ Lost';
+  return s;
+}
+
+function renderStats() {
+  const proposals = window._proposals || [];
+  const counts = { Pursuing:0, Submitted:0, Won:0, Lost:0 };
+  proposals.forEach(p => { if (counts[p.status] !== undefined) counts[p.status]++; });
+  document.getElementById('stat-row').innerHTML = `
+    <div class="stat-pill pursuing"><div class="stat-pill-val">${counts.Pursuing}</div><div class="stat-pill-lbl">Pursuing</div></div>
+    <div class="stat-pill submitted"><div class="stat-pill-val">${counts.Submitted}</div><div class="stat-pill-lbl">Submitted</div></div>
+    <div class="stat-pill won"><div class="stat-pill-val">${counts.Won}</div><div class="stat-pill-lbl">Won</div></div>
+    <div class="stat-pill lost"><div class="stat-pill-val">${counts.Lost}</div><div class="stat-pill-lbl">Lost</div></div>
+    <div class="stat-pill" style="margin-left:auto"><div class="stat-pill-val">${proposals.length}</div><div class="stat-pill-lbl">Total</div></div>
+  `;
+}
+
+function renderTable() {
+  const proposals = (window._proposals || []).slice();
+  const q = (document.getElementById('search-input')?.value || '').toLowerCase();
+  const sf = document.getElementById('filter-status')?.value || '';
+
+  let filtered = proposals.filter(p => {
+    const matchQ = !q || (p.org||'').toLowerCase().includes(q) || (p.rfp||'').toLowerCase().includes(q) || (p.scope||'').toLowerCase().includes(q);
+    const matchS = !sf || p.status === sf;
+    return matchQ && matchS;
+  });
+
+  // Sort by deadline ascending (nulls last)
+  filtered.sort((a, b) => {
+    if (!a.deadline && !b.deadline) return 0;
+    if (!a.deadline) return 1;
+    if (!b.deadline) return -1;
+    return a.deadline.localeCompare(b.deadline);
+  });
+
+  renderStats();
+
+  const tbody = document.getElementById('proposals-body');
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="icon">📁</div><h3>No proposals yet</h3><p>Add your first proposal or import a GO decision from the Go/No-Go form.</p></div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(p => {
+    const days = daysUntil(p.deadline);
+    let deadlineClass = '', badgeClass = 'ok', badgeText = '';
+    if (days !== null) {
+      if (days < 0)       { badgeClass='past';   badgeText=`${Math.abs(days)}d ago`; }
+      else if (days <= 7) { deadlineClass='urgent'; badgeClass='urgent'; badgeText=`${days}d`; }
+      else if (days <= 21){ deadlineClass='soon';   badgeClass='soon';   badgeText=`${days}d`; }
+      else                { badgeText=`${days}d`; }
+    }
+
+    const roles = [];
+    if (p.roleLead)    roles.push(`Lead: ${p.roleLeadName||'TBD'}`);
+    if (p.roleWriter)  roles.push(`Writer: ${p.roleWriterName||'TBD'}`);
+    if (p.rolePricing) roles.push(`Pricing: ${p.rolePricingName||'TBD'}`);
+    if (p.rolePartner) roles.push(`Partner: ${p.rolePartnerName||'TBD'}`);
+
+    return `<tr onclick="openModal('${p.fbKey}')">
+      <td class="td-org">${p.org||'—'}<small>${p.rfp||''}</small></td>
+      <td class="td-dead ${deadlineClass}">${fmtDate(p.deadline)}${days !== null ? `<span class="days-badge ${badgeClass}">${badgeText}</span>` : ''}</td>
+      <td class="td-funding">${p.funding||'—'}</td>
+      <td><span class="status-badge ${statusClass(p.status)}">${statusLabel(p.status)}</span></td>
+      <td><div class="role-tags">${roles.map(r=>`<span class="role-tag">${r}</span>`).join('')||'<span style="color:var(--muted);font-size:11px">—</span>'}</div></td>
+      <td style="color:var(--muted);font-size:12px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.notes||'—'}</td>
+      <td><button class="btn" style="font-size:11px;padding:4px 10px;" onclick="event.stopPropagation();openModal('${p.fbKey}')">Edit</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function openModal(fbKey) {
+  _editKey = fbKey || null;
+  const p = fbKey ? (window._proposals||[]).find(x => x.fbKey === fbKey) : null;
+  document.getElementById('modal-title').textContent = p ? 'Edit Proposal' : 'Add Proposal';
+  document.getElementById('edit-key').value = fbKey || '';
+  document.getElementById('delete-btn').style.display = p ? 'inline-flex' : 'none';
+  document.getElementById('f-org').value = p?.org || '';
+  document.getElementById('f-rfp').value = p?.rfp || '';
+  document.getElementById('f-scope').value = p?.scope || '';
+  document.getElementById('f-deadline').value = p?.deadline || '';
+  document.getElementById('f-funding').value = p?.funding || '';
+  document.getElementById('f-status').value = p?.status || 'Pursuing';
+  document.getElementById('f-pwin').value = p?.pwin || '';
+  document.getElementById('f-notes').value = p?.notes || '';
+  document.getElementById('role-lead').checked = p?.roleLead || false;
+  document.getElementById('role-lead-name').value = p?.roleLeadName || '';
+  document.getElementById('role-writer').checked = p?.roleWriter || false;
+  document.getElementById('role-writer-name').value = p?.roleWriterName || '';
+  document.getElementById('role-pricing').checked = p?.rolePricing || false;
+  document.getElementById('role-pricing-name').value = p?.rolePricingName || '';
+  document.getElementById('role-partner').checked = p?.rolePartner || false;
+  document.getElementById('role-partner-name').value = p?.rolePartnerName || '';
+  document.getElementById('modal-proposal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal-proposal').classList.remove('open');
+  _editKey = null;
+}
+
+function saveProposal() {
+  const org = document.getElementById('f-org').value.trim();
+  if (!org) { showToast('Organization name is required'); return; }
+  const record = {
+    org,
+    rfp:            document.getElementById('f-rfp').value.trim(),
+    scope:          document.getElementById('f-scope').value.trim(),
+    deadline:       document.getElementById('f-deadline').value,
+    funding:        document.getElementById('f-funding').value.trim(),
+    status:         document.getElementById('f-status').value,
+    pwin:           document.getElementById('f-pwin').value.trim(),
+    notes:          document.getElementById('f-notes').value.trim(),
+    roleLead:       document.getElementById('role-lead').checked,
+    roleLeadName:   document.getElementById('role-lead-name').value.trim(),
+    roleWriter:     document.getElementById('role-writer').checked,
+    roleWriterName: document.getElementById('role-writer-name').value.trim(),
+    rolePricing:    document.getElementById('role-pricing').checked,
+    rolePricingName:document.getElementById('role-pricing-name').value.trim(),
+    rolePartner:    document.getElementById('role-partner').checked,
+    rolePartnerName:document.getElementById('role-partner-name').value.trim(),
+    updatedAt:      new Date().toISOString(),
+  };
+
+  if (_editKey) {
+    window._fbSet(`proposals/${_editKey}`, record)
+      .then(() => { closeModal(); showToast('Proposal updated ✓', true); })
+      .catch(() => showToast('Save failed'));
+  } else {
+    record.createdAt = new Date().toISOString();
+    window._fbPush('proposals', record)
+      .then(() => { closeModal(); showToast('Proposal added ✓', true); })
+      .catch(() => showToast('Save failed'));
+  }
+}
+
+function deleteProposal() {
+  if (!_editKey) return;
+  if (!confirm('Delete this proposal? This cannot be undone.')) return;
+  window._fbRemove(`proposals/${_editKey}`)
+    .then(() => { closeModal(); showToast('Proposal deleted'); })
+    .catch(() => showToast('Delete failed'));
+}
+
+// IMPORT FROM GO/NO-GO
+function openImportModal() {
+  const gonogo = window._gonogo || [];
+  const existing = (window._proposals || []).map(p => p.importedFrom).filter(Boolean);
+  const available = gonogo.filter(r => !existing.includes(r.fbKey));
+  _selectedGoNoGo = null;
+
+  const el = document.getElementById('gonogo-list');
+  if (!available.length) {
+    el.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:12px 0;">No new GO decisions available to import. All existing GO decisions have already been imported, or none exist yet.</div>';
+  } else {
+    el.innerHTML = available.map(r => `
+      <div class="gonogo-item" id="gng-${r.fbKey}" onclick="selectGoNoGo('${r.fbKey}')">
+        <span style="font-size:20px">✅</span>
+        <div class="gonogo-item-info">
+          <div class="gonogo-item-org">${r.orgName||'Untitled'}</div>
+          <div class="gonogo-item-meta">${r.rfpNum||'No RFP #'} · Funding: ${r.fundingAmt||r.fundingPerYear||'—'} · Saved ${r.savedAt ? new Date(r.savedAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—'}</div>
+        </div>
+      </div>`).join('');
+  }
+  document.getElementById('modal-import').classList.add('open');
+}
+
+function selectGoNoGo(fbKey) {
+  _selectedGoNoGo = fbKey;
+  document.querySelectorAll('.gonogo-item').forEach(el => el.classList.remove('selected'));
+  const el = document.getElementById(`gng-${fbKey}`);
+  if (el) el.classList.add('selected');
+}
+
+function closeImportModal() {
+  document.getElementById('modal-import').classList.remove('open');
+  _selectedGoNoGo = null;
+}
+
+function confirmImport() {
+  if (!_selectedGoNoGo) { showToast('Please select a GO decision first'); return; }
+  const r = (window._gonogo||[]).find(x => x.fbKey === _selectedGoNoGo);
+  if (!r) return;
+  closeImportModal();
+  // Pre-fill the add modal with go/no-go data
+  _editKey = null;
+  document.getElementById('modal-title').textContent = 'Add Proposal (Imported)';
+  document.getElementById('edit-key').value = '';
+  document.getElementById('delete-btn').style.display = 'none';
+  document.getElementById('f-org').value = r.orgName||'';
+  document.getElementById('f-rfp').value = r.rfpNum||'';
+  document.getElementById('f-scope').value = r.scope && r.scope !== '—' ? r.scope : '';
+  document.getElementById('f-deadline').value = r.subDeadlineDate||'';
+  document.getElementById('f-funding').value = r.fundingAmt||r.fundingPerYear||'';
+  document.getElementById('f-status').value = 'Pursuing';
+  document.getElementById('f-pwin').value = r.pwin && r.pwin !== '—' ? r.pwin : '';
+  document.getElementById('f-notes').value = '';
+  ['lead','writer','pricing','partner'].forEach(r => {
+    document.getElementById(`role-${r}`).checked = false;
+    document.getElementById(`role-${r}-name`).value = '';
+  });
+  // Store the source key so we can mark it as imported
+  document.getElementById('edit-key').dataset.importedFrom = _selectedGoNoGo;
+  document.getElementById('modal-proposal').classList.add('open');
+}
+
+// Override saveProposal to attach importedFrom if present
+const _origSave = saveProposal;
+function saveProposal() {
+  const org = document.getElementById('f-org').value.trim();
+  if (!org) { showToast('Organization name is required'); return; }
+  const importedFrom = document.getElementById('edit-key').dataset.importedFrom || null;
+  const record = {
+    org,
+    rfp:            document.getElementById('f-rfp').value.trim(),
+    scope:          document.getElementById('f-scope').value.trim(),
+    deadline:       document.getElementById('f-deadline').value,
+    funding:        document.getElementById('f-funding').value.trim(),
+    status:         document.getElementById('f-status').value,
+    pwin:           document.getElementById('f-pwin').value.trim(),
+    notes:          document.getElementById('f-notes').value.trim(),
+    roleLead:       document.getElementById('role-lead').checked,
+    roleLeadName:   document.getElementById('role-lead-name').value.trim(),
+    roleWriter:     document.getElementById('role-writer').checked,
+    roleWriterName: document.getElementById('role-writer-name').value.trim(),
+    rolePricing:    document.getElementById('role-pricing').checked,
+    rolePricingName:document.getElementById('role-pricing-name').value.trim(),
+    rolePartner:    document.getElementById('role-partner').checked,
+    rolePartnerName:document.getElementById('role-partner-name').value.trim(),
+    updatedAt:      new Date().toISOString(),
+  };
+  if (importedFrom) record.importedFrom = importedFrom;
+
+  if (_editKey) {
+    window._fbSet(`proposals/${_editKey}`, record)
+      .then(() => { closeModal(); showToast('Proposal updated ✓', true); })
+      .catch(() => showToast('Save failed'));
+  } else {
+    record.createdAt = new Date().toISOString();
+    window._fbPush('proposals', record)
+      .then(() => { document.getElementById('edit-key').dataset.importedFrom = ''; closeModal(); showToast('Proposal added ✓', true); })
+      .catch(() => showToast('Save failed'));
+  }
+}
+
+function showToast(msg, green) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (green ? ' green' : '');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', e => { if (e.target === o) { closeModal(); closeImportModal(); } }));
+</script>
+
+<div style="text-align:center;padding:20px 32px;background:var(--navy);margin-top:40px;">
+  <a href="index.html" style="font-size:12px;color:rgba(255,255,255,0.35);text-decoration:none;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:0.02em;">← Back to Power of Public Operations Hub</a>
+</div>
+
+</div><!-- /app -->
+</body>
+</html>
