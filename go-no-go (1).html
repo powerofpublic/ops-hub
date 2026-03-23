@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RFP Go / No-Go Decision Form — Power of Public</title>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, push, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCVtM9NP3VmP6y0zCCaXNO1PbqRRMfOrcs",
+    authDomain: "time-entry-tracker.firebaseapp.com",
+    databaseURL: "https://time-entry-tracker-default-rtdb.firebaseio.com",
+    projectId: "time-entry-tracker",
+    storageBucket: "time-entry-tracker.firebasestorage.app",
+    messagingSenderId: "991742086851",
+    appId: "1:991742086851:web:47d3813f5c1e3b10d5dc76"
+  };
+
+  const ALLOWED_EMAIL = 'cwatkinsrobinson@gmail.com';
+  const app      = initializeApp(firebaseConfig);
+  const db       = getDatabase(app);
+  const auth     = getAuth(app);
+  const provider = new GoogleAuthProvider();
+
+  window._fbPush   = (path, val) => push(ref(db, path), val);
+  window._fbSet    = (path, val) => set(ref(db, path), val);
+  window._fbRemove = (path) => remove(ref(db, path));
+  window._fbListen = (path, cb) => onValue(ref(db, path), snap => cb(snap.val()));
+  window._fbSignIn  = () => signInWithPopup(auth, provider).catch(() => alert('Sign-in failed. Please try again.'));
+  window._fbSignOut = () => signOut(auth);
+
+  onAuthStateChanged(auth, user => {
+    if (user && user.email === ALLOWED_EMAIL) {
+      document.getElementById('gng-login-screen').style.display = 'none';
+      document.getElementById('gng-app').style.display = 'block';
+      document.getElementById('auth-name').textContent = user.displayName || user.email;
+      window._fbReady = true;
+      // Listen to Firebase records in real time
+      window._fbListen('gonogo', data => {
+        window._gngRecords = data
+          ? Object.entries(data).map(([k,v]) => ({_fbKey:k,...v})).sort((a,b) => (b._savedAt||'').localeCompare(a._savedAt||''))
+          : [];
+        if (typeof renderSavedList === 'function') renderSavedList();
+      });
+    } else if (user) {
+      signOut(auth);
+      alert('Access denied.');
+    } else {
+      document.getElementById('gng-login-screen').style.display = 'flex';
+      document.getElementById('gng-app').style.display = 'none';
+    }
+  }, () => {
+    document.getElementById('gng-login-screen').style.display = 'flex';
+    document.getElementById('gng-app').style.display = 'none';
+  });
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:    #1A1A2E;
+    --pink:    #E8305A;
+    --amber:   #D4A017;
+    --orange:  #F07020;
+    --blue:    #2196F3;
+    --cream:   #F5F0E8;
+    --tan:     #EDE8DC;
+    --emerald: #1A8C5B;
+    --charcoal:#2D2D2D;
+    --muted:   #6B6560;
+    --border:  #D5CCBC;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: #E8E3DA;
+    color: var(--charcoal);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  header { background: var(--navy); }
+  .header-stripe {
+    height: 4px;
+    background: linear-gradient(90deg, var(--pink) 0%, var(--amber) 38%, var(--orange) 65%, var(--blue) 100%);
+  }
+  .header-body {
+    padding: 1.75rem 1.5rem 1.5rem;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .hb-left {}
+  .hb-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: 0.35rem;
+  }
+  .hb-dot { width: 7px; height: 7px; background: var(--pink); border-radius: 50%; }
+  .hb-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+  }
+  .hb-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.65rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.15;
+  }
+  .hb-title em { color: var(--amber); font-style: normal; }
+  /* section title font bump */
+  .hb-right { text-align: right; }
+  .hb-right p { font-size: 0.72rem; color: rgba(255,255,255,0.38); text-transform: uppercase; letter-spacing: 0.06em; }
+  .hb-date { font-size: 0.82rem; color: rgba(255,255,255,0.58); margin-top: 0.22rem; }
+
+  /* PROGRESS */
+  .prog-bar {
+    background: var(--navy);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 0.6rem 2rem;
+  }
+  .prog-inner {
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .prog-lbl { font-size: 0.7rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.07em; white-space: nowrap; }
+  .prog-track { flex: 1; height: 3px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
+  .prog-fill { height: 100%; width: 0%; border-radius: 3px; background: linear-gradient(90deg, var(--emerald), var(--amber)); transition: width 0.35s ease; }
+  .prog-pct { font-size: 0.72rem; font-weight: 700; color: var(--amber); min-width: 2.4rem; text-align: right; }
+
+  /* LAYOUT */
+  .page-wrap {
+    max-width: 800px;
+    margin: 0 auto;
+    box-shadow: 0 0 40px rgba(0,0,0,0.08);
+    background: var(--cream);
+    min-height: 100vh;
+  }
+  main { padding: 1.75rem 1.5rem 3.5rem; }
+
+  /* header/firm/progress inner — full width inside page-wrap, padding handled per element */
+
+  /* SECTION */
+  .section { margin-bottom: 1.5rem; }
+  .sec-head {
+    display: flex; align-items: center; gap: 0.7rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 2px solid var(--amber);
+    margin-bottom: 0.7rem;
+  }
+  .sec-num { font-family: 'Playfair Display', serif; font-size: 1.125rem; font-weight: 700; color: var(--pink); min-width: 1.5rem; }
+  .sec-title { font-family: 'Playfair Display', serif; font-size: 1.125rem; font-weight: 700; color: var(--navy); }
+  .sec-note { margin-left: auto; font-size: 0.76rem; color: var(--muted); font-style: italic; }
+
+  /* CARD */
+  .card { background: var(--tan); border: 1px solid var(--border); border-radius: 8px; padding: 0.9rem 1.2rem; margin-bottom: 0.5rem; }
+  .card:last-child { margin-bottom: 0; }
+  .q-label {
+    font-weight: 600; font-size: 0.88rem; color: var(--navy);
+    margin-bottom: 0.7rem; display: flex; align-items: flex-start; gap: 0.4rem;
+  }
+  .q-label::before { content: '▸'; color: var(--pink); font-size: 0.72rem; margin-top: 0.18rem; flex-shrink: 0; }
+
+  /* FORM */
+  .fl { display: block; font-size: 0.73rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 0.38rem; }
+  input[type=text], input[type=date], textarea {
+    width: 100%; background: #fff; border: 1px solid var(--border);
+    border-radius: 5px; color: var(--charcoal);
+    font-family: 'Source Sans 3', sans-serif; font-size: 0.9rem;
+    padding: 0.52rem 0.8rem; outline: none; resize: vertical;
+    transition: border-color 0.18s, box-shadow 0.18s;
+  }
+  input[type=text]:focus, input[type=date]:focus, textarea:focus {
+    border-color: var(--navy); box-shadow: 0 0 0 3px rgba(26,26,46,0.08);
+  }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; margin-top: 0.85rem; }
+  .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.9rem; margin-top: 0.85rem; }
+  .fg { display: flex; flex-direction: column; }
+
+  /* PILLS */
+  .pills { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.35rem; }
+
+  /* BUDGET CHECKBOXES */
+  .budget-checks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem 1.5rem; margin-top: 0.5rem; }
+  .contract-checks { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.45rem 1.5rem; margin-top: 0.5rem; }
+  .contract-checks .tbd-label { font-size: 0.78rem; white-space: nowrap; }
+  .pill {
+    display: flex; align-items: center; justify-content: flex-start; gap: 0.38rem;
+    padding: 0.32rem 0.82rem; border-radius: 20px;
+    border: 1.5px solid var(--border); background: #fff;
+    font-size: 0.81rem; color: var(--muted); cursor: pointer;
+    user-select: none; font-family: 'Source Sans 3', sans-serif;
+    transition: all 0.17s;
+  }
+  .pill input { display: none; }
+  .pill .ck { font-size: 0.68rem; opacity: 0; }
+  .pill:hover { border-color: var(--navy); color: var(--navy); }
+  .pill.on { background: var(--navy); border-color: var(--navy); color: #fff; }
+  .pill.on .ck { opacity: 1; }
+
+  /* RADIO */
+  .radios { display: flex; gap: 0.45rem; flex-wrap: wrap; margin-bottom: 0.8rem; }
+  .ropt {
+    display: flex; align-items: center; gap: 0.4rem;
+    padding: 0.38rem 1rem; border: 1.5px solid var(--border); border-radius: 5px;
+    cursor: pointer; font-size: 0.84rem; font-weight: 500; color: var(--muted);
+    background: #fff; user-select: none; transition: all 0.17s;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+  .ropt input { display: none; }
+  .ropt:hover { border-color: var(--navy); color: var(--navy); }
+  .ropt.yes.on  { background: #EBF7F2; border-color: var(--emerald); color: var(--emerald); }
+  .ropt.no.on   { background: #FEECF0; border-color: var(--pink);    color: var(--pink); }
+  .ropt.part.on { background: #FEF7E8; border-color: var(--amber);   color: #9A7312; }
+
+  /* COMPETITORS */
+  .comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.48rem; margin-top: 0.38rem; }
+  .comp-row { display: flex; align-items: flex-start; gap: 0.48rem; }
+  .comp-n { font-size: 0.7rem; font-weight: 700; color: var(--amber); width: 16px; text-align: right; flex-shrink: 0; padding-top: 0.6rem; }
+
+  /* TBD CHECKBOX */
+  .tbd-check { display: inline-flex; align-items: center; gap: 0.55rem; cursor: pointer; user-select: none; }
+  .tbd-check input { display: none; }
+  .tbd-box {
+    width: 17px; height: 17px; border-radius: 4px;
+    border: 1.5px solid var(--border); background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.17s;
+  }
+  .tbd-check input:checked + .tbd-box {
+    background: var(--navy); border-color: var(--navy);
+  }
+  .tbd-check input:checked + .tbd-box::after {
+    content: '✓'; font-size: 0.65rem; color: #fff; line-height: 1;
+  }
+  .tbd-label { font-size: 0.84rem; font-weight: 500; color: var(--charcoal); }
+
+  /* FIN CARDS */
+  .fin-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.7rem; margin-top: 0.35rem; }
+  .fin-cell { background: #fff; border: 1px solid var(--border); border-top: 3px solid var(--amber); border-radius: 6px; padding: 0.7rem 0.85rem; }
+
+  /* RISK TABLE */
+  .risk-wrap { overflow-x: auto; }
+  table.rt { width: 100%; border-collapse: collapse; margin-top: 0.45rem; font-size: 0.85rem; }
+  table.rt th { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); padding: 0.38rem 0.55rem; border-bottom: 2px solid var(--border); background: #fff; text-align: left; }
+  table.rt td { padding: 0.3rem 0.38rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  table.rt tr:last-child td { border-bottom: none; }
+  table.rt input[type=text] { border: none; background: transparent; padding: 0.18rem 0.28rem; box-shadow: none; font-size: 0.84rem; }
+  table.rt input[type=text]:focus { background: rgba(26,26,46,0.04); border-radius: 3px; }
+  .rsel { width: 100%; border: none; background: transparent; font-family: 'Source Sans 3', sans-serif; font-size: 0.83rem; color: var(--charcoal); padding: 0.18rem 0.28rem; cursor: pointer; outline: none; }
+  .rsel:focus { background: rgba(26,26,46,0.04); border-radius: 3px; }
+  .rbadge { display: inline-block; padding: 0.14rem 0.52rem; border-radius: 10px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em; }
+  .rh { background: #FEECF0; color: var(--pink); }
+  .rm { background: #FEF7E8; color: #9A7312; }
+  .rl { background: #EBF7F2; color: var(--emerald); }
+
+  /* DECISION */
+  .dec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.45rem; }
+  .dec-card {
+    border: 2px solid var(--border); border-radius: 8px;
+    padding: 0.6rem 1.2rem; text-align: center; cursor: pointer;
+    background: #fff; user-select: none; transition: all 0.22s;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.2rem;
+  }
+  .dec-icon { font-size: 1.3rem; line-height: 1; }
+  .dec-lbl { display: block; font-family: 'Source Sans 3', sans-serif; font-size: 1.225rem; font-weight: 700; letter-spacing: 0.12em; }
+  .dec-sub { display: block; font-size: 0.74rem; color: var(--muted); margin-top: 0.05rem; }
+  .dec-text { display: contents; }
+  .dc-go:hover   { border-color: var(--emerald); background: #EBF7F2; }
+  .dc-nogo:hover { border-color: var(--pink);    background: #FEECF0; }
+  .dc-go.on   { border-color: var(--emerald); background: #EBF7F2; box-shadow: 0 3px 14px rgba(26,140,91,0.14); }
+  .dc-go.on .dec-lbl   { color: var(--emerald); }
+  .dc-nogo.on { border-color: var(--pink); background: #FEECF0; box-shadow: 0 3px 14px rgba(232,48,90,0.14); }
+  .dc-nogo.on .dec-lbl { color: var(--pink); }
+
+  /* BUTTONS */
+  .act-row { display: flex; justify-content: flex-end; gap: 0.65rem; margin-top: 2rem; flex-wrap: wrap; }
+  .btn-add-row {
+    background: none;
+    border: 1.5px dashed var(--border);
+    border-radius: 6px;
+    color: var(--muted);
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.35rem 0.85rem;
+    cursor: pointer;
+    transition: border-color 0.18s, color 0.18s, background 0.18s;
+    letter-spacing: 0.03em;
+  }
+  .btn-add-row:hover {
+    border-color: var(--amber);
+    color: var(--amber);
+    background: rgba(212,160,23,0.05);
+  }
+  .btn { padding: 0.57rem 1.45rem; border-radius: 5px; font-family: 'Source Sans 3', sans-serif; font-size: 0.87rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.18s; }
+  .btn-ghost { background: transparent; border: 1.5px solid var(--border); color: var(--muted); }
+  .btn-ghost:hover { border-color: var(--charcoal); color: var(--charcoal); }
+  .btn-outline { background: transparent; border: 1.5px solid var(--navy); color: var(--navy); }
+  .btn-outline:hover { background: var(--navy); color: #fff; }
+  .btn-primary { background: var(--emerald); color: #fff; font-weight: 700; box-shadow: 0 3px 12px rgba(26,140,91,0.22); }
+  .btn-primary:hover { background: #167a4f; transform: translateY(-1px); box-shadow: 0 5px 18px rgba(26,140,91,0.3); }
+
+  /* SAVED RECORDS PANEL */
+  #savedPanel { background: var(--tan); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 1.6rem; overflow: hidden; }
+  .saved-hd { background: var(--navy); padding: 0.75rem 1.25rem; display: flex; align-items: center; justify-content: space-between; }
+  .saved-hd-title { font-family: 'Playfair Display', serif; font-size: 0.88rem; color: #fff; }
+  .saved-hd-count { font-size: 0.72rem; color: rgba(255,255,255,0.45); }
+  #savedList { padding: 0.5rem 0.75rem; display: flex; flex-direction: column; gap: 0.35rem; max-height: 240px; overflow-y: auto; }
+  .saved-empty { font-size: 0.82rem; color: var(--muted); font-style: italic; padding: 0.5rem 0; }
+  .saved-item {
+    display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+    background: #fff; border: 1px solid var(--border); border-radius: 6px;
+    padding: 0.55rem 0.85rem; cursor: pointer; transition: border-color 0.16s, box-shadow 0.16s;
+  }
+  .saved-item:hover { border-color: var(--amber); box-shadow: 0 2px 8px rgba(212,160,23,0.12); }
+  .saved-item-info { flex: 1; min-width: 0; }
+  .saved-item-org { font-size: 0.85rem; font-weight: 600; color: var(--charcoal); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .saved-item-meta { font-size: 0.72rem; color: var(--muted); margin-top: 0.1rem; }
+  .saved-item-del { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1rem; line-height: 1; padding: 0.2rem 0.35rem; border-radius: 4px; flex-shrink: 0; transition: color 0.15s, background 0.15s; }
+  .saved-item-del:hover { color: var(--pink); background: #FEECF0; }
+
+  /* EXPANDABLE TEXTAREAS */
+  textarea { resize: vertical; min-height: 2.8rem; }
+  /* Partner and competitor textareas auto-expand */
+  #partnerRows textarea, #compList textarea {
+    min-height: 3.5rem;
+    resize: vertical;
+    overflow-y: auto;
+    field-sizing: content;
+  }
+
+  /* PRINT */
+  @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+  /* FOOTER */
+  footer { background: var(--navy); text-align: center; font-size: 0.73rem; color: rgba(255,255,255,0.3); padding: 1.1rem; letter-spacing: 0.04em; margin-top: 3rem; }
+  footer span { color: var(--pink); }
+
+  /* FIRM INFO — lives inside header, no separate background */
+  .firm-strip { border-top: 1px solid rgba(255,255,255,0.1); }
+  .firm-inner { padding: 0.55rem 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+  .firm-left { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+  .firm-name { font-size: 0.76rem; font-weight: 700; color: rgba(255,255,255,0.85); letter-spacing: 0.02em; }
+  .firm-sep { color: var(--amber); font-size: 0.65rem; }
+  .firm-desc { font-size: 0.73rem; color: rgba(255,255,255,0.55); }
+  .firm-link { font-size: 0.73rem; color: var(--amber); text-decoration: none; letter-spacing: 0.01em; }
+  .firm-link:hover { text-decoration: underline; color: var(--gold-light); }
+  .firm-right { font-size: 0.73rem; color: rgba(255,255,255,0.6); font-style: italic; white-space: nowrap; }
+
+  /* PRINT */
+  @media print {
+    /* hide interactive chrome */
+    .prog-bar, .act-row, footer { display: none !important; }
+
+    /* page setup */
+    @page { size: letter; margin: 0.55in 0.6in; }
+    @page :first { margin-top: 0.4in; }
+
+    /* base resets */
+    *, *::before, *::after { background: transparent !important; box-shadow: none !important; }
+    body { font-size: 9pt; line-height: 1.4; color: #000; background: #fff !important; }
+    header { background: #1A1A2E !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .header-stripe { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .firm-strip { background: #12122080 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+    /* compact layout */
+    main { padding: 0.3rem 0 0; max-width: 100%; }
+    .section { margin-bottom: 0.6rem; }
+    .sec-head { padding-bottom: 0.2rem; margin-bottom: 0.4rem; }
+    .card { padding: 0.4rem 0.6rem; margin-bottom: 0.35rem; border: 1px solid #ccc; border-radius: 4px; break-inside: avoid; }
+    .header-body { padding: 0.7rem 1rem 0.6rem; }
+    .hb-title { font-size: 1.2rem; }
+    .firm-inner { padding: 0.3rem 1rem; }
+
+    /* compact form elements */
+    input[type=text], input[type=date] {
+      border: none !important;
+      border-bottom: 1px solid #aaa !important;
+      border-radius: 0 !important;
+      padding: 0.1rem 0.2rem !important;
+      font-size: 8.5pt;
+      background: transparent !important;
+    }
+    textarea {
+      border: 1px solid #aaa !important;
+      border-radius: 3px !important;
+      padding: 0.15rem 0.25rem !important;
+      font-size: 8.5pt;
+      background: transparent !important;
+      resize: none;
+    }
+    .fin-cell { border: 1px solid #ccc; border-top: 2px solid #D4A017; padding: 0.3rem 0.4rem; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .tbd-check { font-size: 8pt; }
+    .tbd-box { width: 10px; height: 10px; }
+    .radios { margin-bottom: 0.35rem; gap: 0.3rem; }
+    .ropt { padding: 0.2rem 0.6rem; font-size: 8pt; }
+    .budget-checks, .contract-checks { gap: 0.25rem 1rem; }
+    .comp-grid { gap: 0.28rem; }
+    .row2 { gap: 0.5rem; margin-top: 0.45rem; }
+    .fin-row { gap: 0.4rem; margin-top: 0.2rem; }
+    .q-label { margin-bottom: 0.35rem; font-size: 8.5pt; }
+    .fl { margin-bottom: 0.18rem; }
+    .dec-grid { gap: 0.6rem; }
+    .dec-card { padding: 0.5rem 0.8rem; border: 1.5px solid #ccc; }
+    .dec-card.on { border-color: inherit; }
+
+    /* page counter via CSS */
+    @page { @bottom-right { content: "Page " counter(page) " of " counter(pages); font-family: 'Source Sans 3', sans-serif; font-size: 8pt; color: #888; } }
+    #pageCounter { display: none !important; }
+  }
+
+  /* RESPONSIVE — tablet */
+  @media (max-width: 700px) {
+    .fin-row { grid-template-columns: 1fr 1fr; }
+    .budget-checks { grid-template-columns: repeat(2, 1fr); }
+    .hb-right { display: none; }
+  }
+
+  /* RESPONSIVE — mobile */
+  @media (max-width: 520px) {
+    .page-wrap { box-shadow: none; }
+    .header-body { flex-direction: column; gap: 0.5rem; padding: 1.2rem 1rem 1rem; }
+    .firm-inner { flex-direction: column; align-items: flex-start; gap: 0.2rem; padding: 0.5rem 1rem; }
+    .firm-right { font-size: 0.7rem; }
+    .prog-inner, .prog-bar { padding-left: 1rem; padding-right: 1rem; }
+    main { padding: 1.2rem 0.9rem 2.5rem; }
+    .row2, .row3, .fin-row, .cap-grid, .sg, .dec-grid { grid-template-columns: 1fr; }
+    .comp-grid { grid-template-columns: 1fr; }
+    .budget-checks { grid-template-columns: repeat(2, 1fr); }
+    .fin-cell { border-top-width: 2px; }
+    .hb-title { font-size: 1.3rem; }
+    .sec-title, .sec-num { font-size: 0.95rem; }
+    .card { padding: 1rem 1.1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="gng-login-screen" style="display:none;position:fixed;inset:0;background:#1A1A2E;z-index:9999;flex-direction:column;align-items:center;justify-content:center;gap:24px;">
+  <div style="text-align:center;">
+    <div style="font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:#fff;">Power of Public<span style="color:#E8305A">.</span></div>
+    <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:4px;letter-spacing:0.12em;text-transform:uppercase;">Operations Hub</div>
+  </div>
+  <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:36px 44px;text-align:center;max-width:360px;width:90%;">
+    <div style="font-size:36px;margin-bottom:12px;">📋</div>
+    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#fff;margin-bottom:8px;">Sign in to continue</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:28px;line-height:1.6;">RFP Go / No-Go Decision Form</div>
+    <button onclick="window._fbSignIn()" style="background:#E8305A;color:#fff;border:none;border-radius:8px;padding:13px 24px;font-family:'Source Sans 3',sans-serif;font-size:14px;font-weight:600;cursor:pointer;width:100%;">Sign in with Google</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="gng-app" style="display:none;">
+<div class="page-wrap">
+
+<!-- Page counter (visible only when printing) -->
+<div class="print-page-counter" style="display:none;" id="pageCounter"></div>
+
+<header>
+  <div class="header-stripe"></div>
+  <div class="header-body">
+    <div class="hb-left">
+      <div class="hb-eyebrow"><span class="hb-dot"></span><span class="hb-label">Business Development</span></div>
+      <h1 class="hb-title">RFP <span style="color:var(--pink)">Go / No-Go</span> Decision Form</h1>
+    </div>
+    <div class="hb-right">
+      <p>Opportunity Assessment</p>
+      <div class="hb-date" id="todayDate"></div>
+    </div>
+  </div>
+  <div class="firm-strip">
+    <div class="firm-inner">
+      <div class="firm-left">
+        <span class="firm-name">Power of Public, LLC</span>
+        <span class="firm-sep">|</span>
+        <span class="firm-desc">Strategic Communications Consulting</span>
+        <span class="firm-sep">|</span>
+        <a href="https://www.powerofpublic.co" class="firm-link" target="_blank">www.powerofpublic.co</a>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.75rem;">
+        <span id="auth-name" style="font-size:0.72rem;color:rgba(255,255,255,0.5);"></span>
+        <button onclick="window._fbSignOut()" style="background:transparent;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.5);border-radius:4px;padding:0.2rem 0.6rem;font-size:0.7rem;cursor:pointer;font-family:'Source Sans 3',sans-serif;">Sign out</button>
+        <a href="index.html" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.6);border-radius:4px;padding:0.2rem 0.7rem;font-size:0.7rem;text-decoration:none;font-family:'Source Sans 3',sans-serif;">← Hub</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="prog-bar">
+  <div class="prog-inner">
+    <span class="prog-lbl">Completion</span>
+    <div class="prog-track"><div class="prog-fill" id="pFill"></div></div>
+    <span class="prog-pct" id="pPct">0%</span>
+  </div>
+</div>
+
+<main>
+
+  <!-- SAVED RECORDS -->
+  <div id="savedPanel">
+    <div class="saved-hd">
+      <span class="saved-hd-title">Saved Records</span>
+      <span class="saved-hd-count" id="savedCount">0 records</span>
+    </div>
+    <div id="savedList"><div class="saved-empty">No saved records yet. Complete and save a form to see it here.</div></div>
+  </div>
+  <div class="section">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <span class="sec-title">Opportunity Information</span>
+      <span class="sec-note">Basic RFP details</span>
+    </div>
+
+    <div class="card">
+      <div class="fg">
+        <label class="fl" for="orgName">Organization / Agency Name</label>
+        <input type="text" id="orgName" placeholder="e.g. Department of Health and Human Services" oninput="tick()">
+      </div>
+      <div class="row2" style="margin-top:0.85rem;">
+        <div class="fg">
+          <label class="fl" for="rfpNum">RFP / Solicitation Number</label>
+          <input type="text" id="rfpNum" placeholder="e.g. RFP-2025-HHS-001" oninput="tick()">
+        </div>
+        <div class="fg">
+          <label class="fl" for="fundingPerYear">Funding — Per Year</label>
+          <input type="text" id="fundingPerYear" placeholder="e.g. $500,000" oninput="tick()">
+        </div>
+      </div>
+      <div class="row2" style="margin-top:0.85rem;">
+        <div class="fg">
+          <label class="fl" for="fundingAmt">Funding — Max Total</label>
+          <input type="text" id="fundingAmt" placeholder="e.g. $2,500,000" oninput="tick()">
+        </div>
+        <div class="fg"></div>
+      </div>
+      <div class="row2" style="margin-top:0.85rem;">
+        <div class="fg">
+          <label class="fl" for="startDate">Performance Start Date</label>
+          <input type="date" id="startDate" oninput="tick()">
+        </div>
+        <div class="fg">
+          <label class="fl" for="endDate">Performance End Date</label>
+          <input type="date" id="endDate" oninput="tick()">
+        </div>
+      </div>
+      <div class="row2" style="margin-top:0.85rem;">
+        <div class="fg">
+          <label class="fl" for="optionYears">Number of Option Years</label>
+          <input type="text" id="optionYears" placeholder="e.g. 4" oninput="tick()">
+        </div>
+        <div class="fg"></div>
+      </div>
+      <div style="margin-top:0.85rem;">
+        <label class="fl" style="margin-bottom:0.45rem;">Proposal Contact</label>
+        <div style="display:flex;flex-direction:column;gap:0.45rem;">
+          <input type="text" id="propContactName" placeholder="Full name" oninput="tick()">
+          <div class="row2">
+            <input type="text" id="propContactEmail" placeholder="Email address" oninput="tick()">
+            <input type="text" id="propContactPhone" placeholder="Phone number" oninput="tick()">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <label class="fl" style="margin-bottom:0.5rem;">Contract &amp; Budget Type <span style="font-weight:400;text-transform:none;font-size:0.72rem;font-style:italic;letter-spacing:0;color:var(--muted);">(Select all that apply)</span></label>
+      <div class="contract-checks" id="contractVehicle">
+        <label class="tbd-check"><input type="checkbox" value="Blanket Purchase Agreement (BPA)" onchange="tick()"><span class="tbd-box"></span><span class="tbd-label">Blanket Purchase Agreement (BPA)</span></label>
+        <label class="tbd-check"><input type="checkbox" value="Indefinite-Delivery Contract (IDIQ)" onchange="tick()"><span class="tbd-box"></span><span class="tbd-label">Indefinite-Delivery Contract (IDIQ)</span></label>
+        <label class="tbd-check"><input type="checkbox" value="Task Order Proposal Request (TOPR)" onchange="tick()"><span class="tbd-box"></span><span class="tbd-label">Task Order Proposal Request (TOPR)</span></label>
+        <label class="tbd-check"><input type="checkbox" value="Incentive Contract" onchange="tick()"><span class="tbd-box"></span><span class="tbd-label">Incentive Contract</span></label>
+        <label class="tbd-check"><input type="checkbox" value="Firm-Fixed Price" onchange="tick()"><span class="tbd-box"></span><span class="tbd-label">Firm-Fixed Price</span></label>
+        <label class="tbd-check"><input type="checkbox" value="Time &amp; Materials" onchange="tick()"><span class="tbd-box"></span><span class="tbd-label">Time &amp; Materials</span></label>
+        <label class="tbd-check"><input type="checkbox" value="Hybrid" onchange="tick()"><span class="tbd-box"></span><span class="tbd-label">Hybrid</span></label>
+        <label class="tbd-check"><input type="checkbox" value="Retainer" onchange="tick()"><span class="tbd-box"></span><span class="tbd-label">Retainer</span></label>
+        <label class="tbd-check"><input type="checkbox" value="Single Contract Award" onchange="tick()"><span class="tbd-box"></span><span class="tbd-label">Single Contract Award</span></label>
+        <label class="tbd-check"><input type="checkbox" value="Other" onchange="tick()"><span class="tbd-box"></span><span class="tbd-label">Other</span></label>
+      </div>
+      <div style="margin-top:0.75rem;">
+        <label class="fl" for="contractOther">If Other:</label>
+        <input type="text" id="contractOther" placeholder="Specify contract or budget type…" oninput="tick()">
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="fg">
+        <label class="fl" for="scope">Scope of Work</label>
+        <textarea id="scope" rows="3" placeholder="Describe the scope, deliverables, and objectives for this opportunity…" oninput="tick()"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row2">
+        <div class="fg">
+          <label class="fl" for="subDeadlineDate">Submission Deadline Date</label>
+          <input type="date" id="subDeadlineDate" oninput="tick()">
+        </div>
+        <div class="fg">
+          <label class="fl" for="subDeadlineTime">Submission Deadline Time</label>
+          <input type="time" id="subDeadlineTime" oninput="tick()">
+        </div>
+      </div>
+      <div style="margin-top:0.85rem;">
+        <label class="fl" for="subInstructions">Instructions for Submitting Proposal</label>
+        <textarea id="subInstructions" rows="2" placeholder="Describe portal login, file requirements, naming conventions, page limits, etc…" oninput="tick()"></textarea>
+      </div>
+      <div style="margin-top:0.85rem;">
+        <label class="fl" for="specialReqs">Special Requirements</label>
+        <textarea id="specialReqs" rows="2" placeholder="Note any certifications, clearances, set-aside requirements, socioeconomic designations, or other special considerations…" oninput="tick()"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 PRE-SUBMISSION PLANNING -->
+  <div class="section">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <span class="sec-title">Pre-Submission Planning</span>
+    </div>
+    <div class="card">
+      <div class="row2">
+        <div class="fg">
+          <label class="fl" for="presubDate">Pre-Submission Conference Date</label>
+          <input type="date" id="presubDate" oninput="tick()">
+        </div>
+        <div class="fg">
+          <label class="fl" for="presubTime">Pre-Submission Conference Time</label>
+          <input type="time" id="presubTime" oninput="tick()">
+        </div>
+      </div>
+      <div style="margin-top:0.85rem;">
+        <label class="fl" for="presubQALink">Link to Pre-Submission Q&amp;A Responses</label>
+        <input type="text" id="presubQALink" placeholder="e.g. https://sam.gov/opp/…" oninput="tick()">
+      </div>
+      <div style="margin-top:0.85rem;">
+        <label class="fl" for="confInstructions">Conference Participation Instructions</label>
+        <textarea id="confInstructions" rows="2" placeholder="Describe how to join or attend the pre-submission conference (e.g. dial-in number, Teams/Zoom link, in-person location, registration steps)…" oninput="tick()"></textarea>
+      </div>
+      <div style="margin-top:0.85rem;">
+        <label class="fl" for="confInstructions">Conference Participation Instructions</label>
+        <textarea id="confInstructions" rows="2" placeholder="Dial-in details, registration link, virtual platform info, or in-person location…" oninput="tick()"></textarea>
+      </div>
+      <div class="row2" style="margin-top:0.85rem;">
+        <div class="fg">
+          <label class="fl" for="qaDeadlineDate">Q&amp;A Submission Deadline Date</label>
+          <input type="date" id="qaDeadlineDate" oninput="tick()">
+        </div>
+        <div class="fg">
+          <label class="fl" for="qaDeadlineTime">Q&amp;A Submission Deadline Time</label>
+          <input type="time" id="qaDeadlineTime" oninput="tick()">
+        </div>
+      </div>
+      <div style="margin-top:0.85rem;">
+        <label class="fl" for="presubQuestions">Questions to Submit for Q&amp;A</label>
+        <textarea id="presubQuestions" rows="3" placeholder="List your questions here, one per line…" oninput="tick()"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 CAPABILITY -->
+  <div class="section">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <span class="sec-title">Capability Analysis</span>
+      <span class="sec-note">Internal readiness</span>
+    </div>
+
+    <div class="card">
+      <div class="q-label">Does our past experience support this work?</div>
+      <div class="radios" id="expG">
+        <label class="ropt yes" onclick="selR(this,'exp')"><input type="radio" name="exp" value="Yes"> ✓ Yes</label>
+        <label class="ropt no"  onclick="selR(this,'exp')"><input type="radio" name="exp" value="No"> ✗ No</label>
+        <label class="ropt part" onclick="selR(this,'exp')"><input type="radio" name="exp" value="Partially"> ◑ Partially</label>
+      </div>
+      <div class="fg">
+        <label class="fl" for="expExp">Explanation</label>
+        <textarea id="expExp" rows="1" placeholder="Describe relevant past projects or note experience gaps…" oninput="tick()"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="q-label">Do we have the required skills?</div>
+      <div class="radios" id="skillsG">
+        <label class="ropt yes"  onclick="selR(this,'skills')"><input type="radio" name="skills" value="Yes"> ✓ Yes</label>
+        <label class="ropt no"   onclick="selR(this,'skills')"><input type="radio" name="skills" value="No"> ✗ No</label>
+        <label class="ropt part" onclick="selR(this,'skills')"><input type="radio" name="skills" value="Partially"> ◑ Partially</label>
+      </div>
+      <div class="row2">
+        <div class="fg">
+          <label class="fl" for="skillsHave">Skills Available</label>
+          <textarea id="skillsHave" rows="3" placeholder="List skills already on the team…" oninput="tick()"></textarea>
+        </div>
+        <div class="fg">
+          <label class="fl" for="skillsNeed">Skills Needed / Gaps</label>
+          <textarea id="skillsNeed" rows="3" placeholder="List skills to recruit, hire, or develop…" oninput="tick()"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="q-label">Will we need to partner with another agency to fulfill the scope?</div>
+      <div class="radios" id="partnerG">
+        <label class="ropt yes"  onclick="selR(this,'partner')"><input type="radio" name="partner" value="Yes"> ✓ Yes</label>
+        <label class="ropt no"   onclick="selR(this,'partner')"><input type="radio" name="partner" value="No"> ✗ No</label>
+        <label class="ropt part" onclick="selR(this,'partner')"><input type="radio" name="partner" value="Potentially"> ? Potentially</label>
+      </div>
+      <div style="margin-top:0.6rem;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.1rem 1rem;">
+          <label class="fl" style="margin-bottom:0.3rem;">Potential Partners</label>
+          <label class="fl" style="margin-bottom:0.3rem;">Partnership Rationale</label>
+        </div>
+        <div id="partnerRows" style="display:flex;flex-direction:column;gap:0.6rem;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.45rem 1rem;">
+            <textarea rows="2" tabindex="10" placeholder="Partner 1" oninput="tick()"></textarea>
+            <textarea rows="2" tabindex="11" placeholder="Rationale 1" oninput="tick()"></textarea>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.45rem 1rem;">
+            <textarea rows="2" tabindex="12" placeholder="Partner 2" oninput="tick()"></textarea>
+            <textarea rows="2" tabindex="13" placeholder="Rationale 2" oninput="tick()"></textarea>
+          </div>
+        </div>
+        <button type="button" class="btn-add-row" onclick="addPartnerRow()" style="margin-top:0.6rem;">+ Add Partner</button>
+      </div>
+      <div style="margin-top:0.75rem;">
+        <label class="tbd-check">
+          <input type="checkbox" id="partnerTBD" onchange="tick()">
+          <span class="tbd-box"></span>
+          <span class="tbd-label">To Be Determined</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="q-label">What competitors are likely to pursue this opportunity?</div>
+      <div class="comp-grid" id="compList">
+        <div class="comp-row"><span class="comp-n">01</span><textarea rows="2" tabindex="14" placeholder="Agency / Consultant name" oninput="tick()"></textarea></div>
+        <div class="comp-row"><span class="comp-n">02</span><textarea rows="2" tabindex="15" placeholder="Agency / Consultant name" oninput="tick()"></textarea></div>
+        <div class="comp-row"><span class="comp-n">03</span><textarea rows="2" tabindex="16" placeholder="Agency / Consultant name" oninput="tick()"></textarea></div>
+        <div class="comp-row"><span class="comp-n">04</span><textarea rows="2" tabindex="17" placeholder="Agency / Consultant name" oninput="tick()"></textarea></div>
+      </div>
+      <div style="margin-top:0.75rem;">
+        <label class="tbd-check">
+          <input type="checkbox" id="compTBD" onchange="tick()">
+          <span class="tbd-box"></span>
+          <span class="tbd-label">To Be Determined</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 FINANCIAL PROJECTIONS -->
+  <div class="section">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <span class="sec-title">Financial Projections</span>
+      <span class="sec-note">Revenue &amp; cost outlook</span>
+    </div>
+
+    <div class="card">
+      <div class="fin-row">
+        <div class="fin-cell">
+          <label class="fl" for="estRev">Estimated Revenue</label>
+          <input type="text" id="estRev" placeholder="e.g. $480,000" oninput="calcMargin();tick()">
+        </div>
+        <div class="fin-cell">
+          <label class="fl" for="estCost">Estimated Cost</label>
+          <input type="text" id="estCost" placeholder="e.g. $310,000" oninput="calcMargin();tick()">
+        </div>
+        <div class="fin-cell">
+          <label class="fl" for="estMargin">Est. Margin / Profit <span style="font-weight:400;text-transform:none;font-size:0.68rem;color:var(--emerald);letter-spacing:0">auto</span></label>
+          <input type="text" id="estMargin" placeholder="Auto-calculated" readonly style="background:#f8f8f5!important;cursor:default;">
+        </div>
+      </div>
+      <div class="row2">
+        <div class="fg">
+          <label class="fl" for="bidCost">Bid / Proposal Cost</label>
+          <input type="text" id="bidCost" placeholder="e.g. $8,000" oninput="tick()">
+        </div>
+        <div class="fg">
+          <label class="fl" for="pwin">Probability of Win (Pwin)</label>
+          <input type="text" id="pwin" placeholder="e.g. 45%" oninput="tick()">
+        </div>
+      </div>
+      <div style="margin-top:0.85rem;">
+        <label class="fl" for="finNotes">Financial Notes / Assumptions</label>
+        <textarea id="finNotes" rows="1" placeholder="Describe pricing strategy, key assumptions, or financial risks…" oninput="tick()"></textarea>
+      </div>
+      <div style="margin-top:0.75rem;">
+        <label class="tbd-check">
+          <input type="checkbox" id="finTBD" onchange="tick()">
+          <span class="tbd-box"></span>
+          <span class="tbd-label">To Be Determined</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 EVALUATION CRITERIA -->
+  <div class="section">
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <span class="sec-title">Evaluation Criteria</span>
+      <span class="sec-note">Criteria &amp; weighting</span>
+    </div>
+    <div class="card">
+      <div style="display:grid;grid-template-columns:1fr auto;gap:0.35rem 0.75rem;align-items:center;margin-bottom:0.5rem;">
+        <label class="fl" style="margin-bottom:0;">Criteria Statement</label>
+        <label class="fl" style="margin-bottom:0;white-space:nowrap;">Weight / %</label>
+      </div>
+      <div id="evalRows" style="display:flex;flex-direction:column;gap:0.45rem;">
+        <div style="display:grid;grid-template-columns:1fr 80px;gap:0.45rem;">
+          <input type="text" placeholder="e.g. Technical Approach" oninput="tick()">
+          <input type="text" placeholder="e.g. 30%" oninput="tick()">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 80px;gap:0.45rem;">
+          <input type="text" placeholder="e.g. Past Performance" oninput="tick()">
+          <input type="text" placeholder="e.g. 25%" oninput="tick()">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 80px;gap:0.45rem;">
+          <input type="text" placeholder="e.g. Price / Cost" oninput="tick()">
+          <input type="text" placeholder="e.g. 20%" oninput="tick()">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 80px;gap:0.45rem;">
+          <input type="text" placeholder="e.g. Management Plan" oninput="tick()">
+          <input type="text" placeholder="e.g. 15%" oninput="tick()">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 80px;gap:0.45rem;">
+          <input type="text" placeholder="Criteria 5" oninput="tick()">
+          <input type="text" placeholder="%" oninput="tick()">
+        </div>
+      </div>
+      <button type="button" class="btn-add-row" onclick="addEvalRow()" style="margin-top:0.6rem;">+ Add Criteria</button>
+    </div>
+  </div>
+
+  <!-- 06 FINAL DECISION -->
+  <div class="section">
+    <div class="sec-head">
+      <span class="sec-num">06</span>
+      <span class="sec-title">Final Decision</span>
+    </div>
+    <div class="card">
+      <div class="dec-grid">
+        <div class="dec-card dc-go" id="btnGo" onclick="setDec('GO')">
+          <div class="dec-icon">✅</div>
+          <div class="dec-text">
+            <span class="dec-lbl">GO</span>
+            <span class="dec-sub">Pursue this opportunity</span>
+          </div>
+        </div>
+        <div class="dec-card dc-nogo" id="btnNoGo" onclick="setDec('NO-GO')">
+          <div class="dec-icon">🚫</div>
+          <div class="dec-text">
+            <span class="dec-lbl">NO-GO</span>
+            <span class="dec-sub">Decline this opportunity</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 07 STRATEGY -->
+  <div class="section">
+    <div class="sec-head">
+      <span class="sec-num">07</span>
+      <span class="sec-title">Strategy Planning</span>
+      <span class="sec-note">Complete if GO decision</span>
+    </div>
+    <div class="card">
+      <label class="fl">Win Themes</label>
+      <div id="wtRows" style="display:flex;flex-direction:column;gap:0.4rem;margin-top:0.35rem;margin-bottom:0.6rem;">
+        <input type="text" id="wt1" placeholder="Win Theme 1 — e.g. Proven track record in HHS digital modernization" oninput="tick()">
+        <input type="text" id="wt2" placeholder="Win Theme 2 — e.g. Agile delivery model with measurable milestones" oninput="tick()">
+      </div>
+      <button type="button" class="btn-add-row" onclick="addWinTheme()" style="margin-bottom:0.9rem;">+ Add Win Theme</button>
+
+      <label class="fl">Strategic Imperatives</label>
+      <div id="siRows" style="display:flex;flex-direction:column;gap:0.4rem;margin-top:0.35rem;margin-bottom:0.6rem;">
+        <input type="text" id="si1" placeholder="Strategic Imperative 1 — e.g. Demonstrate measurable community impact through data-driven outcomes" oninput="tick()">
+        <input type="text" id="si2" placeholder="Strategic Imperative 2 — e.g. Prioritize equity and accessibility in all deliverables and engagement" oninput="tick()">
+      </div>
+      <button type="button" class="btn-add-row" onclick="addStrategicImperative()">+ Add Strategic Imperative</button>
+    </div>
+  </div>
+
+  <!-- 08 REVIEW -->
+  <div class="section">
+    <div class="sec-head">
+      <span class="sec-num">08</span>
+      <span class="sec-title">Review &amp; Sign-Off</span>
+    </div>
+    <div class="card">
+      <div class="row2">
+        <div class="fg">
+          <label class="fl" for="reviewer">Reviewer / Decision Maker</label>
+          <input type="text" id="reviewer" placeholder="Full name and title" oninput="tick()">
+        </div>
+        <div class="fg">
+          <label class="fl" for="decDate">Date</label>
+          <input type="date" id="decDate" oninput="tick()">
+        </div>
+      </div>
+      <div style="margin-top:0.85rem;">
+        <label class="fl" for="notes">Decision Justification / Additional Notes</label>
+        <textarea id="notes" rows="2" placeholder="Provide full context, rationale, and any additional considerations that informed this decision…" oninput="tick()"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="act-row">
+    <button class="btn btn-ghost" onclick="resetForm()">↺ Reset</button>
+    <button class="btn btn-outline" onclick="window.print()">⎙ Print / PDF</button>
+    <button class="btn btn-primary" onclick="saveRecord()">✦ Save Record</button>
+  </div>
+
+</main>
+
+<footer><span>●</span> RFP Go / No-Go Decision Form &nbsp;·&nbsp; Business Development Tool</footer>
+</div><!-- /page-wrap -->
+
+<script>
+// Date
+document.getElementById('todayDate').textContent =
+  new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+// Auto-calculate margin
+function calcMargin(){
+  const parse = s => parseFloat(s.replace(/[$,\s]/g,''));
+  const rev = parse(document.getElementById('estRev').value);
+  const cost = parse(document.getElementById('estCost').value);
+  const mEl = document.getElementById('estMargin');
+  if(!isNaN(rev) && !isNaN(cost)){
+    const margin = rev - cost;
+    const pct = rev !== 0 ? ((margin/rev)*100).toFixed(1) : 0;
+    const fmt = n => (n < 0 ? '-$' : '$') + Math.abs(n).toLocaleString('en-US');
+    mEl.value = `${fmt(margin)} (${pct}%)`;
+  } else {
+    mEl.value = '';
+  }
+}
+
+// Decision — clicking again deselects
+let dec = null;
+function setDec(v){
+  if(dec===v){ dec=null; document.getElementById('btnGo').classList.remove('on'); document.getElementById('btnNoGo').classList.remove('on'); }
+  else { dec=v; document.getElementById('btnGo').classList.toggle('on',v==='GO'); document.getElementById('btnNoGo').classList.toggle('on',v==='NO-GO'); }
+  tick();
+}
+
+// Pills
+function togglePill(el,g){ el.classList.toggle('on'); el.querySelector('input').checked=el.classList.contains('on'); tick(); }
+
+// Radio
+function selR(el,g){ document.getElementById(g+'G').querySelectorAll('.ropt').forEach(r=>r.classList.remove('on')); el.classList.add('on'); el.querySelector('input').checked=true; tick(); }
+
+// Progress
+function tick(){
+  const checks=[
+    document.getElementById('orgName').value.trim(),
+    document.getElementById('scope').value.trim(),
+    document.getElementById('fundingPerYear').value.trim() || document.getElementById('fundingAmt').value.trim(),
+    document.querySelector('input[name="exp"]:checked'),
+    document.querySelector('input[name="skills"]:checked'),
+    document.querySelector('input[name="partner"]:checked'),
+    dec,
+    document.getElementById('reviewer').value.trim()
+  ];
+  const n=checks.filter(Boolean).length, pct=Math.round(n/checks.length*100);
+  document.getElementById('pFill').style.width=pct+'%';
+  document.getElementById('pPct').textContent=pct+'%';
+}
+
+function g(id){ return document.getElementById(id).value||'—'; }
+function radio(n){ return document.querySelector(`input[name="${n}"]:checked`)?.value||'—'; }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function cc(v){ return v==='Yes'?'cb-y':v==='No'?'cb-n':'cb-p'; }
+
+function resetForm(){
+  if(!confirm('Reset all fields? This cannot be undone.')) return;
+  document.querySelectorAll('input[type=text],input[type=date],input[type=time],textarea').forEach(i=>i.value='');
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.ropt').forEach(r=>r.classList.remove('on'));
+  document.querySelectorAll('input[type=checkbox],input[type=radio]').forEach(i=>i.checked=false);
+  document.getElementById('budgetOtherBox') && (document.getElementById('budgetOtherBox').style.display='none');
+  dec=null;
+  document.getElementById('btnGo').classList.remove('on');
+  document.getElementById('btnNoGo').classList.remove('on');
+  document.getElementById('pFill').style.width='0%';
+  document.getElementById('pPct').textContent='0%';
+}
+
+// ── SAVE / LOAD (Firebase) ─────────────────────────────────────
+function collectFormData() {
+  const data = {};
+  document.querySelectorAll('input[type=text],input[type=date],input[type=time],textarea').forEach(el => {
+    if (el.id) data[el.id] = el.value;
+  });
+  document.querySelectorAll('input[type=checkbox]').forEach(el => {
+    if (el.id) data[el.id] = el.checked;
+    else if (el.value) data['chk_' + el.closest('[id]')?.id + '_' + el.value] = el.checked;
+  });
+  const vehicles = [...document.querySelectorAll('#contractVehicle input[type=checkbox]')].map(cb => ({ value: cb.value, checked: cb.checked }));
+  data['_contractVehicle'] = vehicles;
+  ['exp','skills','partner'].forEach(name => {
+    const checked = document.querySelector(`input[name="${name}"]:checked`);
+    data['_radio_' + name] = checked ? checked.value : null;
+  });
+  data['_dec'] = dec;
+  data['_partnerRows'] = [...document.querySelectorAll('#partnerRows > div')].map(row => {
+    const tas = row.querySelectorAll('textarea');
+    return { partner: tas[0]?.value || '', rationale: tas[1]?.value || '' };
+  });
+  data['_compList'] = [...document.querySelectorAll('#compList .comp-row textarea')].map(ta => ta.value);
+  data['_evalRows'] = [...document.querySelectorAll('#evalRows > div')].map(row => {
+    const ins = row.querySelectorAll('input');
+    return { criteria: ins[0]?.value || '', weight: ins[1]?.value || '' };
+  });
+  data['_winThemes'] = [...document.querySelectorAll('#wtRows input')].map(i => i.value);
+  data['_stratImps'] = [...document.querySelectorAll('#siRows input')].map(i => i.value);
+  data['_savedAt'] = new Date().toISOString();
+  return data;
+}
+
+function recordKey(data) {
+  const org = (data.orgName || '').trim();
+  const rfp = (data.rfpNum || '').trim();
+  return (org + '|' + rfp).toLowerCase() || data._savedAt;
+}
+
+function saveRecord() {
+  if (!window._fbPush) { alert('Not connected. Please sign in.'); return; }
+  const data = collectFormData();
+  const org = (data.orgName || '').trim();
+  if (!org) { alert('Please enter an Organization / Agency Name before saving.'); return; }
+
+  // Check if record with same org+rfp already exists — if so update it
+  const key = recordKey(data);
+  const existing = (window._gngRecords || []).find(r => recordKey(r) === key);
+
+  const save = existing
+    ? window._fbSet(`gonogo/${existing._fbKey}`, data)
+    : window._fbPush('gonogo', data);
+
+  save.then(() => {
+    const btn = document.querySelector('.btn-primary');
+    const orig = btn.textContent;
+    btn.textContent = '✓ Saved to Firebase!';
+    setTimeout(() => btn.textContent = orig, 1800);
+  }).catch(() => alert('Save failed — check your connection.'));
+}
+
+function deleteRecord(fbKey, e) {
+  e.stopPropagation();
+  if (!confirm('Delete this saved record? This cannot be undone.')) return;
+  window._fbRemove(`gonogo/${fbKey}`);
+}
+
+function renderSavedList() {
+  const records = window._gngRecords || [];
+  const list = document.getElementById('savedList');
+  const count = document.getElementById('savedCount');
+  count.textContent = records.length + (records.length === 1 ? ' record' : ' records');
+  if (!records.length) {
+    list.innerHTML = '<div class="saved-empty">No saved records yet. Complete and save a form to see it here.</div>';
+    return;
+  }
+  list.innerHTML = records.map(r => {
+    const org = r.orgName || '(No organization)';
+    const rfp = r.rfpNum ? ' · ' + r.rfpNum : '';
+    const saved = r._savedAt ? new Date(r._savedAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
+    const decLabel = r._dec ? ` · ${r._dec}` : '';
+    return `<div class="saved-item" onclick="loadRecord('${r._fbKey}')">
+      <div class="saved-item-info">
+        <div class="saved-item-org">${esc(org)}${esc(rfp)}</div>
+        <div class="saved-item-meta">Saved ${saved}${decLabel}</div>
+      </div>
+      <button class="saved-item-del" title="Delete record" onclick="deleteRecord('${r._fbKey}',event)">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function loadRecord(fbKey) {
+  const record = (window._gngRecords || []).find(r => r._fbKey === fbKey);
+  if (!record) return;
+  if (document.getElementById('orgName').value.trim()) {
+    if (!confirm('Load this record? Any unsaved changes will be lost.')) return;
+  }
+  applyFormData(record);
+}
+
+function applyFormData(data) {
+  document.querySelectorAll('input[type=text],input[type=date],input[type=time],textarea').forEach(el => {
+    if (el.id && data[el.id] !== undefined) el.value = data[el.id];
+  });
+  document.querySelectorAll('input[type=checkbox]').forEach(el => {
+    if (el.id && data[el.id] !== undefined) el.checked = data[el.id];
+  });
+  if (data['_contractVehicle']) {
+    data['_contractVehicle'].forEach(({ value, checked }) => {
+      const cb = document.querySelector(`#contractVehicle input[value="${value}"]`);
+      if (cb) cb.checked = checked;
+    });
+  }
+  ['exp','skills','partner'].forEach(name => {
+    const val = data['_radio_' + name];
+    document.querySelectorAll(`input[name="${name}"]`).forEach(r => { r.checked = r.value === val; });
+    document.getElementById(name + 'G')?.querySelectorAll('.ropt').forEach(opt => {
+      const r = opt.querySelector('input');
+      opt.classList.toggle('on', r && r.value === val);
+    });
+  });
+  dec = data['_dec'] || null;
+  document.getElementById('btnGo').classList.toggle('on', dec === 'GO');
+  document.getElementById('btnNoGo').classList.toggle('on', dec === 'NO-GO');
+  if (data['_partnerRows']) {
+    const container = document.getElementById('partnerRows');
+    container.innerHTML = '';
+    data['_partnerRows'].forEach((pr, i) => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:0.45rem 1rem;';
+      row.innerHTML = `<textarea rows="2" placeholder="Partner ${i+1}" oninput="tick()">${esc(pr.partner)}</textarea><textarea rows="2" placeholder="Rationale ${i+1}" oninput="tick()">${esc(pr.rationale)}</textarea>`;
+      container.appendChild(row);
+    });
+  }
+  if (data['_compList']) {
+    const rows = document.querySelectorAll('#compList .comp-row textarea');
+    data['_compList'].forEach((v, i) => { if (rows[i]) rows[i].value = v; });
+  }
+  if (data['_evalRows']) {
+    const container = document.getElementById('evalRows');
+    container.querySelectorAll('div').forEach(r => r.remove());
+    data['_evalRows'].forEach((er, i) => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display:grid;grid-template-columns:1fr 80px;gap:0.45rem;';
+      row.innerHTML = `<input type="text" placeholder="Criteria ${i+1}" value="${esc(er.criteria)}" oninput="tick()"><input type="text" placeholder="%" value="${esc(er.weight)}" oninput="tick()">`;
+      container.appendChild(row);
+    });
+  }
+  if (data['_winThemes']) {
+    const c = document.getElementById('wtRows'); c.innerHTML = '';
+    data['_winThemes'].forEach((v, i) => {
+      const inp = document.createElement('input'); inp.type='text'; inp.placeholder=`Win Theme ${i+1}`; inp.value=v; inp.oninput=tick; c.appendChild(inp);
+    });
+  }
+  if (data['_stratImps']) {
+    const c = document.getElementById('siRows'); c.innerHTML = '';
+    data['_stratImps'].forEach((v, i) => {
+      const inp = document.createElement('input'); inp.type='text'; inp.placeholder=`Strategic Imperative ${i+1}`; inp.value=v; inp.oninput=tick; c.appendChild(inp);
+    });
+  }
+  tick();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Init — saved list renders when Firebase listener fires
+function addWinTheme(){
+  const container = document.getElementById('wtRows');
+  const n = container.children.length + 1;
+  const input = document.createElement('input');
+  input.type = 'text'; input.placeholder = `Win Theme ${n}`; input.oninput = tick;
+  container.appendChild(input); input.focus();
+}
+
+function addStrategicImperative(){
+  const container = document.getElementById('siRows');
+  const n = container.children.length + 1;
+  const input = document.createElement('input');
+  input.type = 'text'; input.placeholder = `Strategic Imperative ${n}`; input.oninput = tick;
+  container.appendChild(input); input.focus();
+}
+
+function addEvalRow(){
+  const container = document.getElementById('evalRows');
+  const n = container.children.length + 1;
+  const row = document.createElement('div');
+  row.style.cssText = 'display:grid;grid-template-columns:1fr 80px;gap:0.45rem;';
+  row.innerHTML = `<input type="text" placeholder="Criteria ${n}" oninput="tick()"><input type="text" placeholder="%" oninput="tick()">`;
+  container.appendChild(row); row.querySelector('input').focus();
+}
+
+function addPartnerRow(){
+  const container = document.getElementById('partnerRows');
+  const n = container.children.length + 1;
+  const row = document.createElement('div');
+  row.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:0.45rem 1rem;';
+  row.innerHTML = `<textarea rows="2" placeholder="Partner ${n}" oninput="tick()"></textarea><textarea rows="2" placeholder="Rationale ${n}" oninput="tick()"></textarea>`;
+  container.appendChild(row); row.querySelector('textarea').focus();
+}
+</script>
+
+<div style="text-align:center;padding:16px 32px;background:var(--navy);">
+  <a href="index.html" style="font-size:12px;color:rgba(255,255,255,0.35);text-decoration:none;font-family:'Source Sans 3',sans-serif;letter-spacing:0.02em;">← Back to Power of Public Operations Hub</a>
+</div>
+
+</div><!-- /gng-app -->
+</body>
+</html>
