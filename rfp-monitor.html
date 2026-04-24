@@ -1415,7 +1415,7 @@ Include currently open RFPs and recently closed ones worth monitoring for re-rel
 Return ONLY a valid JSON array starting with [ and ending with ]. No markdown, no preamble, no explanation.`;
 
   try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+    const resp=await fetch('https://pop-proxy.netlify.app/.netlify/functions/proxy',{
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:4000,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:prompt}]})
