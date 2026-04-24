@@ -1697,26 +1697,29 @@ function buildInvoice(){
 
   document.getElementById('invoice-preview-area').innerHTML=`
     <div class="invoice-preview">
+
+      <!-- CENTERED LOGO + TAGLINE BANNER -->
+      <div style="text-align:center;padding-bottom:14px;margin-bottom:16px;border-bottom:1.5px solid var(--border);">
+        <img src="logo-pink.svg" alt="Power of Public" style="height:30px;display:inline-block;">
+        <div style="font-size:10px;color:var(--muted);margin-top:5px;letter-spacing:0.08em;text-transform:uppercase;">A Health Communications Consultancy</div>
+      </div>
+
+      <!-- TWO-COLUMN: address left | invoice number right -->
       <div class="invoice-header">
-        <div class="invoice-logo">
-          <img src="logo-pink.svg" alt="Power of Public" style="height:28px;display:block;">
-          <div style="font-size:11px;color:var(--muted);margin-top:5px;letter-spacing:0.03em;">A Health Communications Consultancy</div>
-          <div style="height:8px;"></div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.45;">
-            ${fromAddr1?fromAddr1+'<br>':''}
-            ${fromPhone?fromPhone+'<br>':''}
-            ${fromEmail?fromEmail:''}
+        <div style="font-size:12px;color:var(--muted);line-height:1.6;">
+          ${fromAddr1?fromAddr1+'<br>':''}
+          ${fromPhone?fromPhone+'<br>':''}
+          ${fromEmail?fromEmail:''}
+        </div>
+        <div class="invoice-number">
+          <span class="invoice-badge">Invoice</span>
+          <strong>${invNum}</strong>
+          <div style="font-size:11px;color:var(--muted);line-height:1.7;">
+            Issued: ${fmtDateLong(invDate)}<br>
+            Due: ${fmtDateLong(invDue)}
           </div>
         </div>
-      <div class="invoice-number">
-        <span class="invoice-badge">Invoice</span>
-        <strong>${invNum}</strong>
-        <div style="margin-top:8px;font-size:11px;color:var(--muted)">
-          Issued: ${fmtDateLong(invDate)}<br>
-          Due: ${fmtDateLong(invDue)}
-        </div>
       </div>
-    </div>
     <div class="invoice-parties">
       <div>
         <div class="invoice-party-label">Bill From</div>
