@@ -1418,7 +1418,7 @@ Return ONLY a valid JSON array starting with [ and ending with ]. No markdown, n
     const resp=await fetch('https://pop-proxy.netlify.app/.netlify/functions/proxy',{
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:4000,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:prompt}]})
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:4000,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:prompt}]})
     });
     if(!resp.ok){const e=await resp.json().catch(()=>({error:{message:'HTTP '+resp.status}}));throw new Error(e.error?.message||'API error '+resp.status);}
     const data=await resp.json();
