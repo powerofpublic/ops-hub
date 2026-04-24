@@ -1395,9 +1395,7 @@ async function runSearch(){
   if(geo)     focus+='. Geographic focus: '+geo;
   if(exclude) focus+='. Exclude opportunities focused on: '+exclude;
 
-  const prompt=`You are an RFP research assistant for Candice, founder of Power of Public LLC — a health communications and social marketing consultancy based in Maryland. She has 20+ years of public health experience including behavior change campaigns, community engagement, maternal/child health (e.g., Maryland Hear Her campaign), health education, and strategic communications. She works with government agencies, nonprofits, foundations, and academic institutions.
-
-Search for CURRENT, ACTIVE RFP opportunities matching her expertise from these auto-searchable sources:
+  const prompt=`Search for CURRENT, ACTIVE RFP opportunities in health communications and public health consulting from these sources:
 ${srcList}
 
 Focus areas: ${focus}
@@ -1418,7 +1416,7 @@ Return ONLY a valid JSON array starting with [ and ending with ]. No markdown, n
     const resp=await fetch('https://pop-proxy.netlify.app/.netlify/functions/proxy',{
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},
-      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:4000,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:prompt}]})
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:2000,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:prompt}]})
     });
     if(!resp.ok){const e=await resp.json().catch(()=>({error:{message:'HTTP '+resp.status}}));throw new Error(e.error?.message||'API error '+resp.status);}
     const data=await resp.json();
