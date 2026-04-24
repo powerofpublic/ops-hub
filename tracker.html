@@ -1657,7 +1657,7 @@ function buildInvoice(){
       const totalHrs=lineItems.reduce((s,li)=>s+li.hours,0);
       const code=selectedProject.code||'';
       timeSection=
-        `<tr class="section-header"><td colspan="5">Power of Public, LLC — Retainer Services</td></tr>`
+        `<tr class="section-header"><td colspan="5">Retainer Services</td></tr>`
         +lineItems.map(li=>
           `<tr><td style="color:var(--muted)">${code}</td><td>${li.task}</td><td style="text-align:center">${li.hours.toFixed(2)}</td><td style="text-align:right;color:var(--muted)">—</td><td style="text-align:right;color:var(--muted)">included</td></tr>`
         ).join('')
@@ -1666,7 +1666,7 @@ function buildInvoice(){
     } else {
       // Standard T&M / Fixed Price layout
       timeSection=
-        `<tr class="section-header"><td colspan="5">Power of Public, LLC — Time</td></tr>`
+        `<tr class="section-header"><td colspan="5">Time Billed</td></tr>`
         +lineItems.map(li=>{
           const amt=li.project?li.hours*li.project.rate:0;
           const rate=li.project?li.project.rate:0;
@@ -1699,8 +1699,7 @@ function buildInvoice(){
     <div class="invoice-preview">
       <div class="invoice-header">
         <div class="invoice-logo">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="26 20 325 65" height="26" style="display:block;width:180px;">
-            <rect x="25.327" y="18.311" width="384.77" height="80.172" fill="none"/>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="25.3 18.3 321 80.2" height="28" style="display:block;">
             <path d="M26.467,65.746l2.16-.24c1.92-.3,2.58-.601,2.58-1.08V31.488c0-.48-.36-.66-3.12-.96l-1.56-.24-.18-1.02h17.759c11.339,0,17.219,3.06,17.219,9.6,0,6.96-7.14,10.86-17.699,10.86-.9,0-1.86-.06-2.58-.18v14.999c0,.479.3.72,2.94.96l2.22.24.18,1.02h-20.099l.18-1.02ZM50.766,39.707c0-5.879-2.64-9.06-7.68-9.179l-2.04.12v17.52c.66.06,1.44.3,2.28.3,4.319,0,7.439-3.6,7.439-8.76Z" fill="#e8187a"/>
             <path d="M57.066,53.626c0-7.799,6.24-14.099,15.359-14.099,9.24,0,14.64,6.36,14.64,13.859,0,7.919-6.18,14.219-15.359,14.219-9.3,0-14.64-6.359-14.64-13.979ZM77.585,54.106c0-7.08-1.2-10.62-2.76-12.179-.78-.78-1.62-1.02-2.7-1.02-3.72,0-5.7,4.68-5.7,12.06,0,7.199,1.14,10.679,2.7,12.358.72.721,1.74,1.021,2.82,1.021,3.66,0,5.64-4.979,5.64-12.239Z" fill="#e8187a"/>
             <path d="M85.926,44.567c-.9-2.16-1.32-2.7-3.06-2.88l-1.02-.24-.12-1.02h16.08l-.12,1.02-1.38.24c-1.44.18-1.86.9-1.2,2.58l5.279,14.579,4.32-11.939-.84-2.4c-.84-2.16-1.98-2.64-3-2.82l-1.14-.24-.12-1.02h16.319l-.12,1.02-1.32.24c-2.04.3-1.92.9-1.38,2.58l4.86,14.099,3.24-9.839c1.68-4.74,1.26-6.18-1.92-6.72l-1.2-.36-.18-1.02h11.04l-.18,1.02-1.26.3c-2.34.3-2.76,1.14-4.68,6.66l-6.6,18.958h-3.6l-7.14-18.539-6.96,18.539h-3.54l-9.06-22.798Z" fill="#e8187a"/>
