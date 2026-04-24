@@ -203,24 +203,24 @@ select option { background:#fff; }
 .report-summary { background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:20px;box-shadow:var(--shadow);line-height:1.75;font-size:13.5px;color:var(--text2); }
 .report-summary strong { color:var(--text); }
 .invoice-preview { background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:36px 40px;max-width:760px;margin:0 auto;box-shadow:var(--shadow-lg);font-family:'Plus Jakarta Sans',sans-serif; }
-.invoice-header { display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px; }
+.invoice-header { display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px; }
 .invoice-logo { display:flex;flex-direction:column;gap:0;padding-left:0; }
 .invoice-number { font-size:12px;color:var(--muted);text-align:right;flex-shrink:0; }
-.invoice-number strong { display:block;font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--text);letter-spacing:-.5px;margin:5px 0 8px; }
-.invoice-parties { display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-bottom:32px; }
-.invoice-party-label { font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px; }
-.invoice-party-name { font-size:16px;font-weight:700;margin-bottom:2px; }
-.invoice-party-detail { font-size:12px;color:var(--muted);line-height:1.7; }
-.invoice-table { width:100%;border-collapse:collapse;margin-bottom:24px; }
+.invoice-number strong { display:block;font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--text);letter-spacing:-.5px;margin:4px 0 6px; }
+.invoice-parties { display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-bottom:18px; }
+.invoice-party-label { font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:3px; }
+.invoice-party-name { font-size:14px;font-weight:700;margin-bottom:1px; }
+.invoice-party-detail { font-size:12px;color:var(--muted);line-height:1.45; }
+.invoice-table { width:100%;border-collapse:collapse;margin-bottom:16px; }
 .invoice-table th { background:#1A1A2E;color:#fff;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;padding:8px 14px; }
 .invoice-table th:first-child { border-radius:8px 0 0 8px; }
 .invoice-table th:last-child { border-radius:0 8px 8px 0; }
 .invoice-table td { padding:8px 14px;border-bottom:1px solid var(--border);font-size:13px; }
-.invoice-table .section-header td { background:#1A1A2E;font-weight:700;font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,0.7);padding:6px 14px; }
-.invoice-totals { border-top:2px solid var(--border);padding-top:12px;max-width:280px;margin-left:auto; }
-.invoice-total-row { display:flex;justify-content:space-between;padding:5px 0;font-size:13px; }
-.invoice-total-row.grand { font-size:16px;font-weight:700;color:var(--pink);border-top:1.5px solid var(--border);margin-top:8px;padding-top:10px; }
-.invoice-footer { margin-top:40px;padding-top:20px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);text-align:center;line-height:1.8; }
+.invoice-table .section-header td { background:#F0EDE8;font-weight:700;font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:#6B6560;padding:6px 14px; }
+.invoice-totals { border-top:2px solid var(--border);padding-top:10px;max-width:280px;margin-left:auto; }
+.invoice-total-row { display:flex;justify-content:space-between;padding:3px 0;font-size:12px; }
+.invoice-total-row.grand { font-size:14px;font-weight:700;color:var(--pink);border-top:1.5px solid var(--border);margin-top:6px;padding-top:8px; }
+.invoice-footer { margin-top:24px;padding-top:14px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);text-align:center;line-height:1.4; }
 .invoice-badge { display:inline-block;background:var(--pink-light);color:var(--pink);border-radius:20px;padding:4px 14px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px; }
 .invoiced-badge { display:inline-block;background:var(--green-light);color:var(--green);border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px; }
 .invoice-history-row { display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border); }
@@ -1699,7 +1699,7 @@ function buildInvoice(){
     <div class="invoice-preview">
       <div class="invoice-header">
         <div class="invoice-logo">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="22 18 340 70" height="30" style="display:block;margin-left:-2px;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="26 20 325 65" height="26" style="display:block;width:180px;">
             <rect x="25.327" y="18.311" width="384.77" height="80.172" fill="none"/>
             <path d="M26.467,65.746l2.16-.24c1.92-.3,2.58-.601,2.58-1.08V31.488c0-.48-.36-.66-3.12-.96l-1.56-.24-.18-1.02h17.759c11.339,0,17.219,3.06,17.219,9.6,0,6.96-7.14,10.86-17.699,10.86-.9,0-1.86-.06-2.58-.18v14.999c0,.479.3.72,2.94.96l2.22.24.18,1.02h-20.099l.18-1.02ZM50.766,39.707c0-5.879-2.64-9.06-7.68-9.179l-2.04.12v17.52c.66.06,1.44.3,2.28.3,4.319,0,7.439-3.6,7.439-8.76Z" fill="#e8187a"/>
             <path d="M57.066,53.626c0-7.799,6.24-14.099,15.359-14.099,9.24,0,14.64,6.36,14.64,13.859,0,7.919-6.18,14.219-15.359,14.219-9.3,0-14.64-6.359-14.64-13.979ZM77.585,54.106c0-7.08-1.2-10.62-2.76-12.179-.78-.78-1.62-1.02-2.7-1.02-3.72,0-5.7,4.68-5.7,12.06,0,7.199,1.14,10.679,2.7,12.358.72.721,1.74,1.021,2.82,1.021,3.66,0,5.64-4.979,5.64-12.239Z" fill="#e8187a"/>
@@ -1716,8 +1716,8 @@ function buildInvoice(){
             <path d="M329.583,54.467c0-8.58,6.239-14.939,15.119-14.939,5.939,0,10.079,2.58,10.079,6.3,0,2.52-1.8,4.2-4.14,4.2-2.7,0-4.439-2.34-4.2-4.92,0-1.2,1.261-2.46,1.261-2.76-.061-.72-1.261-1.32-2.641-1.32-3.6,0-6.06,3.66-6.06,10.499,0,7.02,2.88,11.1,8.22,11.1,3.24,0,5.7-1.62,7.32-4.62l.659.36c-2.159,6-6.539,9.359-12.659,9.359-7.38,0-12.959-5.46-12.959-13.259Z" fill="#e8187a"/>
           </svg>
           <div style="font-size:11px;color:var(--muted);margin-top:5px;letter-spacing:0.03em;">A Health Communications Consultancy</div>
-          <div style="height:10px;"></div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.85;">
+          <div style="height:8px;"></div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.45;">
             ${fromAddr1?fromAddr1+'<br>':''}
             ${fromPhone?fromPhone+'<br>':''}
             ${fromEmail?fromEmail:''}
