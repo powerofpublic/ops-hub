@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RFP Monitor — Power of Public</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /*
+      POWER OF PUBLIC — OPERATIONS HUB
+      RFP & Procurement Tracker · rfp-monitor.html
+
+      SETUP:
+      1. Drop into your GitHub repo alongside other portal pages.
+      2. Add to hub nav: <a href="rfp-monitor.html">RFP Tracker</a>
+      3. Update "← Hub home" href below to your index filename.
+      4. Get API key: console.anthropic.com → API Keys → Create Key.
+         Add $5 in credits — lasts years at weekly usage. Enter on Search tab.
+
+      SEARCH SOURCES EXPLAINED:
+      — "Auto" sources are Google-indexed and searchable by the API.
+      — "Manual" sources use login/reCAPTCHA. Quick-access links are in the
+        Manual Portals tab so you can check them in one place each week.
+    */
+    :root {
+      --bg:           #f8f6f2;
+      --surface:      #ffffff;
+      --surface2:     #faf9f7;
+      --border:       #e8e4de;
+      --border2:      #d4cec6;
+      --pink:         #e8187a;
+      --pink-light:   #fce8f2;
+      --orange:       #f4620a;
+      --orange-light: #fff0e8;
+      --green:        #15803d;
+      --green-light:  #dcfce7;
+      --green-mid:    #22c55e;
+      --amber:        #92400e;
+      --amber-light:  #fef3c7;
+      --blue:         #0891b2;
+      --blue-light:   #e0f2fe;
+      --text:         #1a1612;
+      --text2:        #4a4540;
+      --muted:        #8a847c;
+      --shadow:       0 2px 12px rgba(0,0,0,0.07);
+      --shadow-lg:    0 8px 32px rgba(0,0,0,0.10);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13.5px; min-height: 100vh; }
+
+    /* ── HEADER ── */
+    header { background: var(--surface); border-bottom: 2px solid var(--border); padding: 0 32px; display: flex; align-items: center; justify-content: space-between; height: 64px; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow); }
+    .logo { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 900; color: var(--pink); letter-spacing: -.5px; }
+    .logo-sub { color: var(--muted); font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 500; font-size: 13px; letter-spacing: 0; }
+
+    /* ── WRAP ── */
+    main { max-width: 1180px; margin: 0 auto; padding: 28px 32px 60px; }
+
+    /* ── PAGE HEADER ── */
+    .page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; gap: 16px; flex-wrap: wrap; }
+    .page-title { font-family: 'Playfair Display', serif; font-size: 30px; font-weight: 900; color: var(--text); }
+    .page-sub { color: var(--muted); font-size: 12px; margin-top: 4px; }
+
+    /* ── API KEY BANNER ── */
+    .key-banner { background: var(--pink-light); border: 1.5px solid var(--pink); border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 22px; }
+    .key-banner.gone { display: none; }
+    .key-banner label { font-size: 11.5px; font-weight: 600; color: var(--pink); text-transform: uppercase; letter-spacing: .5px; white-space: nowrap; }
+    .key-banner input { flex: 1; min-width: 200px; background: var(--surface); border: 1.5px solid var(--border2); border-radius: 8px; padding: 8px 12px; font-size: 13px; font-family: monospace; letter-spacing: .04em; color: var(--text); }
+    .key-banner input:focus { outline: none; border-color: var(--pink); box-shadow: 0 0 0 3px rgba(232,24,122,.08); }
+    .key-banner input::placeholder { font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: 0; color: var(--muted); }
+    .key-saved { font-size: 12px; color: var(--green); font-weight: 600; }
+
+    /* ── PIPELINE SUMMARY ── */
+    .pipeline-bar { display: grid; grid-template-columns: repeat(7,1fr); gap: 12px; margin-bottom: 24px; }
+    .pip { background: var(--surface); border: 1.5px solid var(--border); border-radius: 14px; padding: 16px 12px; text-align: center; cursor: pointer; transition: all .15s; box-shadow: var(--shadow); position: relative; overflow: hidden; }
+    .pip::after { content:''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; }
+    .pip.pp-all::after    { background: var(--muted); }
+    .pip.pp-new::after    { background: var(--pink); }
+    .pip.pp-pursuing::after  { background: var(--orange); }
+    .pip.pp-submitted::after { background: var(--blue); }
+    .pip.pp-won::after    { background: var(--green-mid); }
+    .pip.pp-lost::after   { background: #dc2626; }
+    .pip:hover { border-color: var(--pink); box-shadow: 0 4px 16px rgba(232,24,122,.1); transform: translateY(-1px); }
+    .pip.active { border-color: var(--pink); border-width: 2px; }
+    .pip-val { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 900; color: var(--text); line-height: 1; }
+    .pip-val.cv-pink   { color: var(--pink); }
+    .pip-val.cv-orange { color: var(--orange); }
+    .pip-val.cv-blue   { color: var(--blue); }
+    .pip-val.cv-green  { color: var(--green); }
+    .pip-val.cv-red    { color: #dc2626; }
+    .pip-val.cv-dollar { font-size: 17px; }
+    .pip-lbl { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .7px; color: var(--muted); margin-top: 6px; }
+
+    /* ── TABS ── */
+    .tabs { display: flex; gap: 2px; margin-bottom: 22px; flex-wrap: wrap; }
+    .tab { background: none; border: none; color: var(--muted); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 500; padding: 8px 15px; cursor: pointer; border-radius: 8px; transition: all .15s; white-space: nowrap; }
+    .tab:hover { color: var(--text); background: var(--surface2); }
+    .tab.on { color: var(--pink); background: var(--pink-light); font-weight: 600; }
+    .panel { display: none; }
+    .panel.on { display: block; }
+
+    /* ── BUTTONS ── */
+    .btn { background: var(--surface); border: 1.5px solid var(--border2); color: var(--text2); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12.5px; font-weight: 500; padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: all .15s; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; white-space: nowrap; }
+    .btn:hover { border-color: var(--pink); color: var(--pink); background: var(--pink-light); }
+    .btn:active { transform: scale(.98); }
+    .btn.primary { background: var(--pink); color: #fff; border-color: var(--pink); }
+    .btn.primary:hover { background: #c41268; border-color: #c41268; color: #fff; }
+    .btn.orange { background: var(--orange); color: #fff; border-color: var(--orange); }
+    .btn.orange:hover { background: #c2510a; color: #fff; }
+    .btn.danger { border-color: #fca5a5; color: #dc2626; }
+    .btn.danger:hover { background: #fee2e2; border-color: #dc2626; }
+    .btn.sm { padding: 5px 10px; font-size: 11.5px; }
+    .btn.xs { padding: 3px 8px; font-size: 11px; }
+
+    /* ── CONTROLS ── */
+    .ctrls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 18px; }
+    .ctrls select, .ctrls input[type="text"] { height: 36px; padding: 0 12px; background: var(--surface); border: 1.5px solid var(--border2); border-radius: 8px; color: var(--text); font-size: 13px; font-family: 'Plus Jakarta Sans', sans-serif; }
+    .ctrls select:focus, .ctrls input[type="text"]:focus { outline: none; border-color: var(--pink); box-shadow: 0 0 0 3px rgba(232,24,122,.08); }
+    .ctrls input[type="text"] { flex: 1; min-width: 140px; }
+
+    /* ── OPP CARDS ── */
+    .opp-card { background: var(--surface); border: 1.5px solid var(--border); border-left: 4px solid var(--border2); border-radius: 14px; padding: 18px 20px; margin-bottom: 12px; box-shadow: var(--shadow); transition: all .15s; }
+    .opp-card:hover { box-shadow: var(--shadow-lg); }
+    .opp-card.s-new       { border-left-color: var(--pink); }
+    .opp-card.s-pursuing  { border-left-color: var(--orange); }
+    .opp-card.s-submitted { border-left-color: var(--blue); }
+    .opp-card.s-won       { border-left-color: var(--green-mid); }
+    .opp-card.s-lost      { border-left-color: #dc2626; }
+    .opp-card.s-nogo      { border-left-color: var(--muted); opacity: .45; }
+    .opp-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+    .opp-title { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.3; }
+    .opp-org { font-size: 12px; color: var(--muted); margin-top: 3px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .opp-badges { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+    .opp-body { font-size: 13px; color: var(--text2); line-height: 1.65; margin-bottom: 10px; }
+    .opp-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; font-size: 12px; color: var(--text2); }
+    .opp-meta strong { display: block; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); margin-bottom: 2px; }
+    .opp-notes-disp { font-size: 12.5px; color: var(--text2); background: var(--surface2); border-radius: 8px; padding: 8px 12px; line-height: 1.55; margin-bottom: 10px; }
+    .opp-foot { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding-top: 10px; border-top: 1px solid var(--border); }
+
+    /* ── STATUS SELECT ── */
+    .ss { height: 26px; padding: 0 22px 0 10px; border-radius: 20px; border: none; font-size: 11px; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238a847c'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; }
+    .ss-new       { background-color: var(--pink-light);   color: var(--pink); }
+    .ss-pursuing  { background-color: var(--orange-light);  color: var(--orange); }
+    .ss-submitted { background-color: var(--blue-light);   color: #0369a1; }
+    .ss-won       { background-color: var(--green-light);  color: var(--green); }
+    .ss-lost      { background-color: #fee2e2;             color: #dc2626; }
+    .ss-nogo      { background-color: var(--surface2);     color: var(--muted); }
+
+    /* ── TYPE & DEADLINE PILLS ── */
+    .pill { display: inline-block; font-size: 10.5px; font-weight: 600; padding: 2px 9px; border-radius: 20px; text-transform: uppercase; letter-spacing: .3px; }
+    .pg { background: #e0e7ff; color: #3730a3; }
+    .pf { background: var(--pink-light); color: var(--pink); }
+    .pn { background: var(--blue-light); color: #0369a1; }
+    .pa { background: var(--amber-light); color: var(--amber); }
+    .pm { background: #f3e8ff; color: #7e22ce; }
+
+    .dl { display: inline-flex; align-items: center; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+    .du { background: #fee2e2;           color: #dc2626; }
+    .ds { background: var(--amber-light); color: var(--amber); }
+    .do { background: var(--green-light); color: var(--green); }
+    .dc { background: var(--surface2);   color: var(--muted); }
+
+    /* ── GNG ── */
+    .gng-score { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+    .gng-go    { background: var(--green-light);  color: var(--green); }
+    .gng-maybe { background: var(--amber-light);  color: var(--amber); }
+    .gng-nogo  { background: #fee2e2;             color: #dc2626; }
+
+    /* ── CARD / SECTION ── */
+    .card { background: var(--surface); border: 1.5px solid var(--border); border-radius: 14px; padding: 24px; box-shadow: var(--shadow); margin-bottom: 18px; }
+    .card-title { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 14px; }
+    .section-head { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--text); padding-bottom: 10px; border-bottom: 1.5px solid var(--border); margin-bottom: 16px; }
+
+    /* ── SEARCH OPTS ── */
+    .search-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+    .form-label { color: var(--text2); font-size: 11px; font-weight: 600; letter-spacing: .4px; text-transform: uppercase; margin-bottom: 6px; display: block; }
+    .form-input { background: var(--surface2); border: 1.5px solid var(--border); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; padding: 9px 12px; border-radius: 8px; outline: none; transition: border-color .15s; width: 100%; }
+    .form-input:focus { border-color: var(--pink); box-shadow: 0 0 0 3px rgba(232,24,122,.08); }
+
+    /* ── PENDING RESULTS ── */
+    .pending-card { background: var(--surface2); border: 1.5px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; transition: border-color .15s; }
+    .pending-card:hover { border-color: var(--border2); }
+    .pending-title { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 700; color: var(--text); }
+    .pending-org { font-size: 12px; color: var(--muted); margin-top: 2px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .pending-body { font-size: 12.5px; color: var(--text2); line-height: 1.55; margin-top: 6px; }
+    .pending-actions { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+
+    /* ── SOURCE GRID ── */
+    .sgrid { display: grid; grid-template-columns: repeat(auto-fill,minmax(280px,1fr)); gap: 12px; margin-bottom: 18px; }
+    .scard { background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; box-shadow: var(--shadow); transition: border-color .15s; }
+    .scard:hover { border-color: var(--border2); }
+    .scard-name { font-size: 13px; font-weight: 600; color: var(--text); }
+    .scard-url { font-size: 11px; color: var(--muted); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px; }
+
+    /* ── MANUAL PORTAL LINKS ── */
+    .portal-section { margin-bottom: 28px; }
+    .portal-section h3 { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .portal-section .portal-note { font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
+    .portal-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(260px,1fr)); gap: 10px; }
+    .portal-link { background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; transition: all .15s; box-shadow: var(--shadow); }
+    .portal-link:hover { border-color: var(--orange); box-shadow: 0 4px 16px rgba(244,98,10,.1); transform: translateY(-1px); }
+    .portal-link-name { font-size: 13px; font-weight: 600; color: var(--text); }
+    .portal-link-desc { font-size: 11px; color: var(--muted); margin-top: 3px; line-height: 1.5; }
+    .portal-link-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .portal-link-tag { font-size: 10px; font-weight: 700; padding: 2px 9px; border-radius: 20px; text-transform: uppercase; letter-spacing: .3px; }
+    .tag-login { background: var(--orange-light); color: var(--orange); }
+    .portal-link a { color: var(--pink); font-size: 12px; font-weight: 600; text-decoration: none; }
+    .portal-link a:hover { text-decoration: underline; }
+
+    /* ── WIN/LOSS ── */
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: .7px; text-transform: uppercase; padding: 12px 14px; background: var(--surface2); border-bottom: 1.5px solid var(--border); }
+    td { padding: 11px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; font-size: 13px; color: var(--text2); }
+    tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: var(--pink-light); }
+
+    /* ── MODAL ── */
+    .mbg { position: fixed; inset: 0; background: rgba(0,0,0,.4); display: none; align-items: center; justify-content: center; z-index: 500; padding: 1rem; backdrop-filter: blur(4px); }
+    .mbg.on { display: flex; }
+    .mbox { background: var(--surface); border: 1.5px solid var(--border); border-radius: 18px; padding: 32px; width: 540px; max-width: 96vw; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); }
+    .mbox h3 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 900; color: var(--text); margin-bottom: 6px; }
+    .mbox .msub { font-size: 12px; color: var(--muted); margin-bottom: 22px; }
+    .mfooter { display: flex; gap: 8px; justify-content: flex-end; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border); }
+    .flbl { color: var(--text2); font-size: 11px; font-weight: 600; letter-spacing: .4px; text-transform: uppercase; margin-bottom: 6px; display: block; }
+    .fin { background: var(--surface2); border: 1.5px solid var(--border); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; padding: 9px 12px; border-radius: 8px; outline: none; width: 100%; margin-bottom: 12px; transition: border-color .15s; }
+    .fin:focus { border-color: var(--pink); box-shadow: 0 0 0 3px rgba(232,24,122,.08); }
+    .ftarea { background: var(--surface2); border: 1.5px solid var(--border); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; padding: 9px 12px; border-radius: 8px; outline: none; width: 100%; min-height: 100px; resize: vertical; line-height: 1.55; margin-bottom: 12px; }
+    .ftarea:focus { border-color: var(--pink); box-shadow: 0 0 0 3px rgba(232,24,122,.08); }
+
+    /* ── GNG MODAL ── */
+    .gng-row { display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-bottom: 1px solid var(--border); gap: 14px; }
+    .gng-row:last-of-type { border-bottom: none; }
+    .gng-crit strong { font-size: 13px; font-weight: 600; color: var(--text); display: block; }
+    .gng-crit span { font-size: 11px; color: var(--muted); }
+    .gng-btns { display: flex; gap: 5px; }
+    .gng-btn { height: 28px; padding: 0 12px; border-radius: 20px; border: 1.5px solid var(--border2); background: var(--surface2); font-size: 12px; font-weight: 600; font-family: 'Plus Jakarta Sans', sans-serif; cursor: pointer; transition: all .12s; color: var(--text2); }
+    .gng-btn.sel-yes   { background: var(--green-light); border-color: #86efac; color: var(--green); }
+    .gng-btn.sel-maybe { background: var(--amber-light);  border-color: #fcd34d; color: var(--amber); }
+    .gng-btn.sel-no    { background: #fee2e2;             border-color: #fca5a5; color: #dc2626; }
+    .gng-result { margin-top: 16px; padding: 14px; border-radius: 10px; text-align: center; font-weight: 700; font-size: 15px; }
+    .gng-result.go    { background: var(--green-light); color: var(--green); }
+    .gng-result.maybe { background: var(--amber-light);  color: var(--amber); }
+    .gng-result.nogo  { background: #fee2e2;             color: #dc2626; }
+
+    /* ── DIGEST ── */
+    .digest-preview { background: var(--surface2); border: 1.5px solid var(--border); border-radius: 12px; padding: 20px; font-size: 13px; line-height: 1.8; color: var(--text); white-space: pre-wrap; font-family: 'Plus Jakarta Sans', sans-serif; max-height: 520px; overflow-y: auto; margin-top: 16px; }
+
+    /* ── STATES ── */
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
+    .empty-state h3 { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .empty-state p { font-size: 13px; line-height: 1.6; max-width: 380px; margin: 0 auto; }
+    .loading { text-align: center; padding: 48px 20px; }
+    .spinner { display: inline-block; width: 28px; height: 28px; border: 3px solid var(--border2); border-top-color: var(--pink); border-radius: 50%; animation: spin .7s linear infinite; margin-bottom: 14px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading p { font-size: 13px; color: var(--muted); }
+    .loading .sub { font-size: 11.5px; margin-top: 4px; color: var(--border2); }
+    .ebox { background: #fee2e2; border: 1.5px solid #fca5a5; border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #991b1b; margin-bottom: 14px; }
+    .sbox { background: var(--green-light); border: 1.5px solid #86efac; border-radius: 10px; padding: 12px 16px; font-size: 13px; color: var(--green); font-weight: 500; margin-bottom: 14px; }
+    .notice { background: var(--orange-light); border: 1.5px solid #fed7aa; border-radius: 10px; padding: 12px 16px; font-size: 12.5px; color: #7c2d12; line-height: 1.6; margin-bottom: 16px; }
+    .notice strong { font-weight: 700; }
+    .rmeta { font-size: 11.5px; color: var(--muted); margin-bottom: 14px; font-weight: 500; }
+    .divider { border: none; border-top: 1.5px solid var(--border); margin: 22px 0; }
+    .hint { font-size: 11.5px; color: var(--muted); line-height: 1.6; }
+
+    /* ── KEY ROW ── */
+    .key-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
+    .key-row input { flex: 1; min-width: 200px; background: var(--surface2); border: 1.5px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 13px; font-family: monospace; letter-spacing: .04em; color: var(--text); height: 36px; }
+    .key-row input:focus { outline: none; border-color: var(--pink); box-shadow: 0 0 0 3px rgba(232,24,122,.08); }
+    .key-row input::placeholder { font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: 0; color: var(--muted); }
+
+    @media (max-width: 768px) {
+      .pipeline-bar { grid-template-columns: repeat(4,1fr); }
+      main { padding: 20px 16px 60px; }
+      header { padding: 0 16px; }
+      .opp-meta { grid-template-columns: 1fr; }
+      .search-opts { grid-template-columns: 1fr; }
+      .portal-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCVtM9NP3VmP6y0zCCaXNO1PbqRRMfOrcs",
+    authDomain: "time-entry-tracker.firebaseapp.com",
+    databaseURL: "https://time-entry-tracker-default-rtdb.firebaseio.com",
+    projectId: "time-entry-tracker",
+    storageBucket: "time-entry-tracker.firebasestorage.app",
+    messagingSenderId: "991742086851",
+    appId: "1:991742086851:web:47d3813f5c1e3b10d5dc76"
+  };
+
+  const ALLOWED_EMAIL = 'cwatkinsrobinson@gmail.com';
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+
+  window._fbSignIn  = () => signInWithPopup(auth, provider).catch(() => alert('Sign-in failed. Please try again.'));
+  window._fbSignOut = () => signOut(auth);
+
+  onAuthStateChanged(auth, user => {
+    if (user && user.email === ALLOWED_EMAIL) {
+      document.getElementById('rfp-login-screen').style.display = 'none';
+      document.getElementById('rfp-app').style.display = 'block';
+      document.getElementById('rfp-auth-name').textContent = user.displayName || user.email;
+    } else if (user) {
+      signOut(auth);
+      alert('Access denied.');
+    } else {
+      document.getElementById('rfp-login-screen').style.display = 'flex';
+      document.getElementById('rfp-app').style.display = 'none';
+    }
+  }, () => {
+    document.getElementById('rfp-login-screen').style.display = 'flex';
+    document.getElementById('rfp-app').style.display = 'none';
+  });
+</script>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="rfp-login-screen" style="display:none;position:fixed;inset:0;background:#1A1A2E;z-index:9999;flex-direction:column;align-items:center;justify-content:center;gap:28px;">
+  <div style="display:flex;justify-content:center;"><svg id="Layer_3" height="32" style="display:block;" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 400 100">
+  <!-- Generator: Adobe Illustrator 30.2.1, SVG Export Plug-In . SVG Version: 2.1.1 Build 1)  -->
+  <rect x="25.327" y="18.311" width="384.77" height="80.172" fill="none"/>
+  <path d="M26.467,65.746l2.16-.24c1.92-.3,2.58-.601,2.58-1.08V31.488c0-.48-.36-.66-3.12-.96l-1.56-.24-.18-1.02h17.759c11.339,0,17.219,3.06,17.219,9.6,0,6.96-7.14,10.86-17.699,10.86-.9,0-1.86-.06-2.58-.18v14.999c0,.479.3.72,2.94.96l2.22.24.18,1.02h-20.099l.18-1.02ZM50.766,39.707c0-5.879-2.64-9.06-7.68-9.179l-2.04.12v17.52c.66.06,1.44.3,2.28.3,4.319,0,7.439-3.6,7.439-8.76Z" fill="#f7f5f6"/>
+  <path d="M57.066,53.626c0-7.799,6.24-14.099,15.359-14.099,9.24,0,14.64,6.36,14.64,13.859,0,7.919-6.18,14.219-15.359,14.219-9.3,0-14.64-6.359-14.64-13.979ZM77.585,54.106c0-7.08-1.2-10.62-2.76-12.179-.78-.78-1.62-1.02-2.7-1.02-3.72,0-5.7,4.68-5.7,12.06,0,7.199,1.14,10.679,2.7,12.358.72.721,1.74,1.021,2.82,1.021,3.66,0,5.64-4.979,5.64-12.239Z" fill="#f7f5f6"/>
+  <path d="M85.926,44.567c-.9-2.16-1.32-2.7-3.06-2.88l-1.02-.24-.12-1.02h16.08l-.12,1.02-1.38.24c-1.44.18-1.86.9-1.2,2.58l5.279,14.579,4.32-11.939-.84-2.4c-.84-2.16-1.98-2.64-3-2.82l-1.14-.24-.12-1.02h16.319l-.12,1.02-1.32.24c-2.04.3-1.92.9-1.38,2.58l4.86,14.099,3.24-9.839c1.68-4.74,1.26-6.18-1.92-6.72l-1.2-.36-.18-1.02h11.04l-.18,1.02-1.26.3c-2.34.3-2.76,1.14-4.68,6.66l-6.6,18.958h-3.6l-7.14-18.539-6.96,18.539h-3.54l-9.06-22.798Z" fill="#f7f5f6"/>
+  <path d="M123.486,54.227c0-8.459,6.48-14.819,14.879-14.819,7.08,0,10.74,4.5,10.74,9,0,.6-.06,1.26-.18,1.8,0,0-13.859-.18-16.199-.3-.06.54-.06,1.5-.06,2.04.06,6.3,3.3,10.68,8.58,10.68,3.3,0,5.76-1.62,7.38-4.62l.72.36c-2.1,6-6.3,9.359-12.899,9.359-7.32,0-12.959-5.64-12.959-13.499ZM141.065,48.767c.06-3.96-.78-7.86-3.54-7.86-2.34,0-4.38,2.76-4.8,7.919l8.339-.06Z" fill="#f7f5f6"/>
+  <path d="M147.065,65.746l.78-.061c1.74-.12,2.4-.3,2.4-1.02v-15.719c0-3.72-.48-4.2-2.52-4.8l-1.2-.3.06-.78,12.479-3.479-.12,8.879h.18c1.92-5.64,4.38-8.939,8.1-8.939,2.76,0,4.8,1.68,4.8,4.8,0,2.04-1.74,4.2-4.02,4.2-2.64,0-3.959-1.8-4.62-3.72-1.68.42-3.12,2.46-4.44,6.78v13.079c0,.54.48.84,3,1.02l1.08.061.18,1.02h-16.319l.18-1.02Z" fill="#f7f5f6"/>
+  <path d="M172.384,57.526c0-7.68,5.88-17.399,12.359-17.399,4.68,0,7.26,4.68,7.26,10.619,0,7.86-5.88,16.799-12.66,16.799-5.22,0-6.959-5.22-6.959-10.02ZM188.043,56.146c.72-2.34,1.2-5.58,1.2-7.8,0-4.379-1.32-7.2-4.14-7.2-3.78,0-7.14,6-8.879,11.519-.72,2.4-1.14,5.641-1.14,7.14,0,3.84,1.2,6.78,3.9,6.78,3.84,0,7.32-4.8,9.06-10.439Z" fill="#f7f5f6"/>
+  <path d="M178.923,77.566c0-1.728,1.224-2.808,2.592-2.808,1.944,0,3.312,2.16,1.512,4.608.72.359,2.664-.576,3.168-.576,3.24-.648,4.824-3.601,7.849-19.226l3.888-21.53-5.616-.072.504-1.944,5.76-.36c1.584-7.057,3.601-11.521,5.977-13.969,2.16-2.304,4.681-3.168,7.345-3.168,2.952,0,5.328,1.728,5.328,3.816,0,1.8-1.152,2.88-2.521,2.88-1.943,0-3.384-2.088-1.512-4.608,0,0-2.809-.144-3.816-.144-3.672.864-5.328,4.536-7.417,15.337l7.633.072-.359,2.16h-7.705l-4.392,21.385c-2.304,10.657-4.608,16.346-7.489,19.226-1.8,1.801-3.744,2.521-5.833,2.521-3.312,0-4.896-1.656-4.896-3.601Z" fill="#f7f5f6"/>
+  <path d="M209.943,65.746l2.16-.24c1.92-.3,2.58-.601,2.58-1.08V31.488c0-.48-.36-.66-3.12-.96l-1.56-.24-.181-1.02h17.76c11.34,0,17.219,3.06,17.219,9.6,0,6.96-7.14,10.86-17.699,10.86-.899,0-1.859-.06-2.579-.18v14.999c0,.479.3.72,2.939.96l2.22.24.181,1.02h-20.1l.18-1.02ZM234.243,39.707c0-5.879-2.641-9.06-7.68-9.179l-2.04.12v17.52c.659.06,1.439.3,2.279.3,4.32,0,7.44-3.6,7.44-8.76Z" fill="#f7f5f6"/>
+  <path d="M263.702,62.326h-.18c-3.18,2.76-6.72,5.279-10.439,5.279-2.04,0-3.24-.78-4.74-2.22-1.439-1.5-2.1-4.08-1.979-7.199l.12-15.839c0-.3-.24-.54-3-.84l-.9-.06-.18-1.02h12.84l-.181,16.079c-.12,4.44,1.8,5.64,4.74,5.64,1.62,0,2.88-.66,3.84-1.199v-18.479c0-.6-.42-.78-2.88-.96l-.9-.06-.239-1.02h12.659v19.079c0,2.88.359,3.6,2.1,4.08l1.68.42-.119.72-12.36,3,.12-5.399Z" fill="#f7f5f6"/>
+  <path d="M275.042,34.728c0-3-.359-3.54-2.16-4.08l-1.56-.6.06-.78,12.3-3.3v18.959l.3.12c2.101-2.82,5.4-5.28,9.12-5.28,6,0,10.919,5.58,10.919,12.959,0,9.539-7.68,14.879-15.239,14.879-2.939,0-5.699-.78-8.459-1.8h-.061l-4.68,2.28h-.54v-33.358ZM294.602,55.126c0-6.179-2.58-10.499-6.6-10.499-1.86,0-3.181.84-4.32,1.68v15.119c1.92,2.94,4.14,4.92,5.94,4.92,3.06,0,4.979-4.8,4.979-11.22Z" fill="#f7f5f6"/>
+  <path d="M302.282,65.746l.841-.061c1.739-.12,2.1-.3,2.1-1.02v-29.878c0-2.94-.42-3.48-2.1-4.02l-1.561-.66.12-.72,12.3-3.36v38.698c0,.54.479.78,2.46.96l.72.061.18,1.02h-15.299l.239-1.02Z" fill="#f7f5f6"/>
+  <path d="M315.724,65.746l.84-.061c1.74-.12,2.4-.3,2.4-1.02v-15.719c0-3.72-.48-4.2-2.521-4.8l-1.2-.3.061-.78,12.359-3.479v25.138c0,.54.36.66,2.88.96l.54.061.18,1.02h-15.719l.18-1.02ZM317.823,31.368c0-2.58,2.04-5.04,5.16-5.04,3.24,0,5.22,2.46,5.22,5.04s-1.979,5.1-5.22,5.1c-3.12,0-5.16-2.52-5.16-5.1Z" fill="#f7f5f6"/>
+  <path d="M329.583,54.467c0-8.58,6.239-14.939,15.119-14.939,5.939,0,10.079,2.58,10.079,6.3,0,2.52-1.8,4.2-4.14,4.2-2.7,0-4.439-2.34-4.2-4.92,0-1.2,1.261-2.46,1.261-2.76-.061-.72-1.261-1.32-2.641-1.32-3.6,0-6.06,3.66-6.06,10.499,0,7.02,2.88,11.1,8.22,11.1,3.24,0,5.7-1.62,7.32-4.62l.659.36c-2.159,6-6.539,9.359-12.659,9.359-7.38,0-12.959-5.46-12.959-13.259Z" fill="#f7f5f6"/>
+</svg></div>
+  <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:18px;padding:40px 48px;text-align:center;max-width:380px;width:90%;">
+    <div style="font-size:36px;margin-bottom:14px;">📡</div>
+    <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:8px;">RFP Monitor</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:28px;line-height:1.6;">Sign in with your authorised Google account to access your RFP pipeline.</div>
+    <button onclick="window._fbSignIn()" style="background:#E8187A;color:#fff;border:none;border-radius:10px;padding:14px 24px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;width:100%;">Sign in with Google</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="rfp-app" style="display:none;">
+
+<header style="background:#1A1A2E;border-bottom:3px solid transparent;border-image:linear-gradient(90deg,#E8187A,#D4A017,#1A8C5B) 1;padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100;">
+  <a href="index.html" style="display:flex;align-items:center;"><svg id="Layer_3" height="32" style="display:block;" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 400 100">
+  <!-- Generator: Adobe Illustrator 30.2.1, SVG Export Plug-In . SVG Version: 2.1.1 Build 1)  -->
+  <rect x="25.327" y="18.311" width="384.77" height="80.172" fill="none"/>
+  <path d="M26.467,65.746l2.16-.24c1.92-.3,2.58-.601,2.58-1.08V31.488c0-.48-.36-.66-3.12-.96l-1.56-.24-.18-1.02h17.759c11.339,0,17.219,3.06,17.219,9.6,0,6.96-7.14,10.86-17.699,10.86-.9,0-1.86-.06-2.58-.18v14.999c0,.479.3.72,2.94.96l2.22.24.18,1.02h-20.099l.18-1.02ZM50.766,39.707c0-5.879-2.64-9.06-7.68-9.179l-2.04.12v17.52c.66.06,1.44.3,2.28.3,4.319,0,7.439-3.6,7.439-8.76Z" fill="#f7f5f6"/>
+  <path d="M57.066,53.626c0-7.799,6.24-14.099,15.359-14.099,9.24,0,14.64,6.36,14.64,13.859,0,7.919-6.18,14.219-15.359,14.219-9.3,0-14.64-6.359-14.64-13.979ZM77.585,54.106c0-7.08-1.2-10.62-2.76-12.179-.78-.78-1.62-1.02-2.7-1.02-3.72,0-5.7,4.68-5.7,12.06,0,7.199,1.14,10.679,2.7,12.358.72.721,1.74,1.021,2.82,1.021,3.66,0,5.64-4.979,5.64-12.239Z" fill="#f7f5f6"/>
+  <path d="M85.926,44.567c-.9-2.16-1.32-2.7-3.06-2.88l-1.02-.24-.12-1.02h16.08l-.12,1.02-1.38.24c-1.44.18-1.86.9-1.2,2.58l5.279,14.579,4.32-11.939-.84-2.4c-.84-2.16-1.98-2.64-3-2.82l-1.14-.24-.12-1.02h16.319l-.12,1.02-1.32.24c-2.04.3-1.92.9-1.38,2.58l4.86,14.099,3.24-9.839c1.68-4.74,1.26-6.18-1.92-6.72l-1.2-.36-.18-1.02h11.04l-.18,1.02-1.26.3c-2.34.3-2.76,1.14-4.68,6.66l-6.6,18.958h-3.6l-7.14-18.539-6.96,18.539h-3.54l-9.06-22.798Z" fill="#f7f5f6"/>
+  <path d="M123.486,54.227c0-8.459,6.48-14.819,14.879-14.819,7.08,0,10.74,4.5,10.74,9,0,.6-.06,1.26-.18,1.8,0,0-13.859-.18-16.199-.3-.06.54-.06,1.5-.06,2.04.06,6.3,3.3,10.68,8.58,10.68,3.3,0,5.76-1.62,7.38-4.62l.72.36c-2.1,6-6.3,9.359-12.899,9.359-7.32,0-12.959-5.64-12.959-13.499ZM141.065,48.767c.06-3.96-.78-7.86-3.54-7.86-2.34,0-4.38,2.76-4.8,7.919l8.339-.06Z" fill="#f7f5f6"/>
+  <path d="M147.065,65.746l.78-.061c1.74-.12,2.4-.3,2.4-1.02v-15.719c0-3.72-.48-4.2-2.52-4.8l-1.2-.3.06-.78,12.479-3.479-.12,8.879h.18c1.92-5.64,4.38-8.939,8.1-8.939,2.76,0,4.8,1.68,4.8,4.8,0,2.04-1.74,4.2-4.02,4.2-2.64,0-3.959-1.8-4.62-3.72-1.68.42-3.12,2.46-4.44,6.78v13.079c0,.54.48.84,3,1.02l1.08.061.18,1.02h-16.319l.18-1.02Z" fill="#f7f5f6"/>
+  <path d="M172.384,57.526c0-7.68,5.88-17.399,12.359-17.399,4.68,0,7.26,4.68,7.26,10.619,0,7.86-5.88,16.799-12.66,16.799-5.22,0-6.959-5.22-6.959-10.02ZM188.043,56.146c.72-2.34,1.2-5.58,1.2-7.8,0-4.379-1.32-7.2-4.14-7.2-3.78,0-7.14,6-8.879,11.519-.72,2.4-1.14,5.641-1.14,7.14,0,3.84,1.2,6.78,3.9,6.78,3.84,0,7.32-4.8,9.06-10.439Z" fill="#f7f5f6"/>
+  <path d="M178.923,77.566c0-1.728,1.224-2.808,2.592-2.808,1.944,0,3.312,2.16,1.512,4.608.72.359,2.664-.576,3.168-.576,3.24-.648,4.824-3.601,7.849-19.226l3.888-21.53-5.616-.072.504-1.944,5.76-.36c1.584-7.057,3.601-11.521,5.977-13.969,2.16-2.304,4.681-3.168,7.345-3.168,2.952,0,5.328,1.728,5.328,3.816,0,1.8-1.152,2.88-2.521,2.88-1.943,0-3.384-2.088-1.512-4.608,0,0-2.809-.144-3.816-.144-3.672.864-5.328,4.536-7.417,15.337l7.633.072-.359,2.16h-7.705l-4.392,21.385c-2.304,10.657-4.608,16.346-7.489,19.226-1.8,1.801-3.744,2.521-5.833,2.521-3.312,0-4.896-1.656-4.896-3.601Z" fill="#f7f5f6"/>
+  <path d="M209.943,65.746l2.16-.24c1.92-.3,2.58-.601,2.58-1.08V31.488c0-.48-.36-.66-3.12-.96l-1.56-.24-.181-1.02h17.76c11.34,0,17.219,3.06,17.219,9.6,0,6.96-7.14,10.86-17.699,10.86-.899,0-1.859-.06-2.579-.18v14.999c0,.479.3.72,2.939.96l2.22.24.181,1.02h-20.1l.18-1.02ZM234.243,39.707c0-5.879-2.641-9.06-7.68-9.179l-2.04.12v17.52c.659.06,1.439.3,2.279.3,4.32,0,7.44-3.6,7.44-8.76Z" fill="#f7f5f6"/>
+  <path d="M263.702,62.326h-.18c-3.18,2.76-6.72,5.279-10.439,5.279-2.04,0-3.24-.78-4.74-2.22-1.439-1.5-2.1-4.08-1.979-7.199l.12-15.839c0-.3-.24-.54-3-.84l-.9-.06-.18-1.02h12.84l-.181,16.079c-.12,4.44,1.8,5.64,4.74,5.64,1.62,0,2.88-.66,3.84-1.199v-18.479c0-.6-.42-.78-2.88-.96l-.9-.06-.239-1.02h12.659v19.079c0,2.88.359,3.6,2.1,4.08l1.68.42-.119.72-12.36,3,.12-5.399Z" fill="#f7f5f6"/>
+  <path d="M275.042,34.728c0-3-.359-3.54-2.16-4.08l-1.56-.6.06-.78,12.3-3.3v18.959l.3.12c2.101-2.82,5.4-5.28,9.12-5.28,6,0,10.919,5.58,10.919,12.959,0,9.539-7.68,14.879-15.239,14.879-2.939,0-5.699-.78-8.459-1.8h-.061l-4.68,2.28h-.54v-33.358ZM294.602,55.126c0-6.179-2.58-10.499-6.6-10.499-1.86,0-3.181.84-4.32,1.68v15.119c1.92,2.94,4.14,4.92,5.94,4.92,3.06,0,4.979-4.8,4.979-11.22Z" fill="#f7f5f6"/>
+  <path d="M302.282,65.746l.841-.061c1.739-.12,2.1-.3,2.1-1.02v-29.878c0-2.94-.42-3.48-2.1-4.02l-1.561-.66.12-.72,12.3-3.36v38.698c0,.54.479.78,2.46.96l.72.061.18,1.02h-15.299l.239-1.02Z" fill="#f7f5f6"/>
+  <path d="M315.724,65.746l.84-.061c1.74-.12,2.4-.3,2.4-1.02v-15.719c0-3.72-.48-4.2-2.521-4.8l-1.2-.3.061-.78,12.359-3.479v25.138c0,.54.36.66,2.88.96l.54.061.18,1.02h-15.719l.18-1.02ZM317.823,31.368c0-2.58,2.04-5.04,5.16-5.04,3.24,0,5.22,2.46,5.22,5.04s-1.979,5.1-5.22,5.1c-3.12,0-5.16-2.52-5.16-5.1Z" fill="#f7f5f6"/>
+  <path d="M329.583,54.467c0-8.58,6.239-14.939,15.119-14.939,5.939,0,10.079,2.58,10.079,6.3,0,2.52-1.8,4.2-4.14,4.2-2.7,0-4.439-2.34-4.2-4.92,0-1.2,1.261-2.46,1.261-2.76-.061-.72-1.261-1.32-2.641-1.32-3.6,0-6.06,3.66-6.06,10.499,0,7.02,2.88,11.1,8.22,11.1,3.24,0,5.7-1.62,7.32-4.62l.659.36c-2.159,6-6.539,9.359-12.659,9.359-7.38,0-12.959-5.46-12.959-13.259Z" fill="#f7f5f6"/>
+</svg></a>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <span id="rfp-auth-name" style="font-size:11px;color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:4px 10px;white-space:nowrap;"></span>
+    <a href="index.html" style="background:transparent;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.5);border-radius:6px;padding:5px 10px;font-size:11px;font-family:'Plus Jakarta Sans',sans-serif;text-decoration:none;">← Hub</a>
+    <button onclick="window._fbSignOut()" style="background:transparent;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.5);border-radius:6px;padding:5px 10px;font-size:11px;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;">Sign out</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">RFP & Procurement Tracker</h1>
+      <p class="page-sub">Business development pipeline · Power of Public, LLC</p>
+    </div>
+  </div>
+
+  <!-- API KEY BANNER -->
+  <div class="key-banner" id="kb">
+    <label for="ki">Anthropic API key</label>
+    <input type="password" id="ki" placeholder="sk-ant-api03-…" autocomplete="off" />
+    <button class="btn primary sm" onclick="saveKey()">Save key</button>
+    <span class="key-saved" id="kok" style="display:none;">✓ Saved</span>
+    <button class="btn sm danger" id="kclr" onclick="clearKey()" style="display:none;">Remove</button>
+  </div>
+
+  <!-- PIPELINE SUMMARY -->
+  <div class="pipeline-bar">
+    <div class="pip pp-all active" onclick="filterStatus('all')" id="pip-all"><div class="pip-val" id="p-all">0</div><div class="pip-lbl">All Active</div></div>
+    <div class="pip pp-new" onclick="filterStatus('new')" id="pip-new"><div class="pip-val cv-pink" id="p-new">0</div><div class="pip-lbl">New</div></div>
+    <div class="pip pp-pursuing" onclick="filterStatus('pursuing')" id="pip-pursuing"><div class="pip-val cv-orange" id="p-pursuing">0</div><div class="pip-lbl">Pursuing</div></div>
+    <div class="pip pp-submitted" onclick="filterStatus('submitted')" id="pip-submitted"><div class="pip-val cv-blue" id="p-submitted">0</div><div class="pip-lbl">Submitted</div></div>
+    <div class="pip pp-won" onclick="filterStatus('won')" id="pip-won"><div class="pip-val cv-green" id="p-won">0</div><div class="pip-lbl">Won</div></div>
+    <div class="pip pp-lost" onclick="filterStatus('lost')" id="pip-lost"><div class="pip-val cv-red" id="p-lost">0</div><div class="pip-lbl">Lost</div></div>
+    <div class="pip"><div class="pip-val cv-dollar" id="p-value">$0</div><div class="pip-lbl">Pipeline $</div></div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab on"  onclick="go('pipeline')">Pipeline</button>
+    <button class="tab"     onclick="go('search')">Search</button>
+    <button class="tab"     onclick="go('portals')">Manual Portals</button>
+    <button class="tab"     onclick="go('winloss')">Win / Loss</button>
+    <button class="tab"     onclick="go('digest')">Email Digest</button>
+    <button class="tab"     onclick="go('sources')">Sources</button>
+  </div>
+
+  <!-- ══ PIPELINE ══ -->
+  <div id="tab-pipeline" class="panel on">
+    <div class="ctrls">
+      <select id="ft" onchange="doFilter()">
+        <option value="all">All org types</option>
+        <option value="Government">Government</option>
+        <option value="Foundation">Foundation</option>
+        <option value="Nonprofit / Association">Nonprofit / Association</option>
+        <option value="Academic">Academic</option>
+      </select>
+      <select id="fs" onchange="doFilter()">
+        <option value="deadline">Deadline (soonest first)</option>
+        <option value="status">Status</option>
+        <option value="gng">Go/No-Go score</option>
+        <option value="value">Est. value</option>
+        <option value="newest">Recently added</option>
+      </select>
+      <input type="text" id="fk" placeholder="Search opportunities…" oninput="doFilter()" />
+      <button class="btn" onclick="doExport()">Export CSV</button>
+    </div>
+    <div id="pipe-res">
+      <div class="empty-state">
+        <h3>Pipeline is empty</h3>
+        <p>Go to the <strong>Search</strong> tab to find and add RFP opportunities, or check the <strong>Manual Portals</strong> tab to browse government procurement sites.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SEARCH ══ -->
+  <div id="tab-search" class="panel">
+
+    <div class="card">
+      <div class="card-title">Anthropic API key</div>
+      <p style="font-size:12.5px;color:var(--text2);margin-bottom:14px;line-height:1.6;">
+        Get your key at <a href="https://console.anthropic.com" target="_blank" rel="noopener" style="color:var(--pink);font-weight:600;">console.anthropic.com</a>
+        → API Keys → Create Key. Add $5 in credits — at weekly usage this lasts 1–2 years.
+        Key saves to this browser only, never to your repo.
+      </p>
+      <div class="key-row">
+        <input type="password" id="ki2" placeholder="sk-ant-api03-…" autocomplete="off" />
+        <button class="btn primary sm" onclick="saveKey2()">Save key</button>
+        <span style="font-size:12px;color:var(--green);font-weight:600;" id="kok2" style="display:none;">✓ Key saved</span>
+        <button class="btn sm danger" id="kclr2" onclick="clearKey()" style="display:none;">Remove key</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Run a search</div>
+      <p style="font-size:12.5px;color:var(--muted);margin-bottom:16px;line-height:1.55;">
+        Customize each search run. Results appear below for review before adding to your pipeline.
+        Sources marked Auto are searched by the API. Manual portals are in the <strong>Manual Portals</strong> tab.
+      </p>
+      <div class="search-opts">
+        <div>
+          <label class="form-label">Focus keywords (optional)</label>
+          <input type="text" class="form-input" id="s-kw" placeholder="e.g., maternal health, Maryland" />
+        </div>
+        <div>
+          <label class="form-label">Limit to org type</label>
+          <select class="form-input" id="s-type">
+            <option value="all">All types</option>
+            <option value="Government">Government only</option>
+            <option value="Foundation">Foundations only</option>
+            <option value="Nonprofit / Association">Nonprofits only</option>
+            <option value="Academic">Academic only</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">Exclude keywords (optional)</label>
+          <input type="text" class="form-input" id="s-excl" placeholder="e.g., clinical, direct service" />
+        </div>
+        <div>
+          <label class="form-label">Geographic focus (optional)</label>
+          <input type="text" class="form-input" id="s-geo" placeholder="e.g., Maryland, DC, mid-Atlantic" />
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <button class="btn primary" id="rb" onclick="runSearch()">Search all sources →</button>
+        <span style="font-size:12px;color:var(--muted);">Searches <span id="src-ct">0</span> auto sources · ~20–40 seconds</span>
+      </div>
+      <div id="search-eb" style="margin-top:12px;"></div>
+    </div>
+
+    <div id="pending-section" style="display:none;">
+      <div class="section-head" id="pending-head">Results — review and add to pipeline</div>
+      <div id="pending-list"></div>
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button class="btn primary" onclick="addAllPending()">Add all to pipeline</button>
+        <button class="btn" onclick="clearPending()">Clear results</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ MANUAL PORTALS ══ -->
+  <div id="tab-portals" class="panel">
+
+    <div class="notice">
+      <strong>These sites require a login or pass a reCAPTCHA check</strong> and cannot be searched automatically. Bookmark this tab for your weekly manual check — all links open in a new tab. Most have a public browsing mode; you only need to log in to submit a response.
+    </div>
+
+    <!-- STATE PROCUREMENT PORTALS -->
+    <div class="portal-section">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:4px;">
+        <h3 style="margin-bottom:0;">State procurement portals</h3>
+        <button class="btn sm" onclick="openPortalModal('State procurement portals')">+ Add to this section</button>
+      </div>
+      <p class="portal-note">Official state eProcurement systems. Each posts all agency RFPs in one place. Browse publicly; login only required to bid.</p>
+      <div class="portal-grid" id="pgrid-state">
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">eMMA — Maryland</div>
+            <div class="portal-link-desc">eMaryland Marketplace Advantage · all MD state agencies</div>
+          </div>
+          <a href="https://emma.maryland.gov/page.aspx/en/rfp/request_browse_public" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">eVA / VBO — Virginia</div>
+            <div class="portal-link-desc">Virginia Business Opportunities · all VA state agencies</div>
+          </div>
+          <span class="portal-link-tag tag-login">Login preferred</span>
+          <a href="https://mvendor.cgieva.com/Vendor/public/AllOpportunities.jsp" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">DC OCP — Washington, DC</div>
+            <div class="portal-link-desc">Office of Contracting and Procurement · all DC agencies</div>
+          </div>
+          <a href="https://contracts.ocp.dc.gov/solicitations/search" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">NC eVP — North Carolina</div>
+            <div class="portal-link-desc">Electronic Vendor Portal · all NC state agencies</div>
+          </div>
+          <span class="portal-link-tag tag-login">Login preferred</span>
+          <a href="https://evp.nc.gov/solicitations/" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">GPR — Georgia</div>
+            <div class="portal-link-desc">Georgia Procurement Registry · all GA state agencies (public search — no login to browse)</div>
+          </div>
+          <span class="portal-link-tag tag-login">Login to bid only</span>
+          <a href="https://ssl.doas.state.ga.us/gpr/" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">Delaware Bid Directory</div>
+            <div class="portal-link-desc">State of Delaware · all agency RFPs and ITBs (public, no login)</div>
+          </div>
+          <span class="portal-link-tag tag-login">Public</span>
+          <a href="https://mmp.delaware.gov/Bids/" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- DC-ADJACENT ORGS -->
+    <div class="portal-section">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:4px;">
+        <h3 style="margin-bottom:0;">DC-adjacent & regional organizations</h3>
+        <button class="btn sm" onclick="openPortalModal('DC-adjacent & regional organizations')">+ Add to this section</button>
+      </div>
+      <p class="portal-note">Government-adjacent, quasi-governmental, and regional bodies in the DC metro area that issue their own RFPs outside the main procurement portals.</p>
+      <div class="portal-grid" id="pgrid-dc">
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">Events DC</div>
+            <div class="portal-link-desc">DC's official conventions and events authority</div>
+          </div>
+          <span class="portal-link-tag tag-login">Public</span>
+          <a href="https://eventsdc.com/about/procurement" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">Metropolitan Washington COG</div>
+            <div class="portal-link-desc">Regional planning body for DC / MD / VA</div>
+          </div>
+          <span class="portal-link-tag tag-login">Public</span>
+          <a href="https://www.mwcog.org/purchasing-and-bids/cog-bids-and-rfps/" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">WMATA — Metro</div>
+            <div class="portal-link-desc">Washington Metropolitan Area Transit Authority</div>
+          </div>
+          <span class="portal-link-tag tag-login">Public</span>
+          <a href="https://www.wmata.com/business/procurement/solicitations/index.cfm" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">DC Health (DCDOH)</div>
+            <div class="portal-link-desc">DC Department of Health procurement and grants</div>
+          </div>
+          <span class="portal-link-tag tag-login">Public</span>
+          <a href="https://dchealth.dc.gov/service/grants-and-funding" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">DHCF — DC Medicaid</div>
+            <div class="portal-link-desc">DC Dept of Health Care Finance solicitations</div>
+          </div>
+          <span class="portal-link-tag tag-login">Public</span>
+          <a href="https://dhcf.dc.gov/page/dhcf-procurement-opportunities" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">DC Office of Planning</div>
+            <div class="portal-link-desc">Planning and communications-related RFPs</div>
+          </div>
+          <span class="portal-link-tag tag-login">Public</span>
+          <a href="https://planning.dc.gov/page/solicitations-rfps" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">DC DGS Solicitations</div>
+            <div class="portal-link-desc">Department of General Services · facilities and services</div>
+          </div>
+          <span class="portal-link-tag tag-login">Public</span>
+          <a href="https://dgs.dc.gov/page/active-solicitations" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">Prince George's Co. (MD)</div>
+            <div class="portal-link-desc">PG County procurement — major MD suburb</div>
+          </div>
+          <span class="portal-link-tag tag-login">Public</span>
+          <a href="https://www.princegeorgescountymd.gov/2215/Solicitations" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">Montgomery Co. (MD)</div>
+            <div class="portal-link-desc">Montgomery County procurement</div>
+          </div>
+          <span class="portal-link-tag tag-login">Public</span>
+          <a href="https://www.montgomerycountymd.gov/PRO/solicitations/index.html" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">Arlington Co. (VA)</div>
+            <div class="portal-link-desc">Arlington County procurement and RFPs</div>
+          </div>
+          <span class="portal-link-tag tag-login">Public</span>
+          <a href="https://www.arlingtonva.us/Government/Departments/Management-Finance/Procurement/Solicitations" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="portal-section">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:4px;">
+        <h3 style="margin-bottom:0;">Free curated PR & communications RFP lists</h3>
+        <button class="btn sm" onclick="openPortalModal('Free curated PR & communications RFP lists')">+ Add to this section</button>
+      </div>
+      <p class="portal-note">Publicly accessible, no-login pages that curate PR, communications, marketing, and public awareness campaign solicitations from across the country. Updated frequently — worth bookmarking and checking weekly alongside your automated search.</p>
+      <div class="portal-grid" id="pgrid-pr">
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">O'Dwyer's PR — RFPs, RFIs & RFQs</div>
+            <div class="portal-link-desc">PR, communications and public awareness campaigns · national coverage · free to view · updated continuously</div>
+          </div>
+          <span class="portal-link-tag" style="background:var(--green-light);color:var(--green);">Free / Public</span>
+          <a href="https://www.odwyerpr.com/rfps/index.html" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">Everything PR — RFPs</div>
+            <div class="portal-link-desc">PR, marketing, communications and social media RFPs from government and corporate issuers · updated weekly</div>
+          </div>
+          <span class="portal-link-tag" style="background:var(--green-light);color:var(--green);">Free / Public</span>
+          <a href="https://everything-pr.com/rfp/" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">RFP Database (rfpdb.com)</div>
+            <div class="portal-link-desc">Government, nonprofit and corporate RFPs including communications, marketing and public health · no subscription</div>
+          </div>
+          <span class="portal-link-tag" style="background:var(--green-light);color:var(--green);">Free / Public</span>
+          <a href="https://rfpdb.com/" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">rfpmart — Marketing & Branding</div>
+            <div class="portal-link-desc">National aggregator · communications, outreach and public awareness campaign solicitations</div>
+          </div>
+          <span class="portal-link-tag" style="background:var(--green-light);color:var(--green);">Free / Public</span>
+          <a href="https://rfpmart.com/marketing-and-branding-rfp-government-contract.html" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">rfpmart — Social Media & Outreach</div>
+            <div class="portal-link-desc">Community engagement, social marketing, outreach strategy and public awareness solicitations</div>
+          </div>
+          <span class="portal-link-tag" style="background:var(--green-light);color:var(--green);">Free / Public</span>
+          <a href="https://rfpmart.com/social-media-internet-marketing-and-seo-rfp-government-contract.html" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">HigherGov — Communications & Marketing</div>
+            <div class="portal-link-desc">State and local digital marketing, communications, and public outreach contract opportunities · free public search</div>
+          </div>
+          <span class="portal-link-tag" style="background:var(--green-light);color:var(--green);">Free / Public</span>
+          <a href="https://www.highergov.com/sl/contract-opportunities/digital-marketing/" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- MARYLAND BOARD OF PUBLIC WORKS -->
+    <div class="portal-section">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:4px;">
+        <h3 style="margin-bottom:0;">Maryland Board of Public Works</h3>
+        <button class="btn sm" onclick="openPortalModal('Maryland Board of Public Works')">+ Add to this section</button>
+      </div>
+      <p class="portal-note">All Maryland contracts over $200,000 must go to the BPW for approval. Agenda items list contract values and scopes — useful for seeing what MDH and other agencies are procuring even before an RFP is posted. Solicitations are posted through eMMA.</p>
+      <div class="portal-grid" id="pgrid-bpw">
+        <div class="portal-link">
+          <div class="portal-link-name">BPW Procurement</div>
+          <div class="portal-link-desc">Maryland Board of Public Works · advance intelligence on MD contracts >$200K</div>
+          <div class="portal-link-foot">
+            <span class="portal-link-tag" style="background:var(--green-light);color:var(--green);">Public</span>
+            <a href="https://bpw.maryland.gov/Pages/procurement.aspx" target="_blank" rel="noopener">Open ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- USER-ADDED PORTALS -->
+    <div class="portal-section">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:4px;">
+        <h3 style="margin-bottom:0;">My portals</h3>
+        <button class="btn primary sm" onclick="openPortalModal('My portals')">+ Add portal</button>
+      </div>
+      <p class="portal-note">Your own additions. Use the <strong>+ Add to this section</strong> buttons above to add to an existing section, or add here to keep things separate.</p>
+      <div class="portal-grid" id="user-portal-grid"></div>
+      <p class="hint" id="user-portal-empty">No portals added yet. Click any <strong>+ Add</strong> button to get started.</p>
+    </div>
+
+  </div>
+
+  <!-- ══ WIN / LOSS ══ -->
+  <div id="tab-winloss" class="panel">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;">
+      <div class="card" style="padding:16px;margin:0;"><div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);">Submitted</div><div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:900;margin-top:4px;" id="wl-sub">0</div></div>
+      <div class="card" style="padding:16px;margin:0;"><div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);">Won</div><div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:900;color:var(--green);margin-top:4px;" id="wl-won">0</div></div>
+      <div class="card" style="padding:16px;margin:0;"><div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);">Win rate</div><div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:900;margin-top:4px;" id="wl-rate">—</div></div>
+      <div class="card" style="padding:16px;margin:0;"><div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);">Revenue won</div><div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--green);margin-top:4px;" id="wl-rev">$0</div></div>
+    </div>
+    <div id="wl-list">
+      <div class="empty-state"><h3>No closed opportunities yet</h3><p>When you mark an opportunity Won, Lost, or No-Go in the pipeline, it will appear here.</p></div>
+    </div>
+  </div>
+
+  <!-- ══ EMAIL DIGEST ══ -->
+  <div id="tab-digest" class="panel">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div class="card-title">Weekly digest</div>
+          <p style="font-size:12.5px;color:var(--muted);line-height:1.55;">A formatted summary of your active pipeline. Copy and paste into an email to yourself or a status update.</p>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn primary" onclick="buildDigest()">Generate digest</button>
+          <button class="btn" onclick="copyDigest()">Copy to clipboard</button>
+        </div>
+      </div>
+      <div class="digest-preview" id="digest-preview">Click "Generate digest" to create your weekly summary.</div>
+    </div>
+  </div>
+
+  <!-- ══ SOURCES ══ -->
+  <div id="tab-sources" class="panel">
+    <div class="notice">
+      <strong>These are the auto-searchable sources</strong> — sites Google has indexed that the API can query without hitting a login or reCAPTCHA wall. Sources requiring login/reCAPTCHA are in the <strong>Manual Portals</strong> tab, not here.
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+      <span class="hint">Add or remove auto-searchable sources. Changes save to your browser.</span>
+      <button class="btn primary" onclick="openM('source')">+ Add source</button>
+    </div>
+    <div class="sgrid" id="sg"></div>
+    <hr class="divider" />
+    <p class="hint">Sources save in localStorage. Clearing browser data resets to the defaults.</p>
+  </div>
+
+</main>
+
+<!-- ══ GNG MODAL ══ -->
+<div class="mbg" id="gng-modal">
+  <div class="mbox">
+    <h3>Go / No-Go Scorecard</h3>
+    <p class="msub" id="gng-opp-title"></p>
+    <div id="gng-criteria"></div>
+    <div class="gng-result" id="gng-result" style="display:none;"></div>
+    <div style="margin-top:16px;">
+      <label class="flbl">Contact at this org</label>
+      <input class="fin" type="text" id="gng-contact" placeholder="Name, title, or 'warm intro needed'" />
+      <label class="flbl">Est. contract value ($)</label>
+      <input class="fin" type="text" id="gng-value" placeholder="e.g., 50000" style="margin-bottom:0;" />
+    </div>
+    <div class="mfooter">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn primary" onclick="saveGng()">Save scorecard</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ NOTES MODAL ══ -->
+<div class="mbg" id="notes-modal">
+  <div class="mbox" style="width:480px;">
+    <h3>Notes</h3>
+    <p class="msub" id="notes-opp-title"></p>
+    <textarea class="ftarea" id="notes-text" style="min-height:140px;" placeholder="Your thinking, next steps, contacts, anything relevant…"></textarea>
+    <div class="mfooter">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn primary" onclick="saveNotes()">Save notes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADD / EDIT SOURCE MODAL ══ -->
+<div class="mbg" id="source-modal">
+  <div class="mbox" style="width:400px;">
+    <h3 id="sm-title">Add auto-search source</h3>
+    <p class="msub" id="sm-sub">Only add sources the API can access without a login or reCAPTCHA.</p>
+    <label class="flbl">Organization name</label>
+    <input class="fin" type="text" id="mn" placeholder="e.g., NACCHO" />
+    <label class="flbl">URL (RFP or opportunities page)</label>
+    <input class="fin" type="text" id="mu" placeholder="https://naccho.org/rfps" />
+    <label class="flbl">Type</label>
+    <select class="fin" id="mt" style="height:36px;">
+      <option>Government</option><option>Foundation</option>
+      <option>Nonprofit / Association</option><option>Academic</option>
+    </select>
+    <label class="flbl">Keywords (optional)</label>
+    <input class="fin" type="text" id="mk" placeholder="e.g., maternal health, communications" />
+    <div class="mfooter">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn primary" id="sm-save-btn" onclick="saveSource()">Add source</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADD PORTAL MODAL ══ -->
+<div class="mbg" id="portal-modal">
+  <div class="mbox" style="width:440px;">
+    <h3 id="pm-title">Add portal</h3>
+    <p class="msub" id="pm-sub">Add any organization, agency, or resource to the Manual Portals tab.</p>
+    <label class="flbl">Section</label>
+    <select class="fin" id="ps" style="height:36px;margin-bottom:12px;">
+      <option value="My portals">My portals (default)</option>
+      <option value="State procurement portals">State procurement portals</option>
+      <option value="DC-adjacent & regional organizations">DC-adjacent & regional organizations</option>
+      <option value="Free curated PR & communications RFP lists">Free curated PR & communications RFP lists</option>
+      <option value="Maryland Board of Public Works">Maryland Board of Public Works</option>
+    </select>
+    <label class="flbl">Name</label>
+    <input class="fin" type="text" id="pn" placeholder="e.g., CDC Procurement" />
+    <label class="flbl">Description</label>
+    <input class="fin" type="text" id="pd" placeholder="e.g., CDC vendor & contract opportunities" />
+    <label class="flbl">URL</label>
+    <input class="fin" type="url" id="pu" placeholder="https://…" />
+    <label class="flbl">Tag</label>
+    <select class="fin" id="pt" style="height:36px;" onchange="toggleCustomTag(this.value)">
+      <option value="public">Public</option>
+      <option value="free">Free / Public</option>
+      <option value="login">Login Preferred</option>
+      <option value="loginbid">Login to bid only</option>
+      <option value="custom">Custom…</option>
+    </select>
+    <div id="custom-tag-wrap" style="display:none;margin-top:-6px;margin-bottom:12px;">
+      <input class="fin" type="text" id="pt-custom" placeholder="e.g., Registration required" style="margin-bottom:0;" />
+    </div>
+    <div class="mfooter">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn primary" id="pm-save-btn" onclick="savePortal()">Add portal</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   AUTO-SEARCHABLE SOURCES
+   These are Google-indexed and accessible to the
+   API without login or reCAPTCHA.
+═══════════════════════════════════════════════ */
+const DEFAULTS = [
+  /* AGGREGATORS — pull from many govt sources */
+  {id:1,  name:"SAM.gov (Federal)",               url:"https://sam.gov/search/?index=opp&sort=-modifiedDate&sfm%5Bstatus%5D%5B0%5D=Active",          type:"Government",             kw:"health communications, public health outreach, social marketing, behavior change"},
+  {id:2,  name:"rfpmart.com — Health & Marketing",url:"https://rfpmart.com/marketing-and-branding-rfp-government-contract.html",                      type:"Government",             kw:"health communications, community outreach, public health consultant, Maryland, DC, Virginia"},
+  {id:3,  name:"HigherGov — DC OCP",              url:"https://www.highergov.com/sl/agency/contracting-and-procurement-ocp-ocp-12530/",               type:"Government",             kw:"communications, health, outreach, DC, public awareness"},
+  {id:4,  name:"Georgia Procurement Registry",    url:"https://ssl.doas.state.ga.us/gpr/",                                                            type:"Government",             kw:"health communications, public health, outreach, marketing consultant"},
+  {id:5,  name:"NC eVP Solicitations",            url:"https://evp.nc.gov/solicitations/",                                                            type:"Government",             kw:"health communications, public health, outreach, communications consultant"},
+  {id:6,  name:"Delaware Bid Directory",          url:"https://mmp.delaware.gov/Bids/",                                                               type:"Government",             kw:"health communications, public health, outreach, marketing"},
+  /* PR & COMMUNICATIONS-SPECIFIC */
+  {id:7,  name:"O'Dwyer's PR — RFPs",             url:"https://www.odwyerpr.com/rfps/index.html",                                                    type:"Nonprofit / Association",kw:"public relations, communications, health communications, public awareness, marketing"},
+  /* FOUNDATIONS */
+  {id:8,  name:"CDC Foundation",                  url:"https://cdcfoundation.org/request-for-proposals",                                              type:"Foundation",             kw:"health communications, maternal health, community outreach, consultant"},
+  {id:9,  name:"Philanthropy News Digest",        url:"https://philanthropynewsdigest.org/rfps",                                                      type:"Foundation",             kw:"health communications, public health, social marketing, behavior change"},
+  {id:10, name:"Elevance Health Foundation",      url:"https://elevancehealth.foundation/for-grantseekers",                                            type:"Foundation",             kw:"maternal health, behavioral health, community outreach, communications"},
+  {id:11, name:"Horizon Foundation (MD)",         url:"https://thehorizonfoundation.org/tag/rfp/",                                                    type:"Foundation",             kw:"health communications, community outreach, Maryland, marketing"},
+  {id:12, name:"Grantmakers in Health",           url:"https://gih.org",                                                                              type:"Foundation",             kw:"health communications, public health, community engagement consultant"},
+  {id:13, name:"New York Health Foundation",      url:"https://nyhealthfoundation.org/rfp/",                                                          type:"Foundation",             kw:"health communications, maternal health, community outreach"},
+  /* NONPROFITS / ASSOCIATIONS */
+  {id:14, name:"NACCHO",                          url:"https://naccho.org",                                                                           type:"Nonprofit / Association",kw:"health communications, local health department, marketing consultant"},
+  {id:15, name:"Public Health Institute (PHI)",   url:"https://phi.org/work-with-us/rfp-vendor-opportunities/",                                      type:"Nonprofit / Association",kw:"communications, health education, community outreach, consultant"},
+  {id:16, name:"NNPHI",                           url:"https://nnphi.org",                                                                            type:"Nonprofit / Association",kw:"public health systems, communications consultant, training"},
+  {id:17, name:"American Public Health Association",url:"https://apha.org",                                                                           type:"Nonprofit / Association",kw:"communications consultant, public health, health education"},
+  {id:18, name:"Corporation for Supportive Housing",url:"https://csh.org",                                                                            type:"Nonprofit / Association",kw:"communications consultant, health equity, outreach"},
+  /* ACADEMIC */
+  {id:19, name:"UNC Gillings SPH",                url:"https://sph.unc.edu/research/common-public-health-funding-opportunities/",                    type:"Academic",               kw:"health communications, community outreach, consultant"},
+  /* GRANTS.GOV */
+  {id:20, name:"grants.gov (Federal grants)",     url:"https://grants.gov/search-grants",                                                             type:"Government",             kw:"health communications, public health, community outreach, behavior change, social marketing"},
+  /* ADDITIONAL PR / COMMUNICATIONS-SPECIFIC LISTS */
+  {id:21, name:"Everything PR — RFPs",            url:"https://everything-pr.com/rfp/",                                                              type:"Nonprofit / Association",kw:"public relations, communications, health communications, public awareness, marketing, community outreach"},
+  {id:22, name:"RFP Database (rfpdb.com)",        url:"https://rfpdb.com/",                                                                           type:"Nonprofit / Association",kw:"communications, public health, community outreach, marketing, health communications"},
+  {id:23, name:"rfpmart — Social Media & Outreach",url:"https://rfpmart.com/social-media-internet-marketing-and-seo-rfp-government-contract.html",   type:"Government",             kw:"community outreach, communications strategy, public awareness, social marketing, health campaigns"},
+];
+
+const GNG_CRITERIA = [
+  {key:'fit',      label:'Mission & scope fit',      desc:'Does this align with your core expertise?'},
+  {key:'timeline', label:'Timeline is workable',     desc:'Can you deliver within the proposed schedule?'},
+  {key:'budget',   label:'Budget is adequate',       desc:'Is the contract value worth the investment?'},
+  {key:'compete',  label:'Competitive position',     desc:'Do you have a strong chance of winning?'},
+  {key:'rel',      label:'Existing relationship',    desc:'Do you have a contact or warm intro at this org?'},
+  {key:'capacity', label:'Capacity available',       desc:'Do you have the bandwidth to pursue and deliver?'},
+];
+
+/* ─── STATE ─── */
+let sources  = JSON.parse(localStorage.getItem('pop_src')  || 'null') || DEFAULTS;
+let pipeline = JSON.parse(localStorage.getItem('pop_pipe') || '[]');
+let pending  = [];
+let statusFilter = 'all';
+let activeModal  = null;
+let activeOppId  = null;
+
+function persist(){
+  localStorage.setItem('pop_src',  JSON.stringify(sources));
+  localStorage.setItem('pop_pipe', JSON.stringify(pipeline));
+}
+
+/* ─── API KEY ─── */
+function syncKeyUI(){
+  const has = !!localStorage.getItem('pop_key');
+  document.getElementById('kok').style.display  = has ? 'inline' : 'none';
+  document.getElementById('kclr').style.display = has ? 'inline' : 'none';
+  document.getElementById('kok2').style.display  = has ? 'inline' : 'none';
+  document.getElementById('kclr2').style.display = has ? 'inline' : 'none';
+  if(has) document.getElementById('kb').classList.add('gone');
+}
+function saveKey(){
+  const k = document.getElementById('ki').value.trim();
+  if(!k) return;
+  localStorage.setItem('pop_key', k);
+  document.getElementById('ki').value = '';
+  syncKeyUI();
+}
+function saveKey2(){
+  const k = document.getElementById('ki2').value.trim();
+  if(!k) return;
+  localStorage.setItem('pop_key', k);
+  document.getElementById('ki2').value = '';
+  syncKeyUI();
+}
+function clearKey(){
+  if(!confirm('Remove saved API key?')) return;
+  localStorage.removeItem('pop_key');
+  document.getElementById('kb').classList.remove('gone');
+  syncKeyUI();
+}
+syncKeyUI();
+
+/* ─── PIPELINE SUMMARY ─── */
+function updatePipeline(){
+  const active = pipeline.filter(o => !['won','lost','nogo'].includes(o.status));
+  const cnt = s => pipeline.filter(o => o.status === s).length;
+  document.getElementById('p-all').textContent       = active.length;
+  document.getElementById('p-new').textContent       = cnt('new');
+  document.getElementById('p-pursuing').textContent  = cnt('pursuing');
+  document.getElementById('p-submitted').textContent = cnt('submitted');
+  document.getElementById('p-won').textContent       = cnt('won');
+  document.getElementById('p-lost').textContent      = cnt('lost');
+  const pv = pipeline.filter(o => ['new','pursuing','submitted'].includes(o.status)).reduce((s,o)=>s+(parseInt(o.value)||0),0);
+  document.getElementById('p-value').textContent = pv > 0 ? '$' + pv.toLocaleString() : '$0';
+  document.getElementById('src-ct').textContent  = sources.length;
+  updateWL();
+}
+
+/* ─── TABS ─── */
+function go(n){
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('on',['pipeline','search','portals','winloss','digest','sources'][i]===n));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.getElementById('tab-'+n).classList.add('on');
+  if(n==='sources')  renderSrc();
+  if(n==='winloss')  renderWL();
+  if(n==='pipeline') doFilter();
+  if(n==='portals')  renderUserPortals();
+}
+
+/* ─── PILLS ─── */
+function tpill(t){
+  const m={'Government':'pg','Foundation':'pf','Nonprofit / Association':'pn','Academic':'pa'};
+  return `<span class="pill ${m[t]||'pg'}">${t}</span>`;
+}
+function dlinfo(d){
+  if(!d||d==='Unknown') return {c:'dc',l:'Deadline unknown'};
+  if(d==='Rolling')     return {c:'do',l:'Rolling'};
+  const dt = new Date(d); if(isNaN(dt)) return {c:'dc',l:d};
+  const days = (dt - Date.now())/86400000;
+  const f = dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  if(days < 0)   return {c:'dc',l:'Closed · '+f};
+  if(days <= 14) return {c:'du',l:'Due '+f};
+  if(days <= 45) return {c:'ds',l:'Due '+f};
+  return               {c:'do',l:'Due '+f};
+}
+function gngLabel(s){
+  if(!s) return 'Score it';
+  const n=parseInt(s);
+  if(n>=70) return 'GO · '+n+'%';
+  if(n>=40) return 'MAYBE · '+n+'%';
+  return 'NO-GO · '+n+'%';
+}
+function gngClass(s){
+  if(!s) return '';
+  const n=parseInt(s);
+  if(n>=70) return 'gng-go';
+  if(n>=40) return 'gng-maybe';
+  return 'gng-nogo';
+}
+function fmtVal(v){ return v&&parseInt(v)>0?'$'+parseInt(v).toLocaleString():''; }
+function statusColor(s){ return {new:'s-new',pursuing:'s-pursuing',submitted:'s-submitted',won:'s-won',lost:'s-lost',nogo:'s-nogo'}[s]||'s-new'; }
+
+/* ─── FILTER STATUS ─── */
+function filterStatus(s){
+  statusFilter = s;
+  document.querySelectorAll('.pip').forEach(p=>p.classList.remove('active'));
+  (document.getElementById('pip-'+s)||document.getElementById('pip-all')).classList.add('active');
+  doFilter();
+}
+
+/* ─── RENDER PIPELINE ─── */
+function doFilter(){
+  const tf=document.getElementById('ft').value, sf=document.getElementById('fs').value, kw=document.getElementById('fk').value.toLowerCase();
+  let list = pipeline.filter(o=>{
+    if(statusFilter!=='all' && o.status!==statusFilter) return false;
+    if(tf!=='all' && o.type!==tf) return false;
+    if(kw && !JSON.stringify(o).toLowerCase().includes(kw)) return false;
+    return true;
+  });
+  list.sort((a,b)=>{
+    if(sf==='deadline'){const da=new Date(a.deadline),db=new Date(b.deadline);return(isNaN(da)?Infinity:da)-(isNaN(db)?Infinity:db);}
+    if(sf==='status'){const ord={new:0,pursuing:1,submitted:2,won:3,lost:4,nogo:5};return(ord[a.status]||0)-(ord[b.status]||0);}
+    if(sf==='gng'){return(parseInt(b.gngScore)||0)-(parseInt(a.gngScore)||0);}
+    if(sf==='value'){return(parseInt(b.value)||0)-(parseInt(a.value)||0);}
+    return b.id - a.id;
+  });
+  renderPipeline(list);
+}
+
+function renderPipeline(list){
+  const el = document.getElementById('pipe-res');
+  if(!list.length){
+    const msg = pipeline.length===0
+      ? '<h3>Pipeline is empty</h3><p>Go to <strong>Search</strong> to find opportunities, or check <strong>Manual Portals</strong> for procurement sites.</p>'
+      : '<h3>No matching opportunities</h3><p>Try adjusting your filters.</p>';
+    el.innerHTML = `<div class="empty-state">${msg}</div>`; return;
+  }
+  el.innerHTML = `<div class="rmeta">${list.length} opportunit${list.length===1?'y':'ies'}</div>` +
+    list.map(o=>{
+      const dl=dlinfo(o.deadline), gc=gngClass(o.gngScore), gl=gngLabel(o.gngScore);
+      const isSav = false; // saved tab removed for simplicity
+      return `<div class="opp-card ${statusColor(o.status)}" id="opp-${o.id}">
+        <div class="opp-top">
+          <div style="flex:1;min-width:0;">
+            <div class="opp-title">${o.title||'Untitled'}</div>
+            <div class="opp-org">${o.org||''} ${tpill(o.type||'Government')}
+              ${o.contact?`<span style="font-size:11px;color:var(--muted);">👤 ${o.contact}</span>`:''}
+            </div>
+          </div>
+          <div class="opp-badges">
+            <div class="dl ${dl.c}">${dl.l}</div>
+            <select class="ss ss-${o.status}" onchange="updateStatus(${o.id},this.value)">
+              <option value="new"       ${o.status==='new'?'selected':''}>New</option>
+              <option value="pursuing"  ${o.status==='pursuing'?'selected':''}>Pursuing</option>
+              <option value="submitted" ${o.status==='submitted'?'selected':''}>Submitted</option>
+              <option value="won"       ${o.status==='won'?'selected':''}>Won</option>
+              <option value="lost"      ${o.status==='lost'?'selected':''}>Lost</option>
+              <option value="nogo"      ${o.status==='nogo'?'selected':''}>No-Go</option>
+            </select>
+          </div>
+        </div>
+        ${o.summary?`<div class="opp-body">${o.summary}</div>`:''}
+        <div class="opp-meta">
+          ${o.requirements?`<div><strong>Requirements</strong>${o.requirements}</div>`:''}
+          ${o.value?`<div><strong>Est. value</strong>${fmtVal(o.value)}</div>`:''}
+        </div>
+        ${o.notes?`<div class="opp-notes-disp">${o.notes.replace(/\n/g,'<br>')}</div>`:''}
+        <div class="opp-foot">
+          ${o.url?`<a href="${o.url}" target="_blank" rel="noopener" class="btn sm">View source ↗</a>`:''}
+          <button class="btn sm ${gc?gc+' gng-score':''}" onclick="openGng(${o.id})">${gl}</button>
+          <button class="btn sm" onclick="openNotes(${o.id})">📝 ${o.notes?'Edit notes':'Add notes'}</button>
+          <button class="btn sm danger" onclick="deleteOpp(${o.id})" style="margin-left:auto;">Remove</button>
+        </div>
+      </div>`;
+    }).join('');
+}
+
+function updateStatus(id,val){
+  const o=pipeline.find(x=>x.id===id); if(!o) return;
+  o.status=val; persist(); updatePipeline(); doFilter();
+  if(['won','lost','nogo'].includes(val)) setTimeout(()=>go('winloss'),400);
+}
+function deleteOpp(id){
+  if(!confirm('Remove this opportunity?')) return;
+  pipeline=pipeline.filter(o=>o.id!==id); persist(); updatePipeline(); doFilter();
+}
+
+/* ─── GNG ─── */
+function openGng(id){
+  const o=pipeline.find(x=>x.id===id); if(!o) return;
+  activeOppId=id;
+  document.getElementById('gng-opp-title').textContent=o.title||'';
+  document.getElementById('gng-contact').value=o.contact||'';
+  document.getElementById('gng-value').value=o.value||'';
+  document.getElementById('gng-result').style.display='none';
+  const scores=o.gngScores||{};
+  document.getElementById('gng-criteria').innerHTML=GNG_CRITERIA.map(c=>`
+    <div class="gng-row">
+      <div class="gng-crit"><strong>${c.label}</strong><span>${c.desc}</span></div>
+      <div class="gng-btns">
+        <button class="gng-btn ${scores[c.key]==='yes'?'sel-yes':''}"   onclick="scoreBtn(this,'${c.key}','yes')">Yes</button>
+        <button class="gng-btn ${scores[c.key]==='maybe'?'sel-maybe':''}" onclick="scoreBtn(this,'${c.key}','maybe')">Maybe</button>
+        <button class="gng-btn ${scores[c.key]==='no'?'sel-no':''}"    onclick="scoreBtn(this,'${c.key}','no')">No</button>
+      </div>
+    </div>`).join('');
+  openModal('gng-modal'); calcGng();
+}
+function scoreBtn(btn,key,val){
+  btn.closest('.gng-row').querySelectorAll('.gng-btn').forEach(b=>b.classList.remove('sel-yes','sel-maybe','sel-no'));
+  btn.classList.add('sel-'+val); calcGng();
+}
+function calcGng(){
+  const vals={yes:100,maybe:50,no:0};
+  let total=0,count=0;
+  document.getElementById('gng-criteria').querySelectorAll('.gng-row').forEach((r,i)=>{
+    const sel=r.querySelector('[class*="sel-"]');
+    if(sel){total+=vals[sel.classList.contains('sel-yes')?'yes':sel.classList.contains('sel-maybe')?'maybe':'no'];count++;}
+  });
+  if(!count) return;
+  const score=Math.round(total/count);
+  const el=document.getElementById('gng-result');
+  el.style.display='block';
+  el.className='gng-result '+(score>=70?'go':score>=40?'maybe':'nogo');
+  el.textContent=score>=70?`GO — ${score}% match. Strong opportunity.`:score>=40?`MAYBE — ${score}% match. Consider carefully.`:`NO-GO — ${score}% match. Likely not worth pursuing.`;
+}
+function saveGng(){
+  const o=pipeline.find(x=>x.id===activeOppId); if(!o) return;
+  const scores={};
+  document.getElementById('gng-criteria').querySelectorAll('.gng-row').forEach((r,i)=>{
+    const sel=r.querySelector('[class*="sel-"]');
+    if(sel)scores[GNG_CRITERIA[i].key]=sel.classList.contains('sel-yes')?'yes':sel.classList.contains('sel-maybe')?'maybe':'no';
+  });
+  const vals={yes:100,maybe:50,no:0};
+  const entries=Object.values(scores);
+  o.gngScores=scores;
+  o.gngScore=entries.length?Math.round(entries.reduce((s,v)=>s+vals[v],0)/entries.length):null;
+  o.contact=document.getElementById('gng-contact').value.trim();
+  o.value=document.getElementById('gng-value').value.replace(/[^0-9]/g,'');
+  persist(); updatePipeline(); doFilter(); closeModal();
+}
+
+/* ─── NOTES ─── */
+function openNotes(id){
+  const o=pipeline.find(x=>x.id===id); if(!o) return;
+  activeOppId=id;
+  document.getElementById('notes-opp-title').textContent=o.title||'';
+  document.getElementById('notes-text').value=o.notes||'';
+  openModal('notes-modal');
+}
+function saveNotes(){
+  const o=pipeline.find(x=>x.id===activeOppId); if(!o) return;
+  o.notes=document.getElementById('notes-text').value.trim();
+  persist(); doFilter(); closeModal();
+}
+
+/* ─── MODALS ─── */
+function openModal(id){ closeModal(); document.getElementById(id).classList.add('on'); activeModal=id; }
+function closeModal(){ if(activeModal)document.getElementById(activeModal)?.classList.remove('on'); activeModal=null; }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeModal(); });
+
+/* ─── WIN/LOSS ─── */
+function updateWL(){
+  const submitted=pipeline.filter(o=>['submitted','won','lost'].includes(o.status)).length;
+  const won=pipeline.filter(o=>o.status==='won').length;
+  const rate=submitted>0?Math.round((won/submitted)*100)+'%':'—';
+  const rev=pipeline.filter(o=>o.status==='won').reduce((s,o)=>s+(parseInt(o.value)||0),0);
+  document.getElementById('wl-sub').textContent=submitted;
+  document.getElementById('wl-won').textContent=won;
+  document.getElementById('wl-rate').textContent=rate;
+  document.getElementById('wl-rev').textContent=rev>0?'$'+rev.toLocaleString():'$0';
+}
+function renderWL(){
+  const closed=pipeline.filter(o=>['won','lost','nogo','submitted'].includes(o.status));
+  const el=document.getElementById('wl-list');
+  if(!closed.length){el.innerHTML=`<div class="empty-state"><h3>No closed opportunities yet</h3><p>Mark opportunities Won, Lost, or No-Go in the pipeline to track outcomes here.</p></div>`;return;}
+  el.innerHTML=`<table><thead><tr><th>Opportunity</th><th>Org</th><th>Status</th><th>Est. value</th><th>Go/No-Go</th><th>Deadline</th></tr></thead><tbody>${
+    closed.map(o=>{
+      const sl={won:'✓ Won',lost:'✗ Lost',nogo:'No-Go',submitted:'Submitted'}[o.status]||o.status;
+      const sc={won:'color:var(--green)',lost:'color:#dc2626',nogo:'color:var(--muted)',submitted:'color:var(--blue)'}[o.status]||'';
+      const dl=dlinfo(o.deadline);
+      return `<tr>
+        <td><a href="${o.url||'#'}" target="_blank" style="color:var(--pink);text-decoration:none;font-weight:600;">${o.title||'Untitled'}</a>
+          ${o.notes?`<div style="font-size:11px;color:var(--muted);margin-top:2px;">${o.notes.slice(0,80)}${o.notes.length>80?'…':''}</div>`:''}
+        </td>
+        <td>${o.org||''}<br>${tpill(o.type||'Government')}</td>
+        <td style="${sc};font-weight:700;">${sl}</td>
+        <td>${fmtVal(o.value)||'—'}</td>
+        <td>${o.gngScore?gngLabel(o.gngScore):'—'}</td>
+        <td><span class="dl ${dl.c}">${dl.l}</span></td>
+      </tr>`;
+    }).join('')
+  }</tbody></table>`;
+  updateWL();
+}
+
+/* ─── EMAIL DIGEST ─── */
+function buildDigest(){
+  const date=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  const active=pipeline.filter(o=>['new','pursuing','submitted'].includes(o.status));
+  const won=pipeline.filter(o=>o.status==='won').length;
+  const pipeVal=active.reduce((s,o)=>s+(parseInt(o.value)||0),0);
+  let d=`POWER OF PUBLIC — WEEKLY RFP UPDATE\n${date}\n${'─'.repeat(48)}\n\nPIPELINE SNAPSHOT\nActive opportunities: ${active.length}\nEstimated pipeline value: ${pipeVal>0?'$'+pipeVal.toLocaleString():'Not yet estimated'}\nWins to date: ${won}\n\n`;
+  const submitted=active.filter(o=>o.status==='submitted');
+  const pursuing=active.filter(o=>o.status==='pursuing');
+  const newOpps=active.filter(o=>o.status==='new');
+  if(submitted.length){
+    d+=`SUBMITTED (${submitted.length})\n${'─'.repeat(28)}\n`;
+    submitted.forEach(o=>{const dl=o.deadline&&o.deadline!=='Unknown'?new Date(o.deadline).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'Unknown';d+=`• ${o.title||'Untitled'}\n  ${o.org||''} · Deadline: ${dl}${o.value?` · Est. $${parseInt(o.value).toLocaleString()}`:''}${o.notes?`\n  Notes: ${o.notes}`:''}\n\n`;});
+  }
+  if(pursuing.length){
+    d+=`ACTIVELY PURSUING (${pursuing.length})\n${'─'.repeat(28)}\n`;
+    pursuing.forEach(o=>{const dl=o.deadline&&o.deadline!=='Unknown'?new Date(o.deadline).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'Unknown';const gng=o.gngScore?` · ${gngLabel(o.gngScore)}`:'';d+=`• ${o.title||'Untitled'}\n  ${o.org||''} · Due: ${dl}${gng}${o.notes?`\n  Notes: ${o.notes}`:''}\n\n`;});
+  }
+  if(newOpps.length){
+    d+=`NEW / UNDER REVIEW (${newOpps.length})\n${'─'.repeat(28)}\n`;
+    newOpps.forEach(o=>{const dl=o.deadline&&o.deadline!=='Unknown'?new Date(o.deadline).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'Unknown';d+=`• ${o.title||'Untitled'} — ${o.org||''} · Due: ${dl}\n`;});d+='\n';
+  }
+  d+=`${'─'.repeat(48)}\nPower of Public, LLC · powerofpublic.co`;
+  document.getElementById('digest-preview').textContent=d;
+}
+function copyDigest(){
+  const txt=document.getElementById('digest-preview').textContent;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const btn=event.target; btn.textContent='✓ Copied!';
+    setTimeout(()=>btn.textContent='Copy to clipboard',2000);
+  });
+}
+
+/* ─── SOURCES ─── */
+function renderSrc(){
+  document.getElementById('sg').innerHTML=sources.map(s=>`
+    <div class="scard">
+      <div style="min-width:0;flex:1;">
+        <div class="scard-name">${s.name}</div>
+        <div class="scard-url">${s.url}</div>
+        <div style="margin-top:6px;">${tpill(s.type)}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
+        <button class="btn xs" onclick="editSrc(${s.id})" title="Edit">Edit</button>
+        <button class="btn xs danger" onclick="rmSrc(${s.id})" title="Remove">Remove</button>
+      </div>
+    </div>`).join('');
+}
+function rmSrc(id){
+  const s=sources.find(x=>x.id===id);
+  if(!confirm(`Remove "${s?.name||'this source'}" from your auto-search list?`)) return;
+  sources=sources.filter(s=>s.id!==id); persist(); updatePipeline(); renderSrc();
+}
+
+let _srcEditId = null;
+
+function _resetSourceModal(){
+  _srcEditId = null;
+  document.getElementById('sm-title').textContent    = 'Add auto-search source';
+  document.getElementById('sm-sub').textContent      = 'Only add sources the API can access without a login or reCAPTCHA.';
+  document.getElementById('sm-save-btn').textContent = 'Add source';
+  ['mn','mu','mk'].forEach(x => document.getElementById(x).value = '');
+  document.getElementById('mt').value = 'Government';
+}
+
+function openM(type){
+  if(type === 'source') _resetSourceModal();
+  openModal(type+'-modal');
+}
+
+function editSrc(id){
+  const s = sources.find(x => x.id === id);
+  if(!s) return;
+  _srcEditId = id;
+  document.getElementById('sm-title').textContent    = 'Edit source';
+  document.getElementById('sm-sub').textContent      = `Editing: ${s.name}`;
+  document.getElementById('sm-save-btn').textContent = 'Save changes';
+  document.getElementById('mn').value = s.name || '';
+  document.getElementById('mu').value = s.url  || '';
+  document.getElementById('mt').value = s.type || 'Government';
+  document.getElementById('mk').value = s.kw   || '';
+  openModal('source-modal');
+}
+
+function saveSource(){
+  const n=document.getElementById('mn').value.trim();
+  const u=document.getElementById('mu').value.trim();
+  const t=document.getElementById('mt').value;
+  const k=document.getElementById('mk').value.trim();
+  if(!n||!u){ alert('Please enter at least a name and URL.'); return; }
+
+  if(_srcEditId !== null){
+    const idx = sources.findIndex(x => x.id === _srcEditId);
+    if(idx >= 0) sources[idx] = { ...sources[idx], name:n, url:u, type:t, kw:k };
+  } else {
+    const id = Math.max(...sources.map(s=>s.id), 0) + 1;
+    sources.push({id, name:n, url:u, type:t, kw:k});
+  }
+
+  persist(); updatePipeline(); renderSrc(); closeModal();
+  _resetSourceModal();
+}
+
+/* Alias so any existing references still work */
+function addSource(){ saveSource(); }
+
+/* ─── EXPORT ─── */
+function doExport(){
+  const tf=document.getElementById('ft').value, kw=document.getElementById('fk').value.toLowerCase();
+  const list=pipeline.filter(r=>{
+    if(statusFilter!=='all'&&r.status!==statusFilter) return false;
+    if(tf!=='all'&&r.type!==tf) return false;
+    if(kw&&!JSON.stringify(r).toLowerCase().includes(kw)) return false;
+    return true;
+  });
+  const e=v=>'"'+String(v||'').replace(/"/g,'""')+'"';
+  const rows=[['Title','Org','Type','Status','Deadline','GNG Score','Est Value','Contact','Requirements','URL','Notes'].map(e).join(',')];
+  list.forEach(r=>rows.push([r.title,r.org,r.type,r.status,r.deadline,r.gngScore,r.value,r.contact,r.requirements,r.url,r.notes].map(e).join(',')));
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv'}));
+  a.download='pop_pipeline_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+}
+
+/* ─── API SEARCH ─── */
+async function runSearch(){
+  const key=localStorage.getItem('pop_key');
+  if(!key){
+    document.getElementById('search-eb').innerHTML=`<div class="ebox">Please enter and save your Anthropic API key above before searching.</div>`;
+    return;
+  }
+  const kwExtra=document.getElementById('s-kw').value.trim();
+  const typeFilter=document.getElementById('s-type').value;
+  const exclude=document.getElementById('s-excl').value.trim();
+  const geo=document.getElementById('s-geo').value.trim();
+
+  document.getElementById('search-eb').innerHTML='';
+  document.getElementById('pending-section').style.display='none';
+  document.getElementById('rb').disabled=true;
+  document.getElementById('rb').textContent='Searching…';
+
+  const filteredSources=typeFilter==='all'?sources:sources.filter(s=>s.type===typeFilter);
+  const srcList=filteredSources.map(s=>`- ${s.name} (${s.type}): ${s.url}${s.kw?' | focus: '+s.kw:''}`).join('\n');
+
+  let focus='health communications, social marketing, behavior change, community outreach, maternal/child health, health equity, public health education, strategic communications consulting';
+  if(kwExtra) focus=kwExtra+', '+focus;
+  if(geo)     focus+='. Geographic focus: '+geo;
+  if(exclude) focus+='. Exclude opportunities focused on: '+exclude;
+
+  const prompt=`You are an RFP research assistant for Candice, founder of Power of Public LLC — a health communications and social marketing consultancy based in Maryland. She has 20+ years of public health experience including behavior change campaigns, community engagement, maternal/child health (e.g., Maryland Hear Her campaign), health education, and strategic communications. She works with government agencies, nonprofits, foundations, and academic institutions.
+
+Search for CURRENT, ACTIVE RFP opportunities matching her expertise from these auto-searchable sources:
+${srcList}
+
+Focus areas: ${focus}
+
+For each opportunity found, return a JSON array where each item has EXACTLY these fields:
+- "title": concise RFP title
+- "org": organization name
+- "type": exactly one of: "Government", "Foundation", "Nonprofit / Association", "Academic"
+- "deadline": ISO date YYYY-MM-DD, or "Rolling", or "Unknown"
+- "summary": 2-3 sentences — what it is and why it fits Candice's background
+- "requirements": 1 sentence key qualifications
+- "url": direct URL to the RFP or opportunities page
+
+Include currently open RFPs and recently closed ones worth monitoring for re-release.
+Return ONLY a valid JSON array starting with [ and ending with ]. No markdown, no preamble, no explanation.`;
+
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:4000,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:prompt}]})
+    });
+    if(!resp.ok){const e=await resp.json().catch(()=>({error:{message:'HTTP '+resp.status}}));throw new Error(e.error?.message||'API error '+resp.status);}
+    const data=await resp.json();
+    let text=''; for(const b of(data.content||[]))if(b.type==='text')text+=b.text;
+    const m=text.match(/\[[\s\S]*\]/);
+    if(!m) throw new Error('Could not parse results. Please try again.');
+    pending=JSON.parse(m[0]).map((r,i)=>({...r,id:Date.now()+i}));
+    renderPending();
+  }catch(e){
+    document.getElementById('search-eb').innerHTML=`<div class="ebox">${e.message}</div>`;
+  }finally{
+    document.getElementById('rb').disabled=false;
+    document.getElementById('rb').textContent='Search all sources →';
+  }
+}
+
+function renderPending(){
+  const el=document.getElementById('pending-list');
+  const sec=document.getElementById('pending-section');
+  if(!pending.length){sec.style.display='none';return;}
+  sec.style.display='block';
+  document.getElementById('pending-head').textContent=`${pending.length} results found — review and add to pipeline`;
+  el.innerHTML=pending.map(r=>{
+    const dl=dlinfo(r.deadline);
+    return `<div class="pending-card" id="pend-${r.id}">
+      <div style="flex:1;">
+        <div class="pending-title">${r.title||'Untitled'}</div>
+        <div class="pending-org">${r.org||''} ${tpill(r.type||'Government')} <span class="dl ${dl.c}" style="margin-left:4px;">${dl.l}</span></div>
+        <div class="pending-body">${r.summary||''}</div>
+      </div>
+      <div class="pending-actions">
+        <button class="btn sm primary" onclick="addToPipeline(${r.id})">Add →</button>
+        <button class="btn sm danger"  onclick="dismissPending(${r.id})">Skip</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function addToPipeline(id){
+  const r=pending.find(x=>x.id===id); if(!r) return;
+  pipeline.unshift({...r,status:'new',gngScore:null,gngScores:{},notes:'',contact:'',value:''});
+  pending=pending.filter(x=>x.id!==id);
+  persist(); updatePipeline();
+  document.getElementById(`pend-${id}`)?.remove();
+  if(!pending.length)document.getElementById('pending-section').style.display='none';
+  else document.getElementById('pending-head').textContent=`${pending.length} results — review and add to pipeline`;
+}
+function addAllPending(){
+  if(!confirm(`Add all ${pending.length} result${pending.length===1?'':'s'} to your pipeline?`)) return;
+  pending.forEach(r=>pipeline.unshift({...r,status:'new',gngScore:null,gngScores:{},notes:'',contact:'',value:''}));
+  pending=[];
+  persist(); updatePipeline();
+  document.getElementById('pending-section').style.display='none';
+  document.getElementById('search-eb').innerHTML=`<div class="sbox">All opportunities added to your pipeline.</div>`;
+  setTimeout(()=>{go('pipeline');document.getElementById('search-eb').innerHTML='';},1200);
+}
+function dismissPending(id){
+  if(!confirm('Skip this result? It will not be added to your pipeline.')) return;
+  pending=pending.filter(x=>x.id!==id); document.getElementById(`pend-${id}`)?.remove(); if(!pending.length)document.getElementById('pending-section').style.display='none';
+}
+function clearPending(){
+  if(!confirm('Clear all search results? None will be added to your pipeline.')) return;
+  pending=[]; document.getElementById('pending-section').style.display='none';
+}
+
+/* ─── USER PORTALS ─── */
+let userPortals = JSON.parse(localStorage.getItem('pop_portals') || '[]');
+
+function persistPortals(){ localStorage.setItem('pop_portals', JSON.stringify(userPortals)); }
+
+const TAG_STYLES = {
+  public:   { bg:'var(--green-light)',  color:'var(--green)',  label:'Public' },
+  free:     { bg:'var(--green-light)',  color:'var(--green)',  label:'Free / Public' },
+  login:    { bg:'var(--orange-light)', color:'var(--orange)', label:'Login Preferred' },
+  loginbid: { bg:'var(--orange-light)', color:'var(--orange)', label:'Login to bid only' },
+};
+
+// Map section names to grid element IDs
+const SECTION_GRID_MAP = {
+  'State procurement portals':              'pgrid-state',
+  'DC-adjacent & regional organizations':   'pgrid-dc',
+  'Free curated PR & communications RFP lists': 'pgrid-pr',
+  'Maryland Board of Public Works':         'pgrid-bpw',
+  'My portals':                             'user-portal-grid',
+};
+
+function tagStyle(tagKey, customLabel){
+  const t = TAG_STYLES[tagKey];
+  if(t) return { bg: t.bg, color: t.color, label: t.label };
+  return { bg:'var(--blue-light)', color:'var(--blue)', label: customLabel || tagKey };
+}
+
+function portalCardHTML(p, showControls){
+  const ts = tagStyle(p.tagKey, p.tagLabel);
+  return `<div class="portal-link" id="upl-${p.id}">
+    <div class="portal-link-name">${p.name}</div>
+    <div class="portal-link-desc">${p.desc||''}</div>
+    <div class="portal-link-foot">
+      <span class="portal-link-tag" style="background:${ts.bg};color:${ts.color};">${ts.label}</span>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <a href="${p.url}" target="_blank" rel="noopener">Open ↗</a>
+        ${showControls ? `
+          <button class="btn xs" onclick="editPortal(${p.id})" title="Edit">Edit</button>
+          <button class="btn xs danger" onclick="removePortal(${p.id})" title="Remove">✕</button>
+        ` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderUserPortals(){
+  Object.values(SECTION_GRID_MAP).forEach(gridId => {
+    const grid = document.getElementById(gridId);
+    if(grid) grid.querySelectorAll('[id^="upl-"]').forEach(el => el.remove());
+  });
+  userPortals.forEach(p => {
+    const section = p.section || 'My portals';
+    const gridId  = SECTION_GRID_MAP[section] || 'user-portal-grid';
+    const grid    = document.getElementById(gridId);
+    if(grid) grid.insertAdjacentHTML('beforeend', portalCardHTML(p, true));
+  });
+  const myPortals = userPortals.filter(p => (p.section||'My portals') === 'My portals');
+  const empty = document.getElementById('user-portal-empty');
+  if(empty) empty.style.display = myPortals.length ? 'none' : 'block';
+}
+
+/* Portal modal state — tracks whether we're adding or editing */
+let _portalEditId = null;
+
+function _resetPortalModal(){
+  _portalEditId = null;
+  document.getElementById('pm-title').textContent   = 'Add portal';
+  document.getElementById('pm-sub').textContent     = 'Add any organization, agency, or resource to the Manual Portals tab.';
+  document.getElementById('pm-save-btn').textContent = 'Add portal';
+  document.getElementById('ps').value  = 'My portals';
+  document.getElementById('pn').value  = '';
+  document.getElementById('pd').value  = '';
+  document.getElementById('pu').value  = '';
+  document.getElementById('pt').value  = 'public';
+  document.getElementById('pt-custom').value = '';
+  document.getElementById('custom-tag-wrap').style.display = 'none';
+}
+
+function openPortalModal(section){
+  _resetPortalModal();
+  document.getElementById('ps').value = section;
+  openModal('portal-modal');
+}
+
+function editPortal(id){
+  const p = userPortals.find(x => x.id === id);
+  if(!p) return;
+  _portalEditId = id;
+  document.getElementById('pm-title').textContent    = 'Edit portal';
+  document.getElementById('pm-sub').textContent      = `Editing: ${p.name}`;
+  document.getElementById('pm-save-btn').textContent = 'Save changes';
+  document.getElementById('ps').value  = p.section  || 'My portals';
+  document.getElementById('pn').value  = p.name     || '';
+  document.getElementById('pd').value  = p.desc     || '';
+  document.getElementById('pu').value  = p.url      || '';
+  document.getElementById('pt').value  = p.tagKey   || 'public';
+  document.getElementById('pt-custom').value = p.tagLabel || '';
+  document.getElementById('custom-tag-wrap').style.display = p.tagKey === 'custom' ? 'block' : 'none';
+  openModal('portal-modal');
+}
+
+function toggleCustomTag(val){
+  document.getElementById('custom-tag-wrap').style.display = val === 'custom' ? 'block' : 'none';
+}
+
+function savePortal(){
+  const name     = document.getElementById('pn').value.trim();
+  const desc     = document.getElementById('pd').value.trim();
+  const url      = document.getElementById('pu').value.trim();
+  const section  = document.getElementById('ps').value;
+  const tagKey   = document.getElementById('pt').value;
+  const tagLabel = tagKey === 'custom' ? document.getElementById('pt-custom').value.trim() : '';
+  if(!name || !url){ alert('Please enter at least a name and URL.'); return; }
+
+  if(_portalEditId !== null){
+    /* Edit mode — update in place */
+    const idx = userPortals.findIndex(x => x.id === _portalEditId);
+    if(idx >= 0){
+      userPortals[idx] = { ...userPortals[idx], name, desc, url, section, tagKey, tagLabel };
+    }
+  } else {
+    /* Add mode — append new */
+    userPortals.push({ id: Date.now(), name, desc, url, section, tagKey, tagLabel });
+  }
+
+  persistPortals();
+  renderUserPortals();
+  closeModal();
+  _resetPortalModal();
+}
+
+/* Keep addPortal as an alias so any lingering references still work */
+function addPortal(){ savePortal(); }
+
+function removePortal(id){
+  const p = userPortals.find(x => x.id === id);
+  if(!confirm(`Remove "${p?.name || 'this portal'}"?`)) return;
+  userPortals = userPortals.filter(x => x.id !== id);
+  persistPortals();
+  renderUserPortals();
+}
+
+/* ─── INIT ─── */
+updatePipeline();
+doFilter();
+renderUserPortals();
+</script>
+<div style="text-align:center;padding:20px 32px;background:#1A1A2E;margin-top:40px;">
+  <a href="index.html" style="font-size:12px;color:rgba(255,255,255,0.35);text-decoration:none;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:0.02em;">← Back to Power of Public Operations Hub</a>
+</div>
+
+</div><!-- /rfp-app -->
+</body>
+</html>
