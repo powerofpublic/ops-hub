@@ -423,7 +423,9 @@
       </div>
     </div>
 
-  </div>  <div id="tab-portals" class="panel">
+  </div>
+
+  <div id="tab-portals" class="panel">
 
     <!-- INFO BOX -->
     <div style="background:#FBF3F8;border:1.5px solid #F0C8DF;border-left:4px solid #E8187A;border-radius:10px;padding:16px 20px;margin-bottom:20px;">
@@ -712,15 +714,711 @@
 </html
 /* ─── TAB NAVIGATION ─── */
 function go(n) {
-  document.querySelectorAll('.tab').forEach((tab, i) => {
-    tab.classList.toggle('on', ['pipeline','search','portals','winloss','digest'][i] === n);
+  // Activate correct tab button by matching onclick attribute
+  document.querySelectorAll('.tab').forEach(tab => {
+    const fn = tab.getAttribute('onclick') || '';
+    tab.classList.toggle('on', fn.includes("'" + n + "'"));
   });
+  // Show correct panel
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
   const panel = document.getElementById('tab-' + n);
   if (panel) panel.classList.add('on');
-  if (n === 'portals') renderUserPortals();
-  if (n === 'winloss') renderWinLoss && renderWinLoss();
-  if (n === 'digest')  renderDigest  && renderDigest();
+  if (n === 'portals') { if(typeof renderUserPortals==='function') renderUserPortals(); }
+  if (n === 'winloss') { if(typeof renderWinLoss==='function') renderWinLoss(); }
+  if (n === 'digest')  { if(typeof renderDigest==='function')  renderDigest(); }
 }
 
->
+<script>
+/* ═══════════════════════════════════════════════
+   AUTO-SEARCHABLE SOURCES
+   These are Google-indexed and accessible to the
+   API without login or reCAPTCHA.
+═══════════════════════════════════════════════ */
+const DEFAULTS = [
+  /* AGGREGATORS — pull from many govt sources */
+  {id:1,  name:"SAM.gov (Federal)",               url:"https://sam.gov/search/?index=opp&sort=-modifiedDate&sfm%5Bstatus%5D%5B0%5D=Active",          type:"Government",             kw:"health communications, public health outreach, social marketing, behavior change"},
+  {id:2,  name:"rfpmart.com — Health & Marketing",url:"https://rfpmart.com/marketing-and-branding-rfp-government-contract.html",                      type:"Government",             kw:"health communications, community outreach, public health consultant, Maryland, DC, Virginia"},
+  {id:3,  name:"HigherGov — DC OCP",              url:"https://www.highergov.com/sl/agency/contracting-and-procurement-ocp-ocp-12530/",               type:"Government",             kw:"communications, health, outreach, DC, public awareness"},
+  {id:4,  name:"Georgia Procurement Registry",    url:"https://ssl.doas.state.ga.us/gpr/",                                                            type:"Government",             kw:"health communications, public health, outreach, marketing consultant"},
+  {id:5,  name:"NC eVP Solicitations",            url:"https://evp.nc.gov/solicitations/",                                                            type:"Government",             kw:"health communications, public health, outreach, communications consultant"},
+  {id:6,  name:"Delaware Bid Directory",          url:"https://mmp.delaware.gov/Bids/",                                                               type:"Government",             kw:"health communications, public health, outreach, marketing"},
+  /* PR & COMMUNICATIONS-SPECIFIC */
+  {id:7,  name:"O'Dwyer's PR — RFPs",             url:"https://www.odwyerpr.com/rfps/index.html",                                                    type:"Nonprofit / Association",kw:"public relations, communications, health communications, public awareness, marketing"},
+  /* FOUNDATIONS */
+  {id:8,  name:"CDC Foundation",                  url:"https://cdcfoundation.org/request-for-proposals",                                              type:"Foundation",             kw:"health communications, maternal health, community outreach, consultant"},
+  {id:9,  name:"Philanthropy News Digest",        url:"https://philanthropynewsdigest.org/rfps",                                                      type:"Foundation",             kw:"health communications, public health, social marketing, behavior change"},
+  {id:10, name:"Elevance Health Foundation",      url:"https://elevancehealth.foundation/for-grantseekers",                                            type:"Foundation",             kw:"maternal health, behavioral health, community outreach, communications"},
+  {id:11, name:"Horizon Foundation (MD)",         url:"https://thehorizonfoundation.org/tag/rfp/",                                                    type:"Foundation",             kw:"health communications, community outreach, Maryland, marketing"},
+  {id:12, name:"Grantmakers in Health",           url:"https://gih.org",                                                                              type:"Foundation",             kw:"health communications, public health, community engagement consultant"},
+  {id:13, name:"New York Health Foundation",      url:"https://nyhealthfoundation.org/rfp/",                                                          type:"Foundation",             kw:"health communications, maternal health, community outreach"},
+  /* NONPROFITS / ASSOCIATIONS */
+  {id:14, name:"NACCHO",                          url:"https://naccho.org",                                                                           type:"Nonprofit / Association",kw:"health communications, local health department, marketing consultant"},
+  {id:15, name:"Public Health Institute (PHI)",   url:"https://phi.org/work-with-us/rfp-vendor-opportunities/",                                      type:"Nonprofit / Association",kw:"communications, health education, community outreach, consultant"},
+  {id:16, name:"NNPHI",                           url:"https://nnphi.org",                                                                            type:"Nonprofit / Association",kw:"public health systems, communications consultant, training"},
+  {id:17, name:"American Public Health Association",url:"https://apha.org",                                                                           type:"Nonprofit / Association",kw:"communications consultant, public health, health education"},
+  {id:18, name:"Corporation for Supportive Housing",url:"https://csh.org",                                                                            type:"Nonprofit / Association",kw:"communications consultant, health equity, outreach"},
+  /* ACADEMIC */
+  {id:19, name:"UNC Gillings SPH",                url:"https://sph.unc.edu/research/common-public-health-funding-opportunities/",                    type:"Academic",               kw:"health communications, community outreach, consultant"},
+  /* GRANTS.GOV */
+  {id:20, name:"grants.gov (Federal grants)",     url:"https://grants.gov/search-grants",                                                             type:"Government",             kw:"health communications, public health, community outreach, behavior change, social marketing"},
+  /* ADDITIONAL PR / COMMUNICATIONS-SPECIFIC LISTS */
+  {id:21, name:"Everything PR — RFPs",            url:"https://everything-pr.com/rfp/",                                                              type:"Nonprofit / Association",kw:"public relations, communications, health communications, public awareness, marketing, community outreach"},
+  {id:22, name:"RFP Database (rfpdb.com)",        url:"https://rfpdb.com/",                                                                           type:"Nonprofit / Association",kw:"communications, public health, community outreach, marketing, health communications"},
+  {id:23, name:"rfpmart — Social Media & Outreach",url:"https://rfpmart.com/social-media-internet-marketing-and-seo-rfp-government-contract.html",   type:"Government",             kw:"community outreach, communications strategy, public awareness, social marketing, health campaigns"},
+];
+
+const GNG_CRITERIA = [
+  {key:'fit',      label:'Mission & scope fit',      desc:'Does this align with your core expertise?'},
+  {key:'timeline', label:'Timeline is workable',     desc:'Can you deliver within the proposed schedule?'},
+  {key:'budget',   label:'Budget is adequate',       desc:'Is the contract value worth the investment?'},
+  {key:'compete',  label:'Competitive position',     desc:'Do you have a strong chance of winning?'},
+  {key:'rel',      label:'Existing relationship',    desc:'Do you have a contact or warm intro at this org?'},
+  {key:'capacity', label:'Capacity available',       desc:'Do you have the bandwidth to pursue and deliver?'},
+];
+
+/* ─── STATE ─── */
+let sources  = JSON.parse(localStorage.getItem('pop_src')  || 'null') || DEFAULTS;
+let pipeline = JSON.parse(localStorage.getItem('pop_pipe') || '[]');
+let pending  = [];
+let statusFilter = 'all';
+let activeModal  = null;
+let activeOppId  = null;
+
+function persist(){
+  localStorage.setItem('pop_src',  JSON.stringify(sources));
+  localStorage.setItem('pop_pipe', JSON.stringify(pipeline));
+}
+
+/* ─── API KEY ─── */
+function updatePipeline(){
+  const active = pipeline.filter(o => !['won','lost','nogo'].includes(o.status));
+  const cnt = s => pipeline.filter(o => o.status === s).length;
+  document.getElementById('p-all').textContent       = active.length;
+  document.getElementById('p-new').textContent       = cnt('new');
+  document.getElementById('p-pursuing').textContent  = cnt('pursuing');
+  document.getElementById('p-submitted').textContent = cnt('submitted');
+  document.getElementById('p-won').textContent       = cnt('won');
+  document.getElementById('p-lost').textContent      = cnt('lost');
+  const pv = pipeline.filter(o => ['new','pursuing','submitted'].includes(o.status)).reduce((s,o)=>s+(parseInt(o.value)||0),0);
+  document.getElementById('p-value').textContent = pv > 0 ? '$' + pv.toLocaleString() : '$0';
+  document.getElementById('src-ct').textContent  = sources.length;
+  updateWL();
+}
+
+/* ─── TABS ─── */
+function go(n){
+  document.querySelectorAll('.tab').forEach(tab=>{const fn=tab.getAttribute('onclick')||'';tab.classList.toggle('on',fn.includes("'"+n+"'"));});
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.getElementById('tab-'+n).classList.add('on');
+  if(n==='sources')  renderSrc();
+  if(n==='winloss')  renderWL();
+  if(n==='pipeline') doFilter();
+  if(n==='portals')  renderUserPortals();
+}
+
+/* ─── PILLS ─── */
+function tpill(t){
+  const m={'Government':'pg','Foundation':'pf','Nonprofit / Association':'pn','Academic':'pa'};
+  return `<span class="pill ${m[t]||'pg'}">${t}</span>`;
+}
+function dlinfo(d){
+  if(!d||d==='Unknown') return {c:'dc',l:'Deadline unknown'};
+  if(d==='Rolling')     return {c:'do',l:'Rolling'};
+  const dt = new Date(d); if(isNaN(dt)) return {c:'dc',l:d};
+  const days = (dt - Date.now())/86400000;
+  const f = dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  if(days < 0)   return {c:'dc',l:'Closed · '+f};
+  if(days <= 14) return {c:'du',l:'Due '+f};
+  if(days <= 45) return {c:'ds',l:'Due '+f};
+  return               {c:'do',l:'Due '+f};
+}
+function gngLabel(s){
+  if(!s) return 'Score it';
+  const n=parseInt(s);
+  if(n>=70) return 'GO · '+n+'%';
+  if(n>=40) return 'MAYBE · '+n+'%';
+  return 'NO-GO · '+n+'%';
+}
+function gngClass(s){
+  if(!s) return '';
+  const n=parseInt(s);
+  if(n>=70) return 'gng-go';
+  if(n>=40) return 'gng-maybe';
+  return 'gng-nogo';
+}
+function fmtVal(v){ return v&&parseInt(v)>0?'$'+parseInt(v).toLocaleString():''; }
+function statusColor(s){ return {new:'s-new',pursuing:'s-pursuing',submitted:'s-submitted',won:'s-won',lost:'s-lost',nogo:'s-nogo'}[s]||'s-new'; }
+
+/* ─── FILTER STATUS ─── */
+function filterStatus(s){
+  statusFilter = s;
+  document.querySelectorAll('.pip').forEach(p=>p.classList.remove('active'));
+  (document.getElementById('pip-'+s)||document.getElementById('pip-all')).classList.add('active');
+  doFilter();
+}
+
+/* ─── RENDER PIPELINE ─── */
+function doFilter(){
+  const tf=document.getElementById('ft').value, sf=document.getElementById('fs').value, kw=document.getElementById('fk').value.toLowerCase();
+  let list = pipeline.filter(o=>{
+    if(statusFilter!=='all' && o.status!==statusFilter) return false;
+    if(tf!=='all' && o.type!==tf) return false;
+    if(kw && !JSON.stringify(o).toLowerCase().includes(kw)) return false;
+    return true;
+  });
+  list.sort((a,b)=>{
+    if(sf==='deadline'){const da=new Date(a.deadline),db=new Date(b.deadline);return(isNaN(da)?Infinity:da)-(isNaN(db)?Infinity:db);}
+    if(sf==='status'){const ord={new:0,pursuing:1,submitted:2,won:3,lost:4,nogo:5};return(ord[a.status]||0)-(ord[b.status]||0);}
+    if(sf==='gng'){return(parseInt(b.gngScore)||0)-(parseInt(a.gngScore)||0);}
+    if(sf==='value'){return(parseInt(b.value)||0)-(parseInt(a.value)||0);}
+    return b.id - a.id;
+  });
+  renderPipeline(list);
+}
+
+function renderPipeline(list){
+  const el = document.getElementById('pipe-res');
+  if(!list.length){
+    const msg = pipeline.length===0
+      ? '<h3>Pipeline is empty</h3><p>Go to <strong>Search</strong> to find opportunities, or check <strong>Manual Portals</strong> for procurement sites.</p>'
+      : '<h3>No matching opportunities</h3><p>Try adjusting your filters.</p>';
+    el.innerHTML = `<div class="empty-state">${msg}</div>`; return;
+  }
+  el.innerHTML = `<div class="rmeta">${list.length} opportunit${list.length===1?'y':'ies'}</div>` +
+    list.map(o=>{
+      const dl=dlinfo(o.deadline), gc=gngClass(o.gngScore), gl=gngLabel(o.gngScore);
+      const isSav = false; // saved tab removed for simplicity
+      return `<div class="opp-card ${statusColor(o.status)}" id="opp-${o.id}">
+        <div class="opp-top">
+          <div style="flex:1;min-width:0;">
+            <div class="opp-title">${o.title||'Untitled'}</div>
+            <div class="opp-org">${o.org||''} ${tpill(o.type||'Government')}
+              ${o.contact?`<span style="font-size:11px;color:var(--muted);">👤 ${o.contact}</span>`:''}
+            </div>
+          </div>
+          <div class="opp-badges">
+            <div class="dl ${dl.c}">${dl.l}</div>
+            <select class="ss ss-${o.status}" onchange="updateStatus(${o.id},this.value)">
+              <option value="new"       ${o.status==='new'?'selected':''}>New</option>
+              <option value="pursuing"  ${o.status==='pursuing'?'selected':''}>Pursuing</option>
+              <option value="submitted" ${o.status==='submitted'?'selected':''}>Submitted</option>
+              <option value="won"       ${o.status==='won'?'selected':''}>Won</option>
+              <option value="lost"      ${o.status==='lost'?'selected':''}>Lost</option>
+              <option value="nogo"      ${o.status==='nogo'?'selected':''}>No-Go</option>
+            </select>
+          </div>
+        </div>
+        ${o.summary?`<div class="opp-body">${o.summary}</div>`:''}
+        <div class="opp-meta">
+          ${o.requirements?`<div><strong>Requirements</strong>${o.requirements}</div>`:''}
+          ${o.value?`<div><strong>Est. value</strong>${fmtVal(o.value)}</div>`:''}
+        </div>
+        ${o.notes?`<div class="opp-notes-disp">${o.notes.replace(/\n/g,'<br>')}</div>`:''}
+        <div class="opp-foot">
+          ${o.url?`<a href="${o.url}" target="_blank" rel="noopener" class="btn sm">View source ↗</a>`:''}
+          <button class="btn sm ${gc?gc+' gng-score':''}" onclick="openGng(${o.id})">${gl}</button>
+          <button class="btn sm" onclick="openNotes(${o.id})">📝 ${o.notes?'Edit notes':'Add notes'}</button>
+          <button class="btn sm danger" onclick="deleteOpp(${o.id})" style="margin-left:auto;">Remove</button>
+        </div>
+      </div>`;
+    }).join('');
+}
+
+function updateStatus(id,val){
+  const o=pipeline.find(x=>x.id===id); if(!o) return;
+  o.status=val; persist(); updatePipeline(); doFilter();
+  if(['won','lost','nogo'].includes(val)) setTimeout(()=>go('winloss'),400);
+}
+function deleteOpp(id){
+  if(!confirm('Remove this opportunity?')) return;
+  pipeline=pipeline.filter(o=>o.id!==id); persist(); updatePipeline(); doFilter();
+}
+
+/* ─── GNG ─── */
+function openGng(id){
+  const o=pipeline.find(x=>x.id===id); if(!o) return;
+  activeOppId=id;
+  document.getElementById('gng-opp-title').textContent=o.title||'';
+  document.getElementById('gng-contact').value=o.contact||'';
+  document.getElementById('gng-value').value=o.value||'';
+  document.getElementById('gng-result').style.display='none';
+  const scores=o.gngScores||{};
+  document.getElementById('gng-criteria').innerHTML=GNG_CRITERIA.map(c=>`
+    <div class="gng-row">
+      <div class="gng-crit"><strong>${c.label}</strong><span>${c.desc}</span></div>
+      <div class="gng-btns">
+        <button class="gng-btn ${scores[c.key]==='yes'?'sel-yes':''}"   onclick="scoreBtn(this,'${c.key}','yes')">Yes</button>
+        <button class="gng-btn ${scores[c.key]==='maybe'?'sel-maybe':''}" onclick="scoreBtn(this,'${c.key}','maybe')">Maybe</button>
+        <button class="gng-btn ${scores[c.key]==='no'?'sel-no':''}"    onclick="scoreBtn(this,'${c.key}','no')">No</button>
+      </div>
+    </div>`).join('');
+  openModal('gng-modal'); calcGng();
+}
+function scoreBtn(btn,key,val){
+  btn.closest('.gng-row').querySelectorAll('.gng-btn').forEach(b=>b.classList.remove('sel-yes','sel-maybe','sel-no'));
+  btn.classList.add('sel-'+val); calcGng();
+}
+function calcGng(){
+  const vals={yes:100,maybe:50,no:0};
+  let total=0,count=0;
+  document.getElementById('gng-criteria').querySelectorAll('.gng-row').forEach((r,i)=>{
+    const sel=r.querySelector('[class*="sel-"]');
+    if(sel){total+=vals[sel.classList.contains('sel-yes')?'yes':sel.classList.contains('sel-maybe')?'maybe':'no'];count++;}
+  });
+  if(!count) return;
+  const score=Math.round(total/count);
+  const el=document.getElementById('gng-result');
+  el.style.display='block';
+  el.className='gng-result '+(score>=70?'go':score>=40?'maybe':'nogo');
+  el.textContent=score>=70?`GO — ${score}% match. Strong opportunity.`:score>=40?`MAYBE — ${score}% match. Consider carefully.`:`NO-GO — ${score}% match. Likely not worth pursuing.`;
+}
+function saveGng(){
+  const o=pipeline.find(x=>x.id===activeOppId); if(!o) return;
+  const scores={};
+  document.getElementById('gng-criteria').querySelectorAll('.gng-row').forEach((r,i)=>{
+    const sel=r.querySelector('[class*="sel-"]');
+    if(sel)scores[GNG_CRITERIA[i].key]=sel.classList.contains('sel-yes')?'yes':sel.classList.contains('sel-maybe')?'maybe':'no';
+  });
+  const vals={yes:100,maybe:50,no:0};
+  const entries=Object.values(scores);
+  o.gngScores=scores;
+  o.gngScore=entries.length?Math.round(entries.reduce((s,v)=>s+vals[v],0)/entries.length):null;
+  o.contact=document.getElementById('gng-contact').value.trim();
+  o.value=document.getElementById('gng-value').value.replace(/[^0-9]/g,'');
+  persist(); updatePipeline(); doFilter(); closeModal();
+}
+
+/* ─── NOTES ─── */
+function openNotes(id){
+  const o=pipeline.find(x=>x.id===id); if(!o) return;
+  activeOppId=id;
+  document.getElementById('notes-opp-title').textContent=o.title||'';
+  document.getElementById('notes-text').value=o.notes||'';
+  openModal('notes-modal');
+}
+function saveNotes(){
+  const o=pipeline.find(x=>x.id===activeOppId); if(!o) return;
+  o.notes=document.getElementById('notes-text').value.trim();
+  persist(); doFilter(); closeModal();
+}
+
+/* ─── MODALS ─── */
+function openModal(id){ closeModal(); document.getElementById(id).classList.add('on'); activeModal=id; }
+function closeModal(){ if(activeModal)document.getElementById(activeModal)?.classList.remove('on'); activeModal=null; }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeModal(); });
+
+/* ─── WIN/LOSS ─── */
+function updateWL(){
+  const submitted=pipeline.filter(o=>['submitted','won','lost'].includes(o.status)).length;
+  const won=pipeline.filter(o=>o.status==='won').length;
+  const rate=submitted>0?Math.round((won/submitted)*100)+'%':'—';
+  const rev=pipeline.filter(o=>o.status==='won').reduce((s,o)=>s+(parseInt(o.value)||0),0);
+  document.getElementById('wl-sub').textContent=submitted;
+  document.getElementById('wl-won').textContent=won;
+  document.getElementById('wl-rate').textContent=rate;
+  document.getElementById('wl-rev').textContent=rev>0?'$'+rev.toLocaleString():'$0';
+}
+function renderWL(){
+  const closed=pipeline.filter(o=>['won','lost','nogo','submitted'].includes(o.status));
+  const el=document.getElementById('wl-list');
+  if(!closed.length){el.innerHTML=`<div class="empty-state"><h3>No closed opportunities yet</h3><p>Mark opportunities Won, Lost, or No-Go in the pipeline to track outcomes here.</p></div>`;return;}
+  el.innerHTML=`<table><thead><tr><th>Opportunity</th><th>Org</th><th>Status</th><th>Est. value</th><th>Go/No-Go</th><th>Deadline</th></tr></thead><tbody>${
+    closed.map(o=>{
+      const sl={won:'✓ Won',lost:'✗ Lost',nogo:'No-Go',submitted:'Submitted'}[o.status]||o.status;
+      const sc={won:'color:var(--green)',lost:'color:#dc2626',nogo:'color:var(--muted)',submitted:'color:var(--blue)'}[o.status]||'';
+      const dl=dlinfo(o.deadline);
+      return `<tr>
+        <td><a href="${o.url||'#'}" target="_blank" style="color:var(--pink);text-decoration:none;font-weight:600;">${o.title||'Untitled'}</a>
+          ${o.notes?`<div style="font-size:11px;color:var(--muted);margin-top:2px;">${o.notes.slice(0,80)}${o.notes.length>80?'…':''}</div>`:''}
+        </td>
+        <td>${o.org||''}<br>${tpill(o.type||'Government')}</td>
+        <td style="${sc};font-weight:700;">${sl}</td>
+        <td>${fmtVal(o.value)||'—'}</td>
+        <td>${o.gngScore?gngLabel(o.gngScore):'—'}</td>
+        <td><span class="dl ${dl.c}">${dl.l}</span></td>
+      </tr>`;
+    }).join('')
+  }</tbody></table>`;
+  updateWL();
+}
+
+/* ─── EMAIL DIGEST ─── */
+function buildDigest(){
+  const date=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  const active=pipeline.filter(o=>['new','pursuing','submitted'].includes(o.status));
+  const won=pipeline.filter(o=>o.status==='won').length;
+  const pipeVal=active.reduce((s,o)=>s+(parseInt(o.value)||0),0);
+  let d=`POWER OF PUBLIC — WEEKLY RFP UPDATE\n${date}\n${'─'.repeat(48)}\n\nPIPELINE SNAPSHOT\nActive opportunities: ${active.length}\nEstimated pipeline value: ${pipeVal>0?'$'+pipeVal.toLocaleString():'Not yet estimated'}\nWins to date: ${won}\n\n`;
+  const submitted=active.filter(o=>o.status==='submitted');
+  const pursuing=active.filter(o=>o.status==='pursuing');
+  const newOpps=active.filter(o=>o.status==='new');
+  if(submitted.length){
+    d+=`SUBMITTED (${submitted.length})\n${'─'.repeat(28)}\n`;
+    submitted.forEach(o=>{const dl=o.deadline&&o.deadline!=='Unknown'?new Date(o.deadline).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'Unknown';d+=`• ${o.title||'Untitled'}\n  ${o.org||''} · Deadline: ${dl}${o.value?` · Est. $${parseInt(o.value).toLocaleString()}`:''}${o.notes?`\n  Notes: ${o.notes}`:''}\n\n`;});
+  }
+  if(pursuing.length){
+    d+=`ACTIVELY PURSUING (${pursuing.length})\n${'─'.repeat(28)}\n`;
+    pursuing.forEach(o=>{const dl=o.deadline&&o.deadline!=='Unknown'?new Date(o.deadline).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'Unknown';const gng=o.gngScore?` · ${gngLabel(o.gngScore)}`:'';d+=`• ${o.title||'Untitled'}\n  ${o.org||''} · Due: ${dl}${gng}${o.notes?`\n  Notes: ${o.notes}`:''}\n\n`;});
+  }
+  if(newOpps.length){
+    d+=`NEW / UNDER REVIEW (${newOpps.length})\n${'─'.repeat(28)}\n`;
+    newOpps.forEach(o=>{const dl=o.deadline&&o.deadline!=='Unknown'?new Date(o.deadline).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'Unknown';d+=`• ${o.title||'Untitled'} — ${o.org||''} · Due: ${dl}\n`;});d+='\n';
+  }
+  d+=`${'─'.repeat(48)}\nPower of Public, LLC · powerofpublic.co`;
+  document.getElementById('digest-preview').textContent=d;
+}
+function copyDigest(){
+  const txt=document.getElementById('digest-preview').textContent;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const btn=event.target; btn.textContent='✓ Copied!';
+    setTimeout(()=>btn.textContent='Copy to clipboard',2000);
+  });
+}
+
+/* ─── SOURCES ─── */
+function renderSrc(){
+  document.getElementById('sg').innerHTML=sources.map(s=>`
+    <div class="scard">
+      <div style="min-width:0;flex:1;">
+        <div class="scard-name">${s.name}</div>
+        <div class="scard-url">${s.url}</div>
+        <div style="margin-top:6px;">${tpill(s.type)}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
+        <button class="btn xs" onclick="editSrc(${s.id})" title="Edit">Edit</button>
+        <button class="btn xs danger" onclick="rmSrc(${s.id})" title="Remove">Remove</button>
+      </div>
+    </div>`).join('');
+}
+function rmSrc(id){
+  const s=sources.find(x=>x.id===id);
+  if(!confirm(`Remove "${s?.name||'this source'}" from your auto-search list?`)) return;
+  sources=sources.filter(s=>s.id!==id); persist(); updatePipeline(); renderSrc();
+}
+
+let _srcEditId = null;
+
+function _resetSourceModal(){
+  _srcEditId = null;
+  document.getElementById('sm-title').textContent    = 'Add auto-search source';
+  document.getElementById('sm-sub').textContent      = 'Only add sources the API can access without a login or reCAPTCHA.';
+  document.getElementById('sm-save-btn').textContent = 'Add source';
+  ['mn','mu','mk'].forEach(x => document.getElementById(x).value = '');
+  document.getElementById('mt').value = 'Government';
+}
+
+function openM(type){
+  if(type === 'source') _resetSourceModal();
+  openModal(type+'-modal');
+}
+
+function editSrc(id){
+  const s = sources.find(x => x.id === id);
+  if(!s) return;
+  _srcEditId = id;
+  document.getElementById('sm-title').textContent    = 'Edit source';
+  document.getElementById('sm-sub').textContent      = `Editing: ${s.name}`;
+  document.getElementById('sm-save-btn').textContent = 'Save changes';
+  document.getElementById('mn').value = s.name || '';
+  document.getElementById('mu').value = s.url  || '';
+  document.getElementById('mt').value = s.type || 'Government';
+  document.getElementById('mk').value = s.kw   || '';
+  openModal('source-modal');
+}
+
+function saveSource(){
+  const n=document.getElementById('mn').value.trim();
+  const u=document.getElementById('mu').value.trim();
+  const t=document.getElementById('mt').value;
+  const k=document.getElementById('mk').value.trim();
+  if(!n||!u){ alert('Please enter at least a name and URL.'); return; }
+
+  if(_srcEditId !== null){
+    const idx = sources.findIndex(x => x.id === _srcEditId);
+    if(idx >= 0) sources[idx] = { ...sources[idx], name:n, url:u, type:t, kw:k };
+  } else {
+    const id = Math.max(...sources.map(s=>s.id), 0) + 1;
+    sources.push({id, name:n, url:u, type:t, kw:k});
+  }
+
+  persist(); updatePipeline(); renderSrc(); closeModal();
+  _resetSourceModal();
+}
+
+/* Alias so any existing references still work */
+function addSource(){ saveSource(); }
+
+/* ─── EXPORT ─── */
+function doExport(){
+  const tf=document.getElementById('ft').value, kw=document.getElementById('fk').value.toLowerCase();
+  const list=pipeline.filter(r=>{
+    if(statusFilter!=='all'&&r.status!==statusFilter) return false;
+    if(tf!=='all'&&r.type!==tf) return false;
+    if(kw&&!JSON.stringify(r).toLowerCase().includes(kw)) return false;
+    return true;
+  });
+  const e=v=>'"'+String(v||'').replace(/"/g,'""')+'"';
+  const rows=[['Title','Org','Type','Status','Deadline','GNG Score','Est Value','Contact','Requirements','URL','Notes'].map(e).join(',')];
+  list.forEach(r=>rows.push([r.title,r.org,r.type,r.status,r.deadline,r.gngScore,r.value,r.contact,r.requirements,r.url,r.notes].map(e).join(',')));
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv'}));
+  a.download='pop_pipeline_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+}
+
+/* ─── API SEARCH ─── */
+function renderPending(){
+  const el=document.getElementById('pending-list');
+  const sec=document.getElementById('pending-section');
+  if(!pending.length){sec.style.display='none';return;}
+  sec.style.display='block';
+  document.getElementById('pending-head').textContent=`${pending.length} results found — review and add to pipeline`;
+  el.innerHTML=pending.map(r=>{
+    const dl=dlinfo(r.deadline);
+    return `<div class="pending-card" id="pend-${r.id}">
+      <div style="flex:1;">
+        <div class="pending-title">${r.title||'Untitled'}</div>
+        <div class="pending-org">${r.org||''} ${tpill(r.type||'Government')} <span class="dl ${dl.c}" style="margin-left:4px;">${dl.l}</span></div>
+        <div class="pending-body">${r.summary||''}</div>
+      </div>
+      <div class="pending-actions">
+        <button class="btn sm primary" onclick="addToPipeline(${r.id})">Add →</button>
+        <button class="btn sm danger"  onclick="dismissPending(${r.id})">Skip</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function addToPipeline(id){
+  const r=pending.find(x=>x.id===id); if(!r) return;
+  pipeline.unshift({...r,status:'new',gngScore:null,gngScores:{},notes:'',contact:'',value:''});
+  pending=pending.filter(x=>x.id!==id);
+  persist(); updatePipeline();
+  document.getElementById(`pend-${id}`)?.remove();
+  if(!pending.length)document.getElementById('pending-section').style.display='none';
+  else document.getElementById('pending-head').textContent=`${pending.length} results — review and add to pipeline`;
+}
+function addAllPending(){
+  if(!confirm(`Add all ${pending.length} result${pending.length===1?'':'s'} to your pipeline?`)) return;
+  pending.forEach(r=>pipeline.unshift({...r,status:'new',gngScore:null,gngScores:{},notes:'',contact:'',value:''}));
+  pending=[];
+  persist(); updatePipeline();
+  document.getElementById('pending-section').style.display='none';
+  document.getElementById('search-eb').innerHTML=`<div class="sbox">All opportunities added to your pipeline.</div>`;
+  setTimeout(()=>{go('pipeline');document.getElementById('search-eb').innerHTML='';},1200);
+}
+function dismissPending(id){
+  if(!confirm('Skip this result? It will not be added to your pipeline.')) return;
+  pending=pending.filter(x=>x.id!==id); document.getElementById(`pend-${id}`)?.remove(); if(!pending.length)document.getElementById('pending-section').style.display='none';
+}
+function clearPending(){
+  if(!confirm('Clear all search results? None will be added to your pipeline.')) return;
+  pending=[]; document.getElementById('pending-section').style.display='none';
+}
+
+/* ─── USER PORTALS ─── */
+let userPortals = JSON.parse(localStorage.getItem('pop_portals') || '[]');
+
+function persistPortals(){ localStorage.setItem('pop_portals', JSON.stringify(userPortals)); }
+
+const TAG_STYLES = {
+  public:   { bg:'var(--green-light)',  color:'var(--green)',  label:'Public' },
+  free:     { bg:'var(--green-light)',  color:'var(--green)',  label:'Free / Public' },
+  login:    { bg:'var(--orange-light)', color:'var(--orange)', label:'Login Preferred' },
+  loginbid: { bg:'var(--orange-light)', color:'var(--orange)', label:'Login to bid only' },
+};
+
+// Map section names to grid element IDs
+const SECTION_GRID_MAP = {
+  'State procurement portals':              'pgrid-state',
+  'DC-adjacent & regional organizations':   'pgrid-dc',
+  'Free curated PR & communications RFP lists': 'pgrid-pr',
+  'Maryland Board of Public Works':         'pgrid-bpw',
+  'My portals':                             'user-portal-grid',
+};
+
+function tagStyle(tagKey, customLabel){
+  const t = TAG_STYLES[tagKey];
+  if(t) return { bg: t.bg, color: t.color, label: t.label };
+  return { bg:'var(--blue-light)', color:'var(--blue)', label: customLabel || tagKey };
+}
+
+function portalCardHTML(p, showControls){
+  const ts = tagStyle(p.tagKey, p.tagLabel);
+  return `<div class="portal-link" id="upl-${p.id}">
+    <div class="portal-link-name">${p.name}</div>
+    <div class="portal-link-desc">${p.desc||''}</div>
+    <div class="portal-link-foot">
+      <span class="portal-link-tag" style="background:${ts.bg};color:${ts.color};">${ts.label}</span>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <a href="${p.url}" target="_blank" rel="noopener">Open ↗</a>
+        ${showControls ? `
+          <button class="btn xs" onclick="editPortal(${p.id})" title="Edit">Edit</button>
+          <button class="btn xs danger" onclick="removePortal(${p.id})" title="Remove">✕</button>
+        ` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderUserPortals(){
+  Object.values(SECTION_GRID_MAP).forEach(gridId => {
+    const grid = document.getElementById(gridId);
+    if(grid) grid.querySelectorAll('[id^="upl-"]').forEach(el => el.remove());
+  });
+  userPortals.forEach(p => {
+    const section = p.section || 'My portals';
+    const gridId  = SECTION_GRID_MAP[section] || 'user-portal-grid';
+    const grid    = document.getElementById(gridId);
+    if(grid) grid.insertAdjacentHTML('beforeend', portalCardHTML(p, true));
+  });
+  const myPortals = userPortals.filter(p => (p.section||'My portals') === 'My portals');
+  const empty = document.getElementById('user-portal-empty');
+  if(empty) empty.style.display = myPortals.length ? 'none' : 'block';
+}
+
+/* Portal modal state — tracks whether we're adding or editing */
+let _portalEditId = null;
+
+function _resetPortalModal(){
+  _portalEditId = null;
+  document.getElementById('pm-title').textContent   = 'Add portal';
+  document.getElementById('pm-sub').textContent     = 'Add any organization, agency, or resource to the Manual Portals tab.';
+  document.getElementById('pm-save-btn').textContent = 'Add portal';
+  document.getElementById('ps').value  = 'My portals';
+  document.getElementById('pn').value  = '';
+  document.getElementById('pd').value  = '';
+  document.getElementById('pu').value  = '';
+  document.getElementById('pt').value  = 'public';
+  document.getElementById('pt-custom').value = '';
+  document.getElementById('custom-tag-wrap').style.display = 'none';
+}
+
+function openPortalModal(section){
+  _resetPortalModal();
+  document.getElementById('ps').value = section;
+  openModal('portal-modal');
+}
+
+function editPortal(id){
+  const p = userPortals.find(x => x.id === id);
+  if(!p) return;
+  _portalEditId = id;
+  document.getElementById('pm-title').textContent    = 'Edit portal';
+  document.getElementById('pm-sub').textContent      = `Editing: ${p.name}`;
+  document.getElementById('pm-save-btn').textContent = 'Save changes';
+  document.getElementById('ps').value  = p.section  || 'My portals';
+  document.getElementById('pn').value  = p.name     || '';
+  document.getElementById('pd').value  = p.desc     || '';
+  document.getElementById('pu').value  = p.url      || '';
+  document.getElementById('pt').value  = p.tagKey   || 'public';
+  document.getElementById('pt-custom').value = p.tagLabel || '';
+  document.getElementById('custom-tag-wrap').style.display = p.tagKey === 'custom' ? 'block' : 'none';
+  openModal('portal-modal');
+}
+
+function toggleCustomTag(val){
+  document.getElementById('custom-tag-wrap').style.display = val === 'custom' ? 'block' : 'none';
+}
+
+function savePortal(){
+  const name     = document.getElementById('pn').value.trim();
+  const desc     = document.getElementById('pd').value.trim();
+  const url      = document.getElementById('pu').value.trim();
+  const section  = document.getElementById('ps').value;
+  const tagKey   = document.getElementById('pt').value;
+  const tagLabel = tagKey === 'custom' ? document.getElementById('pt-custom').value.trim() : '';
+  if(!name || !url){ alert('Please enter at least a name and URL.'); return; }
+
+  if(_portalEditId !== null){
+    /* Edit mode — update in place */
+    const idx = userPortals.findIndex(x => x.id === _portalEditId);
+    if(idx >= 0){
+      userPortals[idx] = { ...userPortals[idx], name, desc, url, section, tagKey, tagLabel };
+    }
+  } else {
+    /* Add mode — append new */
+    userPortals.push({ id: Date.now(), name, desc, url, section, tagKey, tagLabel });
+  }
+
+  persistPortals();
+  renderUserPortals();
+  closeModal();
+  _resetPortalModal();
+}
+
+/* Keep addPortal as an alias so any lingering references still work */
+function addPortal(){ savePortal(); }
+
+function removePortal(id){
+  const p = userPortals.find(x => x.id === id);
+  if(!confirm(`Remove "${p?.name || 'this portal'}"?`)) return;
+  userPortals = userPortals.filter(x => x.id !== id);
+  persistPortals();
+  renderUserPortals();
+}
+
+/* ─── INIT ─── */
+updatePipeline();
+doFilter();
+renderUserPortals();
+/* ─── COPY PROMPT ─── */
+function cp(id, btn) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  navigator.clipboard.writeText(el.textContent.trim()).then(() => {
+    btn.textContent = 'Copied ✓'; btn.style.color = 'var(--green)';
+    setTimeout(() => { btn.textContent = 'Copy prompt'; btn.style.color = ''; }, 1800);
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = el.textContent.trim();
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    btn.textContent = 'Copied ✓';
+    setTimeout(() => { btn.textContent = 'Copy prompt'; }, 1800);
+  });
+}
+
+/* ─── IMPORT FROM CLAUDE ─── */
+function importFromClaude() {
+  const raw = document.getElementById('claude-import-text').value.trim();
+  const status = document.getElementById('import-status');
+  if (!raw) { status.textContent = 'Please paste Claude results first.'; return; }
+  const added = [];
+  try {
+    const cleaned = raw.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
+    const si = cleaned.indexOf('[');
+    if (si >= 0) {
+      const items = JSON.parse(cleaned.slice(si));
+      if (Array.isArray(items) && items.length) {
+        items.forEach(item => {
+          if (item.title || item.org) {
+            pipeline.push({ id:Date.now()+Math.random(),
+              title:item.title||item.name||'Untitled',
+              org:item.org||item.organization||item.funder||item.agency||'',
+              type:item.type||'Government', deadline:item.deadline||'',
+              url:item.url||item.link||'', summary:item.description||item.summary||'',
+              status:'new', gngScore:null, notes:'', value:'' });
+            added.push(item.title||item.org);
+          }
+        });
+        persist(); doFilter(); updatePipeline();
+        status.textContent = '✓ Added ' + added.length + ' opportunities';
+        status.style.color = 'var(--green)';
+        document.getElementById('claude-import-text').value = '';
+        setTimeout(() => { status.textContent = ''; }, 3000);
+        return;
+      }
+    }
+  } catch(e) {}
+  status.textContent = 'Could not parse. Paste the full Claude response.';
+  status.style.color = 'var(--pink)';
+}
+
+</script>
+
+<div style="text-align:center;padding:20px 32px;background:#1A1A2E;margin-top:40px;">
+  <a href="index.html" style="font-size:12px;color:rgba(255,255,255,0.35);text-decoration:none;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:0.02em;">← Back to Power of Public Operations Hub</a>
+</div>
+</div><!-- /rfp-app -->
+</body>
+</html>
