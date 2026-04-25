@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Operations Hub — User Guide · Power of Public</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#1A1A2E; --pink:#E8187A; --amber:#D4A017; --emerald:#1A8C5B;
+  --cream:#F5F0E8; --tan:#EDE8DC; --bg:#F2EDE4; --surface:#FFFFFF;
+  --border:#D5CCBC; --muted:#6B6560; --dark:#2D2D2D;
+  --blush:#FBF3F8; --blush-border:#F0C8DF;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;color:var(--dark);font-size:15px;line-height:1.75;}
+
+header{background:var(--navy);border-bottom:3px solid transparent;border-image:linear-gradient(90deg,var(--pink),var(--amber),var(--emerald)) 1;position:sticky;top:0;z-index:100;}
+.header-inner{max-width:1100px;margin:0 auto;padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;}
+.logo{font-family:'Playfair Display',serif;font-size:18px;font-weight:900;color:#fff;}
+.logo span{color:var(--pink);}
+.hdr-links{display:flex;gap:10px;}
+.hdr-btn{font-size:11px;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:5px 12px;text-decoration:none;transition:all .15s;}
+.hdr-btn:hover{color:#fff;border-color:rgba(255,255,255,0.4);}
+
+.page-wrap{max-width:1100px;margin:0 auto;padding:40px 28px 80px;display:grid;grid-template-columns:240px 1fr;gap:40px;align-items:start;}
+
+/* TOC */
+.toc{position:sticky;top:80px;background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px;font-size:13px;max-height:calc(100vh - 100px);overflow-y:auto;}
+.toc-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:900;color:var(--navy);margin-bottom:14px;padding-bottom:10px;border-bottom:1.5px solid var(--border);}
+.toc-section{margin-bottom:2px;}
+.toc-section>a{display:block;color:var(--dark);text-decoration:none;padding:5px 8px;border-radius:6px;transition:all .12s;font-weight:600;font-size:12.5px;}
+.toc-section>a:hover,.toc-section>a.active{background:var(--blush);color:var(--pink);}
+.toc-sub{margin-left:12px;}
+.toc-sub a{font-size:11.5px;padding:3px 8px;color:var(--muted);display:block;text-decoration:none;border-radius:6px;transition:all .12s;}
+.toc-sub a:hover,.toc-sub a.active{color:var(--pink);background:var(--blush);}
+.toc-divider{border:none;border-top:1px solid var(--border);margin:8px 0;}
+.toc-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:6px 8px 2px;}
+
+/* CONTENT */
+.guide-hero{margin-bottom:36px;}
+.guide-hero h1{font-family:'Playfair Display',serif;font-size:40px;font-weight:900;color:var(--navy);line-height:1.15;margin-bottom:8px;}
+.guide-hero h1 em{color:var(--pink);font-style:normal;}
+.guide-hero p{font-size:15px;color:var(--muted);max-width:580px;}
+.guide-hero .meta{font-size:12px;color:var(--muted);margin-top:10px;display:flex;gap:12px;flex-wrap:wrap;}
+.guide-hero .meta span{background:var(--tan);border-radius:20px;padding:3px 12px;}
+
+.guide-section{margin-bottom:52px;scroll-margin-top:80px;}
+.section-hero{background:var(--navy);border-radius:14px;padding:24px 28px;margin-bottom:24px;display:flex;align-items:flex-start;gap:16px;}
+.section-hero-icon{font-size:32px;flex-shrink:0;}
+.section-hero-text h2{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;color:#fff;margin-bottom:4px;}
+.section-hero-text p{font-size:13px;color:rgba(255,255,255,0.5);line-height:1.5;}
+.section-hero-text .tool-url{font-size:11px;color:var(--pink);margin-top:6px;font-weight:600;}
+
+h3{font-size:17px;font-weight:700;color:var(--dark);margin:24px 0 10px;scroll-margin-top:80px;}
+p{margin-bottom:12px;}
+ul{padding-left:20px;margin-bottom:12px;}
+ul li{margin-bottom:6px;}
+ol{padding-left:20px;margin-bottom:12px;}
+ol li{margin-bottom:8px;}
+
+.tip-box{background:var(--blush);border:1.5px solid var(--blush-border);border-left:4px solid var(--pink);border-radius:10px;padding:14px 18px;margin:14px 0;font-size:14px;color:#5A2040;}
+.note-box{background:#FFF8EC;border:1.5px solid #F5D98A;border-left:4px solid var(--amber);border-radius:10px;padding:14px 18px;margin:14px 0;font-size:14px;color:#5A3E00;}
+.warn-box{background:#FFF0F5;border:1.5px solid #F8C8D8;border-left:4px solid var(--pink);border-radius:10px;padding:14px 18px;margin:14px 0;font-size:14px;color:#5A2040;}
+.info-box{background:#F0F9F4;border:1.5px solid #A8DFC0;border-left:4px solid var(--emerald);border-radius:10px;padding:14px 18px;margin:14px 0;font-size:14px;color:#1A3D2B;}
+
+.guide-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px;}
+.guide-table th{background:var(--navy);color:#fff;padding:10px 14px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
+.guide-table td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top;}
+.guide-table tr:nth-child(even) td{background:var(--cream);}
+.guide-table tr:last-child td{border-bottom:none;}
+
+.badge{display:inline-block;font-size:10.5px;font-weight:700;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em;}
+.badge-pink{background:var(--blush);color:var(--pink);}
+.badge-green{background:#EBF7F2;color:var(--emerald);}
+.badge-amber{background:#FEF7E8;color:#9A7312;}
+.badge-navy{background:#EEF2FF;color:var(--navy);}
+
+.steps{counter-reset:steps;list-style:none;padding:0;margin:12px 0;}
+.steps li{counter-increment:steps;display:flex;gap:14px;align-items:flex-start;margin-bottom:10px;padding:12px 14px;background:var(--surface);border:1.5px solid var(--border);border-radius:8px;}
+.steps li::before{content:counter(steps);background:var(--pink);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px;}
+
+footer{background:var(--navy);text-align:center;padding:20px;font-size:11.5px;color:rgba(255,255,255,0.3);}
+footer a{color:var(--pink);text-decoration:none;}
+
+@media(max-width:768px){
+  .page-wrap{grid-template-columns:1fr;}
+  .toc{position:static;margin-bottom:20px;max-height:none;}
+  .guide-hero h1{font-size:28px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">Power of Public<span>.</span></div>
+    <div class="hdr-links">
+      <a href="index.html" class="hdr-btn">← Hub</a>
+      <a href="rfp-monitor-guide.html" class="hdr-btn">RFP Monitor Guide</a>
+    </div>
+  </div>
+</header>
+
+<div class="page-wrap">
+
+  <!-- SIDEBAR TOC -->
+  <nav class="toc">
+    <div class="toc-title">Contents</div>
+    <div class="toc-label">Getting Started</div>
+    <div class="toc-section"><a href="#signin">Signing In</a></div>
+    <div class="toc-section"><a href="#portal">Operations Hub Portal</a></div>
+    <hr class="toc-divider">
+    <div class="toc-label">Tools</div>
+    <div class="toc-section"><a href="#tracker">⏱ Time Entry & Reporting</a></div>
+    <div class="toc-sub">
+      <a href="#tracker-dashboard">Dashboard</a>
+      <a href="#tracker-timesheet">Timesheet</a>
+      <a href="#tracker-projects">Projects & Tasks</a>
+      <a href="#tracker-expenses">Expenses</a>
+      <a href="#tracker-reports">Reports</a>
+      <a href="#tracker-invoices">Invoice Generator</a>
+      <a href="#tracker-timer">Live Timer</a>
+    </div>
+    <div class="toc-section"><a href="#gonogo">📋 Go / No-Go Form</a></div>
+    <div class="toc-sub">
+      <a href="#gonogo-sections">Form Sections</a>
+      <a href="#gonogo-saving">Saving Records</a>
+    </div>
+    <div class="toc-section"><a href="#proposals">📁 Proposal Tracker</a></div>
+    <div class="toc-sub">
+      <a href="#proposals-adding">Adding Proposals</a>
+      <a href="#proposals-import">Importing from Go/No-Go</a>
+      <a href="#proposals-statuses">Statuses</a>
+    </div>
+    <div class="toc-section"><a href="#projects">🗂 Project Manager</a></div>
+    <div class="toc-sub">
+      <a href="#projects-views">Views</a>
+      <a href="#projects-tasks">Tasks</a>
+      <a href="#projects-gantt">Timeline & Export</a>
+    </div>
+    <div class="toc-section"><a href="#rfp">📡 RFP Monitor</a></div>
+    <hr class="toc-divider">
+    <div class="toc-label">Maintenance</div>
+    <div class="toc-section"><a href="#github">GitHub Updates</a></div>
+    <div class="toc-section"><a href="#firebase">Firebase & Data</a></div>
+    <div class="toc-section"><a href="#troubleshooting">Troubleshooting</a></div>
+    <div class="toc-section"><a href="#reference">Quick Reference</a></div>
+  </nav>
+
+  <!-- CONTENT -->
+  <main>
+
+    <div class="guide-hero">
+      <h1>Operations Hub<br><em>User Guide</em></h1>
+      <p>Complete reference for every tool in your private Power of Public Operations Hub — organized by tool section.</p>
+      <div class="meta">
+        <span>Power of Public, LLC</span>
+        <span>powerofpublic.github.io/ops-hub</span>
+        <span>April 2026</span>
+      </div>
+    </div>
+
+    <!-- SIGNING IN -->
+    <div class="guide-section" id="signin">
+      <div class="section-hero">
+        <div class="section-hero-icon">🔐</div>
+        <div class="section-hero-text">
+          <h2>Signing In</h2>
+          <p>All tools use a single Google Sign-In. Sign in once and all tools are accessible in the same browser session.</p>
+        </div>
+      </div>
+      <ol class="steps">
+        <li>Go to <strong>powerofpublic.github.io/ops-hub</strong></li>
+        <li>Click <strong>Sign in with Google</strong></li>
+        <li>Select your authorised Google account</li>
+        <li>You are taken directly to the Operations Hub</li>
+      </ol>
+      <div class="tip-box">Once signed in, your session stays active in that browser. You will not need to sign in again unless you sign out or clear your browser data.</div>
+      <p>To sign out, click the <strong>Sign out</strong> button in the top right corner of any tool. Use the <strong>← Hub</strong> link to return to the portal without signing out.</p>
+    </div>
+
+    <!-- PORTAL -->
+    <div class="guide-section" id="portal">
+      <div class="section-hero">
+        <div class="section-hero-icon">🏠</div>
+        <div class="section-hero-text">
+          <h2>Operations Hub Portal</h2>
+          <p>The portal is your home base. It links to all tools and provides quick access to external resources.</p>
+          <div class="tool-url">powerofpublic.github.io/ops-hub</div>
+        </div>
+      </div>
+      <h3>Operations Tools section</h3>
+      <p>Each tool card links to its respective page. Cards marked <span class="badge badge-green">Live</span> are active. Click any card to open that tool directly.</p>
+      <h3>Quick Links section</h3>
+      <p>One-click access to your public website, LinkedIn, Zoom, SAM.gov opportunity search, user guides, Firebase Console, and GitHub. All open in a new tab.</p>
+      <h3>Adding or changing quick links</h3>
+      <p>Quick links are stored in <code>index.html</code>. To add or change a link, ask Claude to update the file, then upload the new version to GitHub.</p>
+    </div>
+
+    <!-- TIME TRACKER -->
+    <div class="guide-section" id="tracker">
+      <div class="section-hero">
+        <div class="section-hero-icon">⏱</div>
+        <div class="section-hero-text">
+          <h2>Time Entry & Reporting Dashboard</h2>
+          <p>Track billable hours, log expenses, generate invoices, and run reports across all your projects. All data syncs to Firebase in real time.</p>
+          <div class="tool-url">powerofpublic.github.io/ops-hub/tracker.html</div>
+        </div>
+      </div>
+
+      <h3 id="tracker-dashboard">Dashboard</h3>
+      <p>The Dashboard shows a real-time summary of your consulting activity. Stats include this week's hours, monthly billable revenue, active project count, non-billable hours and value, an hours-by-project bar chart, and your six most recent entries.</p>
+
+      <h3 id="tracker-timesheet">Timesheet</h3>
+      <p>Shows your time entries week by week. Use Previous / Next to navigate between weeks.</p>
+      <ol class="steps">
+        <li>Click <strong>+ Add Entry</strong></li>
+        <li>Select the date and enter hours</li>
+        <li>Choose a project and task category</li>
+        <li>Add a description of the work</li>
+        <li>Click <strong>Save Entry</strong></li>
+      </ol>
+      <p>Click any row to edit or delete. Click <strong>Mark Invoiced</strong> to flag an entry as billed — click the green badge to undo.</p>
+
+      <h3 id="tracker-projects">Projects & Tasks</h3>
+      <p>Every time entry, expense, and invoice is linked to a project. Click <strong>+ New Project</strong> to create one.</p>
+      <table class="guide-table">
+        <thead><tr><th>Project Status</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>Active — Bill to Client</td><td>Billable; counts toward revenue stats</td></tr>
+          <tr><td>Active — Non-billable</td><td>Active but hours are not billed</td></tr>
+          <tr><td>Inactive — Non-billable</td><td>Completed or paused, no billing</td></tr>
+          <tr><td>Inactive — Billed to Client</td><td>Completed and fully invoiced</td></tr>
+        </tbody>
+      </table>
+      <table class="guide-table">
+        <thead><tr><th>Project Type</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>Time and Materials</td><td>Hours billed at your hourly rate</td></tr>
+          <tr><td>Firm Fixed Price</td><td>Fixed fee regardless of hours</td></tr>
+          <tr><td>Retainer</td><td>Monthly flat fee — enter the retainer amount</td></tr>
+        </tbody>
+      </table>
+
+      <h3 id="tracker-expenses">Expenses</h3>
+      <p>Click <strong>+ Add Expense</strong> to log a business expense. Select a category, link to a project if billable, enter the amount (or use the mileage calculator), and set billable and reimbursed status. Export as CSV or QuickBooks IIF.</p>
+
+      <h3 id="tracker-reports">Reports</h3>
+      <p>Generate summaries across any date range and project. Group by Project, Task, or Date. Export as CSV, Word (.doc), PDF, or QuickBooks IIF.</p>
+
+      <h3 id="tracker-invoices">Invoice Generator</h3>
+      <ol class="steps">
+        <li>Go to the <strong>Invoice</strong> tab — the number auto-generates (POP-YYYY-###)</li>
+        <li>Set invoice date, due date, and your business information (saves for next time)</li>
+        <li>Select a project to auto-fill client details</li>
+        <li>Set the billing date range to pull in matching entries</li>
+        <li>Add tax rate, payment terms, and notes as needed</li>
+        <li>Click <strong>Generate Invoice</strong></li>
+        <li>Click <strong>Mark as Sent & Save to History</strong> to record it</li>
+        <li>Click <strong>Print / PDF</strong> to save or send</li>
+      </ol>
+      <p>The invoice header displays the Power of Public logo centered, with your tagline and website. Address and contact info appears in the Bill From section below.</p>
+
+      <h3 id="tracker-timer">Live Timer</h3>
+      <p>The live timer in the top right corner tracks time in real time. Select a project, click play to start, pause to pause, and <strong>Log</strong> to convert elapsed time to a time entry. Requires at least one minute — rounds to the nearest quarter hour.</p>
+    </div>
+
+    <!-- GO/NO-GO -->
+    <div class="guide-section" id="gonogo">
+      <div class="section-hero">
+        <div class="section-hero-icon">📋</div>
+        <div class="section-hero-text">
+          <h2>RFP Go / No-Go Decision Form</h2>
+          <p>A structured framework for evaluating new business opportunities. Every submission is saved to Firebase as a permanent record.</p>
+          <div class="tool-url">powerofpublic.github.io/ops-hub/go-no-go.html</div>
+        </div>
+      </div>
+
+      <h3 id="gonogo-sections">Form Sections</h3>
+      <table class="guide-table">
+        <thead><tr><th>Section</th><th>What to complete</th></tr></thead>
+        <tbody>
+          <tr><td>01 Opportunity Information</td><td>Agency name, RFP number, funding, period of performance, contract type, scope, submission deadline</td></tr>
+          <tr><td>02 Pre-Submission Planning</td><td>Conference date, Q&A link, Q&A deadline, questions to submit, participation instructions</td></tr>
+          <tr><td>03 Capability Analysis</td><td>Past experience, required skills, teaming needs, competitor landscape</td></tr>
+          <tr><td>04 Financial Projections</td><td>Estimated revenue, cost, margin, bid cost, probability of win</td></tr>
+          <tr><td>05 Evaluation Criteria</td><td>Criteria statements and weighting percentages</td></tr>
+          <tr><td>06 Final Decision</td><td>Click GO or NO-GO</td></tr>
+          <tr><td>07 Strategy Planning</td><td>Win themes and strategic imperatives (complete if GO)</td></tr>
+          <tr><td>08 Review & Sign-Off</td><td>Reviewer name, date, decision justification</td></tr>
+        </tbody>
+      </table>
+
+      <h3 id="gonogo-saving">Saving & Reviewing Records</h3>
+      <p>Click <strong>☁ Save Record</strong> at the bottom to save to Firebase. The Saved Records panel at the top of the page shows all past submissions. Click any record to load it back into the form for review or editing. Click <strong>↺ Reset</strong> to clear the form without deleting saved records. Click <strong>⎙ Print / PDF</strong> to save as a document.</p>
+      <div class="note-box">Saving the same organization and RFP number combination updates the existing record rather than creating a duplicate.</div>
+    </div>
+
+    <!-- PROPOSAL TRACKER -->
+    <div class="guide-section" id="proposals">
+      <div class="section-hero">
+        <div class="section-hero-icon">📁</div>
+        <div class="section-hero-text">
+          <h2>Proposal Tracker</h2>
+          <p>Manage active proposals from initial pursuit through award. Connects directly to the Go/No-Go form for seamless import.</p>
+          <div class="tool-url">powerofpublic.github.io/ops-hub/proposal-tracker.html</div>
+        </div>
+      </div>
+
+      <h3 id="proposals-adding">Adding a Proposal</h3>
+      <p>Click <strong>+ Add Proposal</strong>. Fill in the organization name, RFP number, scope, submission deadline, funding value, status, probability of win, team role assignments (Proposal Lead, Technical Writer, Pricing/Budget, Subcontractor/Teaming Partner), and notes.</p>
+
+      <h3 id="proposals-import">Importing from Go/No-Go</h3>
+      <p>Click <strong>⬇ Import from Go/No-Go</strong> to see all GO decisions not yet imported. Select one and click <strong>Import Selected →</strong>. The proposal form opens pre-filled with organization name, RFP number, scope, deadline, funding, and probability of win. Review, complete any missing fields, and save.</p>
+
+      <h3 id="proposals-statuses">Statuses & Deadline Tracking</h3>
+      <table class="guide-table">
+        <thead><tr><th>Status</th><th>Use when</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge badge-navy">Pursuing</span></td><td>Actively working on the proposal</td></tr>
+          <tr><td><span class="badge badge-amber">Submitted</span></td><td>Proposal submitted, awaiting decision</td></tr>
+          <tr><td><span class="badge badge-green">Won</span></td><td>Contract awarded</td></tr>
+          <tr><td>Lost / No Award</td><td>Not selected or cancelled</td></tr>
+        </tbody>
+      </table>
+      <p>The table sorts by deadline, most urgent at the top. Deadline badges show days remaining: <span style="color:var(--pink);font-weight:600;">red under 7 days</span>, <span style="color:var(--amber);font-weight:600;">amber under 21 days</span>, green further out.</p>
+    </div>
+
+    <!-- PROJECT MANAGER -->
+    <div class="guide-section" id="projects">
+      <div class="section-hero">
+        <div class="section-hero-icon">🗂</div>
+        <div class="section-hero-text">
+          <h2>Project Manager</h2>
+          <p>Manage tasks across all clients and projects with four views. Pulls project data directly from the Time Entry & Reporting Dashboard.</p>
+          <div class="tool-url">powerofpublic.github.io/ops-hub/project-manager.html</div>
+        </div>
+      </div>
+
+      <h3 id="projects-views">Views</h3>
+      <table class="guide-table">
+        <thead><tr><th>View</th><th>Best for</th></tr></thead>
+        <tbody>
+          <tr><td>🗂 Kanban</td><td>Seeing all tasks by status at a glance. Drag-style column layout: To Do, In Progress, In Review, Complete, Blocked.</td></tr>
+          <tr><td>☰ List</td><td>Sorting and scanning all tasks with full details. Sorted by due date, overdue highlighted in pink.</td></tr>
+          <tr><td>📊 Timeline</td><td>Visualizing work across dates. Today marked by an amber line. Supports Excel export.</td></tr>
+          <tr><td>📅 Calendar</td><td>Seeing tasks on a monthly calendar by due date.</td></tr>
+        </tbody>
+      </table>
+
+      <h3 id="projects-tasks">Adding Tasks</h3>
+      <ol class="steps">
+        <li>Click <strong>+ Add Task</strong></li>
+        <li>Enter the task title</li>
+        <li>Select a project — includes both Time Tracker projects (with codes and client names) and PM-only projects</li>
+        <li>Set status, priority, due date, start date, assigned person, and category tag</li>
+        <li>Click <strong>Save Task</strong></li>
+      </ol>
+      <h3>Managing Projects</h3>
+      <p>Click <strong>⚙ Projects</strong> to open the project manager. Time Tracker projects appear automatically (read-only). Add custom PM projects with a name and color. Deleted PM projects do not delete associated tasks.</p>
+
+      <h3 id="projects-gantt">Timeline View & Excel Export</h3>
+      <p>Switch to the Timeline tab. A date range bar appears below the toolbar — set From and/or To dates to focus the view. Use the Client, Project, Status, and Priority filters alongside the date range to narrow results. Click <strong>⬇ Export Excel</strong> to download a .xlsx file of all currently filtered tasks, grouped by client with a header row per client. The filename includes active filters and date range automatically.</p>
+    </div>
+
+    <!-- RFP MONITOR -->
+    <div class="guide-section" id="rfp">
+      <div class="section-hero">
+        <div class="section-hero-icon">📡</div>
+        <div class="section-hero-text">
+          <h2>RFP Monitor</h2>
+          <p>Search 23 procurement and grant sources simultaneously using AI. Manage your full opportunity pipeline from discovery through award.</p>
+          <div class="tool-url">powerofpublic.github.io/ops-hub/rfp-monitor.html</div>
+        </div>
+      </div>
+      <p>The RFP Monitor has its own dedicated guide with search tips, keyword strategy, source management, and troubleshooting.</p>
+      <div class="tip-box"><a href="rfp-monitor-guide.html" style="color:var(--pink);font-weight:700;">→ Read the full RFP Monitor User Guide</a></div>
+      <h3>Quick summary</h3>
+      <ul>
+        <li>Enter your Anthropic API key once per device</li>
+        <li>Enable 5–8 sources in the Sources tab</li>
+        <li>Search Tuesday or Wednesday morning with 3–5 descriptive keywords</li>
+        <li>Review results and add to pipeline — each search costs ~5¢</li>
+        <li>Track opportunities through New → Pursuing → Submitted → Won/Lost</li>
+        <li>Run the weekly digest every Friday</li>
+      </ul>
+    </div>
+
+    <!-- GITHUB -->
+    <div class="guide-section" id="github">
+      <div class="section-hero">
+        <div class="section-hero-icon">💻</div>
+        <div class="section-hero-text">
+          <h2>GitHub — Updating the Hub</h2>
+          <p>All tool files live in your GitHub repository. Updating a file never touches your Firebase data.</p>
+          <div class="tool-url">github.com/powerofpublic/ops-hub</div>
+        </div>
+      </div>
+      <ol class="steps">
+        <li>Download the updated HTML file from Claude</li>
+        <li>Rename it exactly — no spaces or numbers (e.g. <code>tracker.html</code> not <code>tracker (1).html</code>)</li>
+        <li>Go to <strong>github.com/powerofpublic/ops-hub</strong></li>
+        <li>Click <strong>Add file → Upload files</strong></li>
+        <li>Drag the file in and click <strong>Commit changes</strong></li>
+        <li>Wait 60 seconds, then hard refresh: <strong>Cmd+Shift+R</strong> (Mac) or <strong>Ctrl+Shift+R</strong> (Windows)</li>
+      </ol>
+      <table class="guide-table">
+        <thead><tr><th>File</th><th>Controls</th></tr></thead>
+        <tbody>
+          <tr><td>index.html</td><td>Operations Hub portal (home page)</td></tr>
+          <tr><td>tracker.html</td><td>Time Entry & Reporting Dashboard</td></tr>
+          <tr><td>go-no-go.html</td><td>RFP Go/No-Go Decision Form</td></tr>
+          <tr><td>proposal-tracker.html</td><td>Proposal Tracker</td></tr>
+          <tr><td>project-manager.html</td><td>Project Manager</td></tr>
+          <tr><td>rfp-monitor.html</td><td>RFP Monitor</td></tr>
+          <tr><td>rfp-monitor-guide.html</td><td>RFP Monitor User Guide</td></tr>
+          <tr><td>ops-guide.html</td><td>Operations Hub User Guide (this page)</td></tr>
+          <tr><td>logo-pink.svg</td><td>Pink logo used in invoice header</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- FIREBASE -->
+    <div class="guide-section" id="firebase">
+      <div class="section-hero">
+        <div class="section-hero-icon">🔥</div>
+        <div class="section-hero-text">
+          <h2>Firebase — Your Database</h2>
+          <p>All data lives in Firebase. Updating GitHub files never affects your data.</p>
+          <div class="tool-url">console.firebase.google.com → time-entry-tracker</div>
+        </div>
+      </div>
+      <table class="guide-table">
+        <thead><tr><th>Firebase Key</th><th>Contains</th></tr></thead>
+        <tbody>
+          <tr><td>tt2/projects</td><td>Time Tracker projects</td></tr>
+          <tr><td>tt2/entries</td><td>Time log entries</td></tr>
+          <tr><td>tt2/expenses</td><td>Expense records</td></tr>
+          <tr><td>tt2/invoices</td><td>Invoice history</td></tr>
+          <tr><td>tt2/biz</td><td>Saved business profile for invoices</td></tr>
+          <tr><td>gonogo</td><td>Go/No-Go form submissions</td></tr>
+          <tr><td>proposals</td><td>Proposal Tracker records</td></tr>
+          <tr><td>pm_tasks</td><td>Project Manager tasks</td></tr>
+          <tr><td>pm_projects</td><td>Project Manager custom projects</td></tr>
+        </tbody>
+      </table>
+      <div class="warn-box"><strong>Never change security rules to ".read": true or ".write": true</strong> — that would make your data publicly accessible. Rules must always specify your email address.</div>
+    </div>
+
+    <!-- TROUBLESHOOTING -->
+    <div class="guide-section" id="troubleshooting">
+      <div class="section-hero">
+        <div class="section-hero-icon">🔧</div>
+        <div class="section-hero-text">
+          <h2>Troubleshooting</h2>
+          <p>Common issues and fixes across all hub tools.</p>
+        </div>
+      </div>
+      <table class="guide-table">
+        <thead><tr><th>Issue</th><th>Fix</th></tr></thead>
+        <tbody>
+          <tr><td>Spinning loading screen</td><td>Hard refresh: Cmd+Shift+R. Check internet connection. Open browser console (Cmd+Option+J) for error messages.</td></tr>
+          <tr><td>Sign-in button not working</td><td>Check browser isn't blocking popups. Confirm powerofpublic.github.io is in Firebase authorized domains.</td></tr>
+          <tr><td>Data not showing after sign-in</td><td>Wait a few seconds for Firebase to load, then hard refresh. Check Firebase Console → Realtime Database → Data.</td></tr>
+          <tr><td>Changes not saving</td><td>Check internet connection. Open browser console for errors. Sign out and sign back in.</td></tr>
+          <tr><td>Site not updating after GitHub upload</td><td>Wait up to 2 minutes for GitHub Pages to rebuild. Hard refresh or try incognito window.</td></tr>
+          <tr><td>File shows wrong version after upload</td><td>Check the filename exactly matches — no spaces or numbers. GitHub requires exact filename match to replace.</td></tr>
+          <tr><td>Time Tracker projects missing in Project Manager</td><td>Hard refresh the Project Manager. Confirm projects exist in the Time Tracker.</td></tr>
+          <tr><td>Invoice logo misaligned</td><td>Confirm logo-pink.svg is uploaded to the ops-hub GitHub repo root alongside tracker.html.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- REFERENCE -->
+    <div class="guide-section" id="reference">
+      <div class="section-hero">
+        <div class="section-hero-icon">📌</div>
+        <div class="section-hero-text">
+          <h2>Quick Reference</h2>
+          <p>All important URLs and shortcuts in one place.</p>
+        </div>
+      </div>
+      <table class="guide-table">
+        <thead><tr><th>Resource</th><th>URL</th></tr></thead>
+        <tbody>
+          <tr><td>Operations Hub</td><td>powerofpublic.github.io/ops-hub</td></tr>
+          <tr><td>Time Entry & Reporting</td><td>powerofpublic.github.io/ops-hub/tracker.html</td></tr>
+          <tr><td>Go / No-Go Form</td><td>powerofpublic.github.io/ops-hub/go-no-go.html</td></tr>
+          <tr><td>Proposal Tracker</td><td>powerofpublic.github.io/ops-hub/proposal-tracker.html</td></tr>
+          <tr><td>Project Manager</td><td>powerofpublic.github.io/ops-hub/project-manager.html</td></tr>
+          <tr><td>RFP Monitor</td><td>powerofpublic.github.io/ops-hub/rfp-monitor.html</td></tr>
+          <tr><td>RFP Monitor Guide</td><td>powerofpublic.github.io/ops-hub/rfp-monitor-guide.html</td></tr>
+          <tr><td>This guide</td><td>powerofpublic.github.io/ops-hub/ops-guide.html</td></tr>
+          <tr><td>GitHub Repository</td><td>github.com/powerofpublic/ops-hub</td></tr>
+          <tr><td>Firebase Console</td><td>console.firebase.google.com</td></tr>
+        </tbody>
+      </table>
+      <h3>Keyboard Shortcuts</h3>
+      <table class="guide-table">
+        <thead><tr><th>Action</th><th>Mac</th><th>Windows</th></tr></thead>
+        <tbody>
+          <tr><td>Hard refresh page</td><td>Cmd+Shift+R</td><td>Ctrl+Shift+R</td></tr>
+          <tr><td>Open browser console</td><td>Cmd+Option+J</td><td>Ctrl+Shift+J</td></tr>
+          <tr><td>Print / save as PDF</td><td>Cmd+P</td><td>Ctrl+P</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+<footer>
+  <span style="color:var(--pink);">●</span> Power of Public Operations Hub &nbsp;·&nbsp; <a href="index.html">← Back to Hub</a>
+</footer>
+
+<script>
+// Highlight active TOC link on scroll
+const allLinks = document.querySelectorAll('.toc-section>a, .toc-sub a');
+window.addEventListener('scroll', () => {
+  const sections = document.querySelectorAll('[id]');
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 120) current = s.id;
+  });
+  allLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+</script>
+</body>
+</html>

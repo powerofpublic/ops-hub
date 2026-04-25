@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RFP Monitor — User Guide · Power of Public</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#1A1A2E; --pink:#E8187A; --amber:#D4A017; --emerald:#1A8C5B;
+  --cream:#F5F0E8; --tan:#EDE8DC; --bg:#F2EDE4; --surface:#FFFFFF;
+  --border:#D5CCBC; --muted:#6B6560; --dark:#2D2D2D;
+  --blush:#FBF3F8; --blush-border:#F0C8DF; --pink-dark:#B5467A;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;color:var(--dark);font-size:15px;line-height:1.75;}
+
+/* HEADER */
+header{background:var(--navy);border-bottom:3px solid transparent;border-image:linear-gradient(90deg,var(--pink),var(--amber),var(--emerald)) 1;position:sticky;top:0;z-index:100;}
+.header-inner{max-width:1100px;margin:0 auto;padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;}
+.logo{font-family:'Playfair Display',serif;font-size:18px;font-weight:900;color:#fff;}
+.logo span{color:var(--pink);}
+.hdr-links{display:flex;gap:12px;}
+.hdr-btn{font-size:11px;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:5px 12px;text-decoration:none;transition:all .15s;}
+.hdr-btn:hover{color:#fff;border-color:rgba(255,255,255,0.4);}
+
+/* LAYOUT */
+.page-wrap{max-width:1100px;margin:0 auto;padding:40px 28px 80px;display:grid;grid-template-columns:240px 1fr;gap:40px;align-items:start;}
+
+/* SIDEBAR TOC */
+.toc{position:sticky;top:80px;background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px;font-size:13px;}
+.toc-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:900;color:var(--navy);margin-bottom:14px;padding-bottom:10px;border-bottom:1.5px solid var(--border);}
+.toc-section{margin-bottom:4px;}
+.toc-section a{display:block;color:var(--muted);text-decoration:none;padding:4px 8px;border-radius:6px;transition:all .12s;font-weight:500;}
+.toc-section a:hover{background:var(--blush);color:var(--pink);}
+.toc-section a.active{background:var(--blush);color:var(--pink);font-weight:600;}
+.toc-sub a{font-size:12px;padding:3px 8px 3px 20px;color:var(--muted);display:block;text-decoration:none;border-radius:6px;transition:all .12s;}
+.toc-sub a:hover{color:var(--pink);}
+.toc-divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+.toc-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:4px 8px;margin-top:8px;}
+
+/* CONTENT */
+.content{}
+.guide-hero{margin-bottom:36px;}
+.guide-hero h1{font-family:'Playfair Display',serif;font-size:40px;font-weight:900;color:var(--navy);line-height:1.15;margin-bottom:8px;}
+.guide-hero h1 em{color:var(--pink);font-style:normal;}
+.guide-hero p{font-size:15px;color:var(--muted);max-width:580px;}
+.guide-hero .meta{font-size:12px;color:var(--muted);margin-top:10px;display:flex;gap:16px;flex-wrap:wrap;}
+.guide-hero .meta span{background:var(--tan);border-radius:20px;padding:3px 12px;}
+
+/* SECTIONS */
+.guide-section{margin-bottom:48px;}
+.guide-section h2{font-family:'Playfair Display',serif;font-size:26px;font-weight:900;color:var(--navy);margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:10px;}
+.guide-section h2 .section-num{background:var(--pink);color:#fff;border-radius:6px;font-size:12px;font-weight:700;padding:3px 9px;font-family:'Plus Jakarta Sans',sans-serif;}
+.guide-section h3{font-size:17px;font-weight:700;color:var(--dark);margin:24px 0 10px;}
+.guide-section p{margin-bottom:12px;color:var(--dark);}
+.guide-section ul{padding-left:20px;margin-bottom:12px;}
+.guide-section ul li{margin-bottom:6px;color:var(--dark);}
+.guide-section ol{padding-left:20px;margin-bottom:12px;}
+.guide-section ol li{margin-bottom:8px;color:var(--dark);}
+
+/* BOXES */
+.tip-box{background:var(--blush);border:1.5px solid var(--blush-border);border-left:4px solid var(--pink);border-radius:10px;padding:14px 18px;margin:14px 0;font-size:14px;color:#5A2040;}
+.tip-box strong{color:var(--pink-dark);}
+.note-box{background:#FFF8EC;border:1.5px solid #F5D98A;border-left:4px solid var(--amber);border-radius:10px;padding:14px 18px;margin:14px 0;font-size:14px;color:#5A3E00;}
+.warn-box{background:#FFF0F5;border:1.5px solid #F8C8D8;border-left:4px solid var(--pink);border-radius:10px;padding:14px 18px;margin:14px 0;font-size:14px;color:#5A2040;}
+.info-box{background:#F0F9F4;border:1.5px solid #A8DFC0;border-left:4px solid var(--emerald);border-radius:10px;padding:14px 18px;margin:14px 0;font-size:14px;color:#1A3D2B;}
+
+/* TABLE */
+.guide-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px;}
+.guide-table th{background:var(--navy);color:#fff;padding:10px 14px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
+.guide-table td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top;}
+.guide-table tr:nth-child(even) td{background:var(--cream);}
+.guide-table tr:last-child td{border-bottom:none;}
+
+/* NUMBERED TIPS */
+.tip-list{display:flex;flex-direction:column;gap:12px;margin:14px 0;}
+.tip-item{display:flex;gap:14px;align-items:flex-start;background:var(--blush);border:1px solid var(--blush-border);border-radius:10px;padding:14px 16px;}
+.tip-num{background:var(--pink);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px;}
+.tip-text{font-size:13.5px;color:#5A2040;line-height:1.6;}
+.tip-text strong{color:var(--pink-dark);}
+
+/* KEYWORD TABLE */
+.kw-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;}
+.kw-card{background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;font-size:13px;}
+.kw-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:3px;}
+.kw-value{color:var(--dark);font-weight:500;}
+
+/* BADGE */
+.badge{display:inline-block;font-size:10.5px;font-weight:700;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em;}
+.badge-pink{background:var(--blush);color:var(--pink);}
+.badge-green{background:#EBF7F2;color:var(--emerald);}
+.badge-amber{background:#FEF7E8;color:#9A7312;}
+.badge-navy{background:#EEF2FF;color:var(--navy);}
+
+/* FOOTER */
+footer{background:var(--navy);text-align:center;padding:20px;font-size:11.5px;color:rgba(255,255,255,0.3);}
+footer a{color:var(--pink);text-decoration:none;}
+
+@media(max-width:768px){
+  .page-wrap{grid-template-columns:1fr;}
+  .toc{position:static;margin-bottom:20px;}
+  .guide-hero h1{font-size:28px;}
+  .kw-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">Power of Public<span>.</span></div>
+    <div class="hdr-links">
+      <a href="index.html" class="hdr-btn">← Hub</a>
+      <a href="ops-guide.html" class="hdr-btn">Full Portal Guide</a>
+    </div>
+  </div>
+</header>
+
+<div class="page-wrap">
+
+  <!-- SIDEBAR TOC -->
+  <nav class="toc">
+    <div class="toc-title">Contents</div>
+    <div class="toc-label">Quick Start</div>
+    <div class="toc-section"><a href="#quick-tips">Top 5 Search Tips</a></div>
+    <div class="toc-section"><a href="#best-day">Best Day to Search</a></div>
+    <div class="toc-section"><a href="#keywords">Keyword Strategy</a></div>
+    <hr class="toc-divider">
+    <div class="toc-label">Guide</div>
+    <div class="toc-section"><a href="#overview">1. Overview</a></div>
+    <div class="toc-section"><a href="#setup">2. Setup</a></div>
+    <div class="toc-sub"><a href="#api-key">API Key</a></div>
+    <div class="toc-sub"><a href="#credits">Credits & Cost</a></div>
+    <div class="toc-section"><a href="#searching">3. Running a Search</a></div>
+    <div class="toc-sub"><a href="#search-tab">Search Tab</a></div>
+    <div class="toc-sub"><a href="#results">Reviewing Results</a></div>
+    <div class="toc-section"><a href="#sources">4. Managing Sources</a></div>
+    <div class="toc-sub"><a href="#auto-sources">Auto Sources</a></div>
+    <div class="toc-sub"><a href="#toggles">Enabling & Disabling</a></div>
+    <div class="toc-sub"><a href="#manual-portals">Manual Portals</a></div>
+    <div class="toc-section"><a href="#pipeline">5. Pipeline</a></div>
+    <div class="toc-sub"><a href="#statuses">Statuses</a></div>
+    <div class="toc-sub"><a href="#scorecard">Go/No-Go Scorecard</a></div>
+    <div class="toc-section"><a href="#digest">6. Weekly Digest</a></div>
+    <div class="toc-section"><a href="#troubleshooting">7. Troubleshooting</a></div>
+    <div class="toc-section"><a href="#reference">8. Reference</a></div>
+  </nav>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <div class="guide-hero">
+      <h1>RFP Monitor<br><em>User Guide</em></h1>
+      <p>A practical guide to searching for opportunities, managing your pipeline, and getting the most from every session.</p>
+      <div class="meta">
+        <span>Power of Public, LLC</span>
+        <span>Operations Hub</span>
+        <span>April 2026</span>
+      </div>
+    </div>
+
+    <!-- QUICK TIPS -->
+    <div class="guide-section" id="quick-tips">
+      <h2><span class="section-num">★</span> Top 5 Search Tips</h2>
+      <div class="tip-list">
+        <div class="tip-item">
+          <div class="tip-num">1</div>
+          <div class="tip-text"><strong>Search on Tuesday or Wednesday morning.</strong> Government agencies post new solicitations Monday–Tuesday. Searching mid-week catches everything before deadlines close — and leaves you time to act on what you find.</div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-num">2</div>
+          <div class="tip-text"><strong>Use 3–5 specific words, not one.</strong> "Health communications RFP Maryland" returns far better results than "communications" alone. The more context you give, the more targeted the results.</div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-num">3</div>
+          <div class="tip-text"><strong>Rotate keywords every session.</strong> "Public health outreach," "behavior change consulting," and "community engagement RFP" each surface different opportunities. Never rely on the same search twice in a row.</div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-num">4</div>
+          <div class="tip-text"><strong>Keep 5–8 sources enabled per search.</strong> Too many sources at once can hit your API rate limit. Toggle sources in the Sources tab — green means included in the next search.</div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-num">5</div>
+          <div class="tip-text"><strong>Rate limit error? Wait 60 seconds.</strong> It resets automatically. Each search costs approximately 5¢ — your $5 in API credits covers roughly 100 searches at weekly use.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BEST DAY -->
+    <div class="guide-section" id="best-day">
+      <h2><span class="section-num">★</span> Best Day & Time to Search</h2>
+      <div class="tip-box"><strong>Tuesday or Wednesday morning</strong> is the ideal time for your weekly search session.</div>
+      <p>Most federal and government procurement offices post new solicitations at the start of the work week. Foundations and nonprofits tend to post mid-week. Searching Tuesday or Wednesday morning catches everything posted since the previous week — with enough time left in the week to respond to anything promising.</p>
+      <h3>Why not Monday or Friday?</h3>
+      <ul>
+        <li><strong>Avoid Mondays</strong> — postings from that morning won't be indexed by search engines yet</li>
+        <li><strong>Avoid Fridays</strong> — deadlines frequently fall on Fridays, leaving no time to act on new findings</li>
+      </ul>
+      <h3>Recommended weekly rhythm</h3>
+      <table class="guide-table">
+        <thead><tr><th>Day</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Tue / Wed morning</strong></td><td>Run 2–3 searches with different keyword combinations. Review results and add to pipeline.</td></tr>
+          <tr><td><strong>Thursday</strong></td><td>Check manual portals (login-required sites). Update statuses on existing pipeline opportunities.</td></tr>
+          <tr><td><strong>Friday</strong></td><td>Run the weekly digest. Note approaching deadlines for the following week.</td></tr>
+        </tbody>
+      </table>
+      <h3>How many searches?</h3>
+      <table class="guide-table">
+        <thead><tr><th>Timeframe</th><th>Recommended</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>Per minute</td><td>1 at a time</td><td>Each search can use up to your full rate limit — wait for completion</td></tr>
+          <tr><td>Per hour</td><td>4–6</td><td>Gives buffer between runs without hitting limits</td></tr>
+          <tr><td>Per day</td><td>10–15 max</td><td>Beyond this you'll mostly see duplicate results</td></tr>
+          <tr><td>Per week</td><td>2–3 sessions</td><td>The practical sweet spot for comprehensive coverage</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- KEYWORD STRATEGY -->
+    <div class="guide-section" id="keywords">
+      <h2><span class="section-num">★</span> Keyword Rotation Strategy</h2>
+      <p>Running the same keywords every week returns the same results. Rotate these combinations across sessions to maximize coverage:</p>
+      <div class="kw-grid">
+        <div class="kw-card"><div class="kw-label">Session 1</div><div class="kw-value">health communications consulting RFP</div></div>
+        <div class="kw-card"><div class="kw-label">Session 2</div><div class="kw-value">public health outreach community engagement</div></div>
+        <div class="kw-card"><div class="kw-label">Session 3</div><div class="kw-value">social marketing behavior change Maryland DC</div></div>
+        <div class="kw-card"><div class="kw-label">Session 4</div><div class="kw-value">maternal health communications grant federal</div></div>
+        <div class="kw-card"><div class="kw-label">Session 5</div><div class="kw-value">health education strategic communications nonprofit</div></div>
+        <div class="kw-card"><div class="kw-label">Session 6</div><div class="kw-value">community health awareness campaign consulting</div></div>
+      </div>
+      <div class="note-box">Add your own combinations based on active proposals or new focus areas. The more specific to your current work, the better the results.</div>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div class="guide-section" id="overview">
+      <h2><span class="section-num">1</span> Overview</h2>
+      <p>The RFP Monitor searches multiple procurement, grant, and communications-specific sources simultaneously using the Anthropic API with Claude's web search capability. Results are returned for your review before being added to a full opportunity pipeline — from discovery through award.</p>
+      <h3>What it does</h3>
+      <ul>
+        <li>Searches up to 23 auto-searchable sources in one click</li>
+        <li>Returns matched opportunities for review before adding to your pipeline</li>
+        <li>Tracks opportunities through: New → Pursuing → Submitted → Won / Lost</li>
+        <li>Provides a Go/No-Go scorecard for each opportunity</li>
+        <li>Links to manual portals requiring login for weekly review</li>
+        <li>Generates a weekly digest summary of your pipeline</li>
+      </ul>
+      <h3>How it connects</h3>
+      <table class="guide-table">
+        <thead><tr><th>Component</th><th>Details</th></tr></thead>
+        <tbody>
+          <tr><td>Auto-search</td><td>Anthropic API (claude-sonnet-4-5) with web search tool</td></tr>
+          <tr><td>Proxy</td><td>pop-proxy.netlify.app — routes API calls through Netlify to bypass browser security restrictions</td></tr>
+          <tr><td>Data storage</td><td>Browser localStorage — pipeline and sources save locally per device</td></tr>
+          <tr><td>Manual portals</td><td>Direct links to login-required procurement portals</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SETUP -->
+    <div class="guide-section" id="setup">
+      <h2><span class="section-num">2</span> Initial Setup</h2>
+
+      <h3 id="api-key">Getting your API Key</h3>
+      <p>The RFP Monitor requires an Anthropic API key to run searches. You only need to enter this once per device.</p>
+      <ol>
+        <li>Go to <strong>console.anthropic.com</strong> and sign in</li>
+        <li>Click <strong>API Keys</strong> in the left sidebar</li>
+        <li>Click <strong>Create Key</strong> — name it "RFP Monitor"</li>
+        <li>Copy the full key immediately — it starts with <code>sk-ant-</code> and is only shown once</li>
+        <li>Open the RFP Monitor and paste the key into the API key field</li>
+        <li>Click <strong>Save key</strong></li>
+      </ol>
+      <div class="warn-box"><strong>Important:</strong> The key is only shown once when created. If you navigate away before copying it, you will need to delete it and create a new one. Always copy it immediately.</div>
+
+      <h3 id="credits">API Credits & Cost</h3>
+      <p>Add prepaid credits at <strong>console.anthropic.com → Billing</strong>. Credits are prepaid — you cannot be charged more than you load.</p>
+      <table class="guide-table">
+        <thead><tr><th>Item</th><th>Details</th></tr></thead>
+        <tbody>
+          <tr><td>Cost per search</td><td>~5¢ (input + output tokens combined)</td></tr>
+          <tr><td>$5 in credits covers</td><td>~100 searches</td></tr>
+          <tr><td>At weekly use</td><td>$5 lasts approximately 8–12 months</td></tr>
+          <tr><td>Check usage</td><td>console.anthropic.com → Usage</td></tr>
+          <tr><td>Rate limit</td><td>30,000 input tokens per minute — resets every 60 seconds</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SEARCHING -->
+    <div class="guide-section" id="searching">
+      <h2><span class="section-num">3</span> Running a Search</h2>
+
+      <h3 id="search-tab">Search Tab fields</h3>
+      <table class="guide-table">
+        <thead><tr><th>Field</th><th>What to enter</th></tr></thead>
+        <tbody>
+          <tr><td>Focus keywords</td><td>Your search topic — 3–5 descriptive words</td></tr>
+          <tr><td>Limit to org type</td><td>Filter to Government, Foundation, Nonprofit, or Academic sources only</td></tr>
+          <tr><td>Exclude keywords</td><td>Topics to skip — e.g. "clinical trials, pharmaceutical"</td></tr>
+          <tr><td>Geographic focus</td><td>Optional location — e.g. "Maryland, DC, federal"</td></tr>
+        </tbody>
+      </table>
+      <p>The counter next to the search button shows how many sources are currently enabled. Click <strong>Search all sources →</strong> to run.</p>
+
+      <h3 id="results">Reviewing Results</h3>
+      <p>Results appear in a review panel after the search completes (typically 20–40 seconds). For each result you can:</p>
+      <ul>
+        <li><strong>Add →</strong> — adds it to your pipeline with status "New"</li>
+        <li><strong>Skip</strong> — dismisses it without adding</li>
+        <li><strong>Add All</strong> — adds every result to your pipeline at once</li>
+      </ul>
+      <div class="note-box">Results are not saved automatically. Review them before navigating away or running another search — a new search replaces the current results panel.</div>
+    </div>
+
+    <!-- SOURCES -->
+    <div class="guide-section" id="sources">
+      <h2><span class="section-num">4</span> Managing Sources</h2>
+
+      <h3 id="auto-sources">Auto-searchable sources</h3>
+      <p>Auto-searchable sources are publicly indexed sites that Claude's web search can access without a login. The monitor comes pre-loaded with 23 sources across four categories:</p>
+      <table class="guide-table">
+        <thead><tr><th>Source</th><th>Type</th></tr></thead>
+        <tbody>
+          <tr><td>SAM.gov (Federal)</td><td><span class="badge badge-navy">Government</span></td></tr>
+          <tr><td>rfpmart.com — Health & Marketing</td><td><span class="badge badge-navy">Government</span></td></tr>
+          <tr><td>HigherGov — DC OCP</td><td><span class="badge badge-navy">Government</span></td></tr>
+          <tr><td>Georgia Procurement Registry</td><td><span class="badge badge-navy">Government</span></td></tr>
+          <tr><td>NC eVP Solicitations</td><td><span class="badge badge-navy">Government</span></td></tr>
+          <tr><td>Delaware Bid Directory</td><td><span class="badge badge-navy">Government</span></td></tr>
+          <tr><td>grants.gov (Federal grants)</td><td><span class="badge badge-navy">Government</span></td></tr>
+          <tr><td>rfpmart — Social Media & Outreach</td><td><span class="badge badge-navy">Government</span></td></tr>
+          <tr><td>O'Dwyer's PR — RFPs</td><td><span class="badge badge-pink">Nonprofit</span></td></tr>
+          <tr><td>Everything PR — RFPs</td><td><span class="badge badge-pink">Nonprofit</span></td></tr>
+          <tr><td>RFP Database (rfpdb.com)</td><td><span class="badge badge-pink">Nonprofit</span></td></tr>
+          <tr><td>NACCHO</td><td><span class="badge badge-pink">Nonprofit</span></td></tr>
+          <tr><td>Public Health Institute (PHI)</td><td><span class="badge badge-pink">Nonprofit</span></td></tr>
+          <tr><td>NNPHI</td><td><span class="badge badge-pink">Nonprofit</span></td></tr>
+          <tr><td>American Public Health Association</td><td><span class="badge badge-pink">Nonprofit</span></td></tr>
+          <tr><td>Corporation for Supportive Housing</td><td><span class="badge badge-pink">Nonprofit</span></td></tr>
+          <tr><td>CDC Foundation</td><td><span class="badge badge-amber">Foundation</span></td></tr>
+          <tr><td>Philanthropy News Digest</td><td><span class="badge badge-amber">Foundation</span></td></tr>
+          <tr><td>Elevance Health Foundation</td><td><span class="badge badge-amber">Foundation</span></td></tr>
+          <tr><td>Horizon Foundation (MD)</td><td><span class="badge badge-amber">Foundation</span></td></tr>
+          <tr><td>Grantmakers in Health</td><td><span class="badge badge-amber">Foundation</span></td></tr>
+          <tr><td>New York Health Foundation</td><td><span class="badge badge-amber">Foundation</span></td></tr>
+          <tr><td>UNC Gillings SPH</td><td><span class="badge badge-green">Academic</span></td></tr>
+        </tbody>
+      </table>
+
+      <h3 id="toggles">Enabling & Disabling Sources</h3>
+      <p>Each source card in the Sources tab has an <strong>On/Off</strong> toggle button. Green = included in search, gray = excluded. Changes save automatically. Start with 5–8 sources enabled to stay within rate limits.</p>
+      <div class="tip-box">Keep <strong>SAM.gov</strong> and <strong>Philanthropy News Digest</strong> enabled by default — they are the highest-volume sources for your niche.</div>
+
+      <h3 id="manual-portals">Manual Portals</h3>
+      <p>Manual portals are sites requiring a login or CAPTCHA — they cannot be searched automatically. The Manual Portals tab provides direct links so you can check them quickly during your Thursday review session.</p>
+    </div>
+
+    <!-- PIPELINE -->
+    <div class="guide-section" id="pipeline">
+      <h2><span class="section-num">5</span> Managing Your Pipeline</h2>
+
+      <h3 id="statuses">Opportunity Statuses</h3>
+      <table class="guide-table">
+        <thead><tr><th>Status</th><th>Use when</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge badge-navy">New</span></td><td>Just discovered — not yet evaluated</td></tr>
+          <tr><td><span class="badge badge-amber">Pursuing</span></td><td>Decided to bid — actively working on proposal</td></tr>
+          <tr><td><span class="badge badge-pink">Submitted</span></td><td>Proposal submitted, awaiting decision</td></tr>
+          <tr><td><span class="badge badge-green">Won</span></td><td>Contract awarded</td></tr>
+          <tr><td>Lost</td><td>Not selected or opportunity cancelled</td></tr>
+        </tbody>
+      </table>
+
+      <h3 id="scorecard">Go/No-Go Scorecard</h3>
+      <p>Click the scorecard button on any pipeline opportunity to run a quick evaluation. Rate six criteria: mission fit, timeline, budget, competitive position, existing relationship, and capacity. The tool calculates a score and recommended decision. This connects with your Go/No-Go form in the full Operations Hub.</p>
+    </div>
+
+    <!-- DIGEST -->
+    <div class="guide-section" id="digest">
+      <h2><span class="section-num">6</span> Weekly Digest</h2>
+      <p>The Digest tab generates a plain-language summary of your current pipeline — how many opportunities are active, what's coming up, and key deadlines. Run it every Friday as part of your weekly rhythm.</p>
+      <ul>
+        <li>Click <strong>Generate digest</strong> to create the summary</li>
+        <li>The digest reflects your pipeline at the moment you generate it</li>
+        <li>Copy and paste into an email or document as needed</li>
+      </ul>
+    </div>
+
+    <!-- TROUBLESHOOTING -->
+    <div class="guide-section" id="troubleshooting">
+      <h2><span class="section-num">7</span> Troubleshooting</h2>
+      <table class="guide-table">
+        <thead><tr><th>Error</th><th>Fix</th></tr></thead>
+        <tbody>
+          <tr><td>Failed to search / CORS error</td><td>Check that pop-proxy.netlify.app is live. Verify your key at console.anthropic.com.</td></tr>
+          <tr><td>Invalid x-api-key</td><td>Re-enter your API key. Create a new one at console.anthropic.com if needed — keys are only shown once.</td></tr>
+          <tr><td>Rate limit error</td><td>Wait 60 seconds and retry. Reduce the number of enabled sources before searching.</td></tr>
+          <tr><td>Could not parse results</td><td>Try more specific keywords and search again.</td></tr>
+          <tr><td>No results found</td><td>Broaden or change keywords. Confirm sources are enabled in the Sources tab.</td></tr>
+          <tr><td>Pipeline disappeared</td><td>Browser localStorage was cleared. Data is device-local — this is a known limitation.</td></tr>
+          <tr><td>Source counter shows wrong number</td><td>Hard refresh the page: Cmd+Shift+R (Mac) or Ctrl+Shift+R (Windows).</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- REFERENCE -->
+    <div class="guide-section" id="reference">
+      <h2><span class="section-num">8</span> Quick Reference</h2>
+      <table class="guide-table">
+        <thead><tr><th>Resource</th><th>URL</th></tr></thead>
+        <tbody>
+          <tr><td>RFP Monitor</td><td>powerofpublic.github.io/ops-hub/rfp-monitor.html</td></tr>
+          <tr><td>Operations Hub</td><td>powerofpublic.github.io/ops-hub</td></tr>
+          <tr><td>Anthropic Console</td><td>console.anthropic.com</td></tr>
+          <tr><td>API Usage & Billing</td><td>console.anthropic.com/usage</td></tr>
+          <tr><td>Netlify Proxy</td><td>pop-proxy.netlify.app</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+<footer>
+  <span style="color:var(--pink);">●</span> Power of Public Operations Hub &nbsp;·&nbsp; <a href="index.html">← Back to Hub</a>
+</footer>
+
+<script>
+// Highlight active TOC link on scroll
+const sections = document.querySelectorAll('.guide-section, h3[id]');
+const tocLinks = document.querySelectorAll('.toc-section a, .toc-sub a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 100) current = s.id;
+  });
+  tocLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+</script>
+</body>
+</html>
