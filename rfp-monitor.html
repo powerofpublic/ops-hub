@@ -498,6 +498,17 @@
         <button class="btn primary" id="rb" onclick="runSearch()">Search all sources →</button>
         <span style="font-size:12px;color:var(--muted);"><span id="src-ct">0</span> sources enabled · ~20–40 seconds per search</span>
       </div>
+
+      <!-- RATE LIMIT COUNTDOWN -->
+      <div id="rate-limit-wrap" style="display:none;margin-top:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-size:12px;font-weight:600;color:var(--muted);" id="rate-label">Next search available in <span id="rate-count" style="color:var(--pink);font-weight:700;">1:00</span></span>
+          <span style="font-size:11px;color:var(--muted);">Rate limit resets every 60 seconds</span>
+        </div>
+        <div style="background:var(--border);border-radius:20px;height:6px;overflow:hidden;">
+          <div id="rate-bar" style="height:100%;background:linear-gradient(90deg,var(--pink),var(--amber));border-radius:20px;width:100%;transition:width 1s linear;"></div>
+        </div>
+      </div>
       <div id="search-eb" style="margin-top:12px;"></div>
     </div>
 
@@ -1434,6 +1445,7 @@ async function runSearch(){
   document.getElementById('pending-section').style.display='none';
   document.getElementById('rb').disabled=true;
   document.getElementById('rb').textContent='Searching…';
+  startRateCountdown();
 
   const filteredSources=(typeFilter==='all'?sources:sources.filter(s=>s.type===typeFilter)).filter(s=>s.enabled!==false);
   const srcList=filteredSources.map(s=>`- ${s.name} (${s.type}): ${s.url}${s.kw?' | focus: '+s.kw:''}`).join('\n');
@@ -1660,6 +1672,62 @@ function removePortal(id){
   userPortals = userPortals.filter(x => x.id !== id);
   persistPortals();
   renderUserPortals();
+}
+
+
+/* ─── RATE LIMIT COUNTDOWN ─── */
+let _rateTimer = null;
+
+function startRateCountdown() {
+  // Clear any existing timer
+  if (_rateTimer) clearInterval(_rateTimer);
+
+  const wrap  = document.getElementById('rate-limit-wrap');
+  const label = document.getElementById('rate-count');
+  const bar   = document.getElementById('rate-bar');
+  const btn   = document.getElementById('rb');
+
+  wrap.style.display = 'block';
+  let secs = 60;
+
+  function tick() {
+    secs--;
+    const pct = (secs / 60) * 100;
+    bar.style.width = pct + '%';
+
+    if (secs <= 0) {
+      clearInterval(_rateTimer);
+      _rateTimer = null;
+      label.textContent = '0:00';
+      bar.style.width = '0%';
+      bar.style.background = 'var(--green, #1A8C5B)';
+      // Update label to ready state
+      document.getElementById('rate-label').innerHTML =
+        '<span style="color:var(--green,#1A8C5B);font-weight:700;">✓ Ready to search</span>';
+      // Re-enable button if search has finished
+      if (btn.textContent !== 'Searching…') {
+        btn.disabled = false;
+        btn.textContent = 'Search all sources →';
+      }
+      // Auto-hide after 4 seconds
+      setTimeout(() => {
+        wrap.style.display = 'none';
+        bar.style.background = 'linear-gradient(90deg,var(--pink),var(--amber))';
+        document.getElementById('rate-label').innerHTML =
+          'Next search available in <span id="rate-count" style="color:var(--pink);font-weight:700;">1:00</span>';
+      }, 4000);
+      return;
+    }
+
+    const m = Math.floor(secs / 60);
+    const s = String(secs % 60).padStart(2, '0');
+    label.textContent = `${m}:${s}`;
+    // Turn amber when under 15 seconds
+    if (secs <= 15) bar.style.background = 'var(--amber)';
+  }
+
+  tick();
+  _rateTimer = setInterval(tick, 1000);
 }
 
 /* ─── INIT ─── */
