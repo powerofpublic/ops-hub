@@ -462,35 +462,7 @@
       </div>
     </div>
 
-    <!-- HOT SEARCH TIPS -->
-    <div style="background:#F0F4FF;border:1.5px solid #C7D2FE;border-radius:14px;padding:18px 22px;margin-bottom:18px;">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
-        <span style="font-size:18px;">🔥</span>
-        <span style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#4338CA;">Top 5 Search Tips</span>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:10px;">
-        <div style="display:flex;gap:12px;align-items:flex-start;">
-          <span style="background:#4338CA;color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px;">1</span>
-          <div><span style="font-weight:600;font-size:13px;color:#1e1b4b;">Search on Tuesday or Wednesday morning.</span><span style="font-size:12.5px;color:#4a4785;"> Government offices post Monday–Tuesday. Searching mid-week catches everything before deadlines close.</span></div>
-        </div>
-        <div style="display:flex;gap:12px;align-items:flex-start;">
-          <span style="background:#4338CA;color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px;">2</span>
-          <div><span style="font-weight:600;font-size:13px;color:#1e1b4b;">Use 3–5 specific words, not one.</span><span style="font-size:12.5px;color:#4a4785;"> "Health communications RFP Maryland" returns far better results than "communications" alone.</span></div>
-        </div>
-        <div style="display:flex;gap:12px;align-items:flex-start;">
-          <span style="background:#4338CA;color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px;">3</span>
-          <div><span style="font-weight:600;font-size:13px;color:#1e1b4b;">Rotate keywords every session.</span><span style="font-size:12.5px;color:#4a4785;"> Try "public health outreach," then "behavior change consulting," then "community engagement RFP" — each surfaces different opportunities.</span></div>
-        </div>
-        <div style="display:flex;gap:12px;align-items:flex-start;">
-          <span style="background:#4338CA;color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px;">4</span>
-          <div><span style="font-weight:600;font-size:13px;color:#1e1b4b;">Keep 5–8 sources enabled per search.</span><span style="font-size:12.5px;color:#4a4785;"> Too many sources at once can hit your API rate limit. Toggle sources in the Sources tab — green means included.</span></div>
-        </div>
-        <div style="display:flex;gap:12px;align-items:flex-start;">
-          <span style="background:#4338CA;color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px;">5</span>
-          <div><span style="font-weight:600;font-size:13px;color:#1e1b4b;">If you hit a rate limit, wait 60 seconds.</span><span style="font-size:12.5px;color:#4a4785;"> This resets automatically. Each search costs ~5¢ — your $5 covers roughly 100 searches at weekly use.</span></div>
-        </div>
-      </div>
-    </div>
+    <!-- HOT SEARCH TIPS moved below Run a search -->
 
     <div class="card">
       <div class="card-title">Run a search</div>
@@ -527,6 +499,44 @@
         <span style="font-size:12px;color:var(--muted);"><span id="src-ct">0</span> sources enabled · ~20–40 seconds per search</span>
       </div>
       <div id="search-eb" style="margin-top:12px;"></div>
+    </div>
+
+    <!-- SEARCH TIPS — collapsible, on-brand -->
+    <div style="background:#FBF3F8;border:1.5px solid #F0C8DF;border-radius:12px;margin-bottom:18px;overflow:hidden;">
+      <button onclick="(function(){const b=document.getElementById('tips-body');const a=document.getElementById('tips-arrow');const open=b.style.display!=='none';b.style.display=open?'none':'block';a.textContent=open?'▸':'▾';})()" style="width:100%;background:none;border:none;cursor:pointer;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;text-align:left;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#B5467A;">Search Tips</span>
+          <span style="font-size:11px;color:#C97BA8;font-weight:400;">Top 5 things to know</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <a href="https://powerofpublic.github.io/ops-hub/rfp-monitor-guide.html" target="_blank" onclick="event.stopPropagation()" style="font-size:11px;color:#B5467A;font-weight:600;text-decoration:none;border:1px solid #F0C8DF;border-radius:6px;padding:3px 9px;background:#fff;">Full guide ↗</a>
+          <span id="tips-arrow" style="font-size:13px;color:#B5467A;font-weight:700;">▸</span>
+        </div>
+      </button>
+      <div id="tips-body" style="display:none;padding:4px 18px 16px;border-top:1px solid #F0C8DF;">
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;">
+          <div style="display:flex;gap:12px;align-items:flex-start;">
+            <span style="background:#E8187A;color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">1</span>
+            <div style="font-size:12.5px;color:#5A2040;line-height:1.55;"><strong>Search Tuesday or Wednesday morning.</strong> Government agencies post Monday–Tuesday. Mid-week searches catch everything before deadlines close.</div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start;">
+            <span style="background:#E8187A;color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">2</span>
+            <div style="font-size:12.5px;color:#5A2040;line-height:1.55;"><strong>Use 3–5 specific words, not one.</strong> "Health communications RFP Maryland" returns far better results than "communications" alone.</div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start;">
+            <span style="background:#E8187A;color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">3</span>
+            <div style="font-size:12.5px;color:#5A2040;line-height:1.55;"><strong>Rotate keywords every session.</strong> "Public health outreach," "behavior change consulting," and "community engagement RFP" each surface different opportunities.</div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start;">
+            <span style="background:#E8187A;color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">4</span>
+            <div style="font-size:12.5px;color:#5A2040;line-height:1.55;"><strong>Keep 5–8 sources enabled per search.</strong> Too many at once can hit your API rate limit. Toggle sources in the Sources tab — green means included.</div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start;">
+            <span style="background:#E8187A;color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">5</span>
+            <div style="font-size:12.5px;color:#5A2040;line-height:1.55;"><strong>Rate limit error? Wait 60 seconds.</strong> It resets automatically. Each search costs ~5¢ — your $5 covers roughly 100 searches at weekly use.</div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div id="pending-section" style="display:none;">
