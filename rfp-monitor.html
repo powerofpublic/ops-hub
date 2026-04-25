@@ -848,13 +848,18 @@
     <div class="notice">
       <strong>These are the auto-searchable sources</strong> — sites Google has indexed that the API can query without hitting a login or reCAPTCHA wall. Sources requiring login/reCAPTCHA are in the <strong>Manual Portals</strong> tab, not here.
     </div>
+
+    <!-- PERMANENT SOURCES NOTE -->
+    <div style="background:#FBF3F8;border:1.5px solid #F0C8DF;border-left:4px solid #E8187A;border-radius:10px;padding:14px 18px;margin-bottom:18px;">
+      <div style="font-size:12px;font-weight:700;color:#B5467A;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">📌 How to add or remove sources</div>
+      <div style="font-size:13px;color:#5A2040;line-height:1.6;">Sources are permanently stored in the HTML file — not your browser. This means they work consistently across all devices and are never lost when you clear browser data or upload a new version.<br><br>
+      <strong>To add or remove a source:</strong> ask Claude to update the HTML file. Share the source name, URL, and type (Government / Foundation / Nonprofit / Academic). Upload the new file to GitHub and it's live everywhere instantly.</div>
+    </div>
+
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
-      <span class="hint">Add or remove auto-searchable sources. Changes save to your browser.</span>
-      <button class="btn primary" onclick="openM('source')">+ Add source</button>
+      <span class="hint"><span id="src-enabled-count">0</span> of <span id="src-total-count">0</span> sources enabled for search — toggle On/Off to include or exclude from searches</span>
     </div>
     <div class="sgrid" id="sg"></div>
-    <hr class="divider" />
-    <p class="hint">Sources save in localStorage. Clearing browser data resets to the defaults.</p>
   </div>
 
 </main>
@@ -888,29 +893,6 @@
     <div class="mfooter">
       <button class="btn" onclick="closeModal()">Cancel</button>
       <button class="btn primary" onclick="saveNotes()">Save notes</button>
-    </div>
-  </div>
-</div>
-
-<!-- ══ ADD / EDIT SOURCE MODAL ══ -->
-<div class="mbg" id="source-modal">
-  <div class="mbox" style="width:400px;">
-    <h3 id="sm-title">Add auto-search source</h3>
-    <p class="msub" id="sm-sub">Only add sources the API can access without a login or reCAPTCHA.</p>
-    <label class="flbl">Organization name</label>
-    <input class="fin" type="text" id="mn" placeholder="e.g., NACCHO" />
-    <label class="flbl">URL (RFP or opportunities page)</label>
-    <input class="fin" type="text" id="mu" placeholder="https://naccho.org/rfps" />
-    <label class="flbl">Type</label>
-    <select class="fin" id="mt" style="height:36px;">
-      <option>Government</option><option>Foundation</option>
-      <option>Nonprofit / Association</option><option>Academic</option>
-    </select>
-    <label class="flbl">Keywords (optional)</label>
-    <input class="fin" type="text" id="mk" placeholder="e.g., maternal health, communications" />
-    <div class="mfooter">
-      <button class="btn" onclick="closeModal()">Cancel</button>
-      <button class="btn primary" id="sm-save-btn" onclick="saveSource()">Add source</button>
     </div>
   </div>
 </div>
@@ -1333,8 +1315,12 @@ function copyDigest(){
 /* ─── SOURCES ─── */
 function renderSrc(){
   const enabled = sources.filter(s => s.enabled !== false).length;
-  document.getElementById('sg').innerHTML=`<div style="font-size:12px;color:var(--muted);margin-bottom:10px;">${enabled} of ${sources.length} sources enabled for search</div>`
-  + sources.map(s=>`
+  const total   = sources.length;
+  const ec = document.getElementById('src-enabled-count');
+  const tc = document.getElementById('src-total-count');
+  if(ec) ec.textContent = enabled;
+  if(tc) tc.textContent = total;
+  document.getElementById('sg').innerHTML = sources.map(s=>`
     <div class="scard" style="opacity:${s.enabled===false?'0.45':'1'};">
       <div style="min-width:0;flex:1;">
         <div class="scard-name">${s.name}</div>
@@ -1343,8 +1329,6 @@ function renderSrc(){
       </div>
       <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
         <button class="btn xs" onclick="toggleSrc(${s.id})" style="background:${s.enabled===false?'var(--border)':'var(--green-light)'};color:${s.enabled===false?'var(--muted)':'var(--green)'};">${s.enabled===false?'Off':'On'}</button>
-        <button class="btn xs" onclick="editSrc(${s.id})" title="Edit">Edit</button>
-        <button class="btn xs danger" onclick="rmSrc(${s.id})" title="Remove">Del</button>
       </div>
     </div>`).join('');
 }

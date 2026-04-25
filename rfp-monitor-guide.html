@@ -138,6 +138,7 @@ footer a{color:var(--pink);text-decoration:none;}
     <div class="toc-section"><a href="#sources">4. Managing Sources</a></div>
     <div class="toc-sub"><a href="#auto-sources">Auto Sources</a></div>
     <div class="toc-sub"><a href="#toggles">Enabling & Disabling</a></div>
+    <div class="toc-sub"><a href="#adding-sources">Adding Sources</a></div>
     <div class="toc-sub"><a href="#manual-portals">Manual Portals</a></div>
     <div class="toc-section"><a href="#pipeline">5. Pipeline</a></div>
     <div class="toc-sub"><a href="#statuses">Statuses</a></div>
@@ -351,7 +352,17 @@ footer a{color:var(--pink);text-decoration:none;}
 
       <h3 id="toggles">Enabling & Disabling Sources</h3>
       <p>Each source card in the Sources tab has an <strong>On/Off</strong> toggle button. Green = included in search, gray = excluded. Changes save automatically. Start with 5–8 sources enabled to stay within rate limits.</p>
-      <div class="tip-box">Keep <strong>SAM.gov</strong> and <strong>Philanthropy News Digest</strong> enabled by default — they are the highest-volume sources for your niche.</div>
+      <div class="tip-box"><strong>Keep SAM.gov and Philanthropy News Digest enabled by default</strong> — they are the highest-volume sources for your niche.</div>
+
+      <h3 id="adding-sources">Adding or Removing Sources</h3>
+      <div class="warn-box"><strong>Important:</strong> Sources are permanently stored in the HTML file — not your browser. This is intentional. It means your sources work consistently across all devices and are never lost when you clear browser data or upload a new version of the tool.</div>
+      <p>Because of this, sources cannot be added through the UI. To add or remove a source:</p>
+      <ol>
+        <li>Message Claude: <em>"Add [source name], URL: [url], Type: [Government / Foundation / Nonprofit / Academic] to the RFP Monitor defaults"</em></li>
+        <li>Download the updated <code>rfp-monitor.html</code></li>
+        <li>Upload to GitHub — the new source is live everywhere instantly</li>
+      </ol>
+      <div class="note-box">This two-minute process permanently bakes the source into the HTML so it survives any future updates, device switches, or browser clears. Never add sources through a UI that saves to browser storage — they will eventually disappear.</div>
 
       <h3 id="manual-portals">Manual Portals</h3>
       <p>Manual portals are sites requiring a login or CAPTCHA — they cannot be searched automatically. The Manual Portals tab provides direct links so you can check them quickly during your Thursday review session.</p>
