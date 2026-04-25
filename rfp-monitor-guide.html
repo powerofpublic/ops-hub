@@ -290,37 +290,42 @@ footer a{color:var(--pink);text-decoration:none;}
     </div>
 
     <!-- SEARCHING -->
-    <div class="guide-section" id="searching">
+        <div class="guide-section" id="searching">
       <h2><span class="section-num">3</span> Running a Search</h2>
 
-      <h3 id="search-tab">Search Tab fields</h3>
+      <h3 id="search-tab">How the Search tab works</h3>
+      <p>The Search tab provides five copy-ready prompts you use directly in your Claude Pro subscription at claude.ai — at no extra cost. Claude searches the live web and returns real, current RFPs with direct links and descriptions.</p>
+
       <table class="guide-table">
-        <thead><tr><th>Field</th><th>What to enter</th></tr></thead>
+        <thead><tr><th>Prompt</th><th>What it searches</th></tr></thead>
         <tbody>
-          <tr><td>Focus keywords</td><td>Your search topic — 3–5 descriptive words</td></tr>
-          <tr><td>Limit to org type</td><td>Filter to Government, Foundation, Nonprofit, or Academic sources only</td></tr>
-          <tr><td>Exclude keywords</td><td>Topics to skip — e.g. "clinical trials, pharmaceutical"</td></tr>
-          <tr><td>Geographic focus</td><td>Optional location — e.g. "Maryland, DC, federal"</td></tr>
+          <tr><td>Federal & government</td><td>SAM.gov and Grants.gov — active RFPs, last 14 days</td></tr>
+          <tr><td>Foundations & nonprofits</td><td>Philanthropy News Digest, CDC Foundation, Grantmakers in Health, NACCHO, NNPHI</td></tr>
+          <tr><td>Communications-specific</td><td>O'Dwyer's PR, Everything PR, rfpdb.com</td></tr>
+          <tr><td>Regional — Maryland & DC</td><td>eMMA, DC OCP, Virginia EPROCURE, HigherGov</td></tr>
+          <tr><td>Broad weekly sweep</td><td>All sources, last 14 days, minimum 8 results</td></tr>
         </tbody>
       </table>
-      <p>The counter next to the search button shows how many sources are currently enabled. Click <strong>Search all sources →</strong> to run.</p>
 
-      <h3 id="results">Reviewing Results</h3>
-      <p>Results appear in a review panel after the search completes (typically 20–40 seconds). For each result you can:</p>
-      <ul>
-        <li><strong>Add →</strong> — adds it to your pipeline with status "New"</li>
-        <li><strong>Skip</strong> — dismisses it without adding</li>
-        <li><strong>Add All</strong> — adds every result to your pipeline at once</li>
-      </ul>
-      <div class="note-box">Results are not saved automatically. Review them before navigating away or running another search — a new search replaces the current results panel.</div>
+      <h3 id="results">Workflow — Search to Pipeline</h3>
+      <ol>
+        <li>Go to the <strong>Search</strong> tab and click <strong>Copy prompt</strong></li>
+        <li>Open <strong>claude.ai</strong> in a new tab and paste the prompt into a new chat</li>
+        <li>Claude searches the live web and returns results with titles, deadlines, descriptions, and direct links</li>
+        <li>Copy the full Claude response</li>
+        <li>Return to your portal → <strong>Pipeline</strong> tab → paste into <strong>Import from Claude</strong></li>
+        <li>Click <strong>+ Add all to pipeline</strong> — everything imports in one click</li>
+      </ol>
+      <div class="tip-box"><strong>Run 2–3 different prompts per session</strong> for the best coverage. Each prompt targets different source types so results don't overlap.</div>
+      <div class="note-box">Best day: Tuesday or Wednesday morning. Government agencies post Monday–Tuesday so mid-week searches catch everything.</div>
+
     </div>
 
-    <!-- SOURCES -->
     <div class="guide-section" id="sources">
       <h2><span class="section-num">4</span> Managing Sources</h2>
 
-      <h3 id="auto-sources">Auto-searchable Sources</h3>
-      <p>Auto-searchable sources are publicly indexed sites that Claude's web search can access without a login or CAPTCHA. The monitor comes pre-loaded with 23 sources across four categories. Sources are permanently stored in the HTML file — not your browser — so they work consistently across all devices and survive any browser data clearing or HTML updates.</p>
+      <h3 id="auto-sources">Sources — now in the Portals tab</h3>
+      <p>All 23 sources are now organized as direct links in the <strong>Portals tab</strong> — divided into Government & procurement, Foundations, Nonprofit & associations, and Academic sections alongside the login-required manual portals. Sources are permanently stored in the HTML file and never in your browser.</p>
 
       <h3 id="toggles">Enabling & Disabling Sources</h3>
       <p>Each source card in the Sources tab has an <strong>On/Off</strong> toggle button. Green = included in next search, gray = excluded. Your toggle settings save automatically to your browser. Start with 5–8 sources enabled to stay within rate limits.</p>
@@ -419,8 +424,8 @@ footer a{color:var(--pink);text-decoration:none;}
           <tr><td>Failed to fetch</td><td>Network error — search never ran. Wait 10–15 seconds and try again. Check app.netlify.com → pop-proxy → Functions to confirm proxy is live.</td></tr>
           <tr><td>Invalid x-api-key</td><td>Re-enter your API key. Create a new one at console.anthropic.com if needed — keys are only shown once.</td></tr>
           <tr><td>Rate limit error</td><td>Wait 60 seconds and retry. Click ⏱ 60s cooldown in the header to track the reset. Reduce enabled sources if it keeps happening.</td></tr>
-          <tr><td>Could not parse results</td><td>Try more specific keywords and search again.</td></tr>
-          <tr><td>No results found</td><td>Broaden or change keywords. Confirm sources are enabled in the Sources tab.</td></tr>
+          <tr><td>Claude returns no results</td><td>Try a different prompt or broader keywords. Check that Claude Pro web search is active.</td></tr>
+          <tr><td>Import from Claude not working</td><td>Make sure you paste the full Claude response. Both JSON and formatted text are supported.</td></tr>
           <tr><td>Pipeline disappeared</td><td>Browser localStorage was cleared. Data is device-local — this is a known limitation.</td></tr>
           <tr><td>Source counter shows wrong number</td><td>Hard refresh the page: Cmd+Shift+R (Mac) or Ctrl+Shift+R (Windows).</td></tr>
         </tbody>
