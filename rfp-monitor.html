@@ -328,7 +328,6 @@
     <button class="tab"     onclick="go('portals')">Manual Portals</button>
     <button class="tab"     onclick="go('winloss')">Win / Loss</button>
     <button class="tab"     onclick="go('digest')">Email Digest</button>
-    <button class="tab"     onclick="go('sources')">Sources</button>
   </div>
 
   <!-- ══ PIPELINE ══ -->
@@ -710,4 +709,18 @@
 </div>
 
 </body>
-</html>
+</html
+/* ─── TAB NAVIGATION ─── */
+function go(n) {
+  document.querySelectorAll('.tab').forEach((tab, i) => {
+    tab.classList.toggle('on', ['pipeline','search','portals','winloss','digest'][i] === n);
+  });
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+  const panel = document.getElementById('tab-' + n);
+  if (panel) panel.classList.add('on');
+  if (n === 'portals') renderUserPortals();
+  if (n === 'winloss') renderWinLoss && renderWinLoss();
+  if (n === 'digest')  renderDigest  && renderDigest();
+}
+
+>
