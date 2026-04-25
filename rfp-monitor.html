@@ -494,7 +494,7 @@
       </div>
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
         <button class="btn primary" id="rb" onclick="runSearch()">Search all sources →</button>
-        <span style="font-size:12px;color:var(--muted);">Searches <span id="src-ct">0</span> auto sources · ~20–40 seconds</span>
+        <span style="font-size:12px;color:var(--muted);"><span id="src-ct">0</span> sources enabled · ~20–40 seconds per search</span>
       </div>
       <div id="search-eb" style="margin-top:12px;"></div>
     </div>
@@ -1005,7 +1005,7 @@ function updatePipeline(){
   document.getElementById('p-lost').textContent      = cnt('lost');
   const pv = pipeline.filter(o => ['new','pursuing','submitted'].includes(o.status)).reduce((s,o)=>s+(parseInt(o.value)||0),0);
   document.getElementById('p-value').textContent = pv > 0 ? '$' + pv.toLocaleString() : '$0';
-  document.getElementById('src-ct').textContent  = sources.length;
+  document.getElementById('src-ct').textContent  = sources.filter(s=>s.enabled!==false).length;
   updateWL();
 }
 
