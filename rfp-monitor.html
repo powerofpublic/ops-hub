@@ -425,11 +425,7 @@ html>
 </svg></a>
   <div style="display:flex;align-items:center;gap:10px;">
     <span id="rfp-auth-name" style="font-size:11px;color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:4px 10px;white-space:nowrap;"></span>
-    <div id="hdr-timer-wrap" style="display:flex;align-items:center;gap:8px;">
-      <button id="hdr-timer-btn" onclick="toggleHeaderTimer()" title="Click after each search to start 60-second rate limit countdown" style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.6);border-radius:6px;padding:5px 12px;font-size:11px;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;display:flex;align-items:center;gap:5px;">⏱ 60s cooldown</button>
-      <span id="hdr-timer-display" style="display:none;font-size:12px;font-weight:700;color:var(--pink);min-width:32px;text-align:center;"></span>
-    </div>
-    <a href="index.html" style="background:transparent;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.5);border-radius:6px;padding:5px 10px;font-size:11px;font-family:'Plus Jakarta Sans',sans-serif;text-decoration:none;">← Hub</a>
+        <a href="index.html" style="background:transparent;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.5);border-radius:6px;padding:5px 10px;font-size:11px;font-family:'Plus Jakarta Sans',sans-serif;text-decoration:none;">← Hub</a>
     <button onclick="window._fbSignOut()" style="background:transparent;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.5);border-radius:6px;padding:5px 10px;font-size:11px;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;">Sign out</button>
   </div>
 </header>
@@ -446,12 +442,7 @@ html>
 
   <!-- API KEY BANNER -->
   <div class="key-banner" id="kb">
-    <label for="ki">Anthropic API key</label>
-    <input type="password" id="ki" placeholder="sk-ant-api03-…" autocomplete="off" />
-    <button class="btn primary sm" onclick="saveKey()">Save key</button>
-    <span class="key-saved" id="kok" style="display:none;">✓ Saved</span>
-    <button class="btn sm danger" id="kclr" onclick="clearKey()" style="display:none;">Remove</button>
-  </div>
+    
 
   <!-- PIPELINE SUMMARY -->
   <div class="pipeline-bar">
@@ -571,10 +562,7 @@ html>
 
   </div>
 
-  <!-- ══ SOURCES ══ -->
-
-
-<div id="tab-portals" class="panel">
+  <div id="tab-portals" class="panel">
 
     <!-- SINGLE COMBINED INFO BOX — matches Sources tab style -->
     <div style="background:#FBF3F8;border:1.5px solid #F0C8DF;border-left:4px solid #E8187A;border-radius:10px;padding:16px 20px;margin-bottom:20px;">
@@ -903,8 +891,6 @@ html>
     </div>
   </div>
 
-  <!-- ══ SOURCES ══ -->
-
   <div id="tab-sources" class="panel">
 
     <!-- SINGLE COMBINED INFO BOX -->
@@ -1057,7 +1043,7 @@ function persist(){
 
 /* ─── API KEY ─── */
 function syncKeyUI(){
-  const has = !!localStorage.getItem('pop_key');
+  const has = !!localStorage.getItem('');
   document.getElementById('kok').style.display  = has ? 'inline' : 'none';
   document.getElementById('kclr').style.display = has ? 'inline' : 'none';
   document.getElementById('kok2').style.display  = has ? 'inline' : 'none';
@@ -1067,20 +1053,13 @@ function syncKeyUI(){
 function saveKey(){
   const k = document.getElementById('ki').value.trim();
   if(!k) return;
-  localStorage.setItem('pop_key', k);
+  localStorage.setItem('', k);
   document.getElementById('ki').value = '';
-  syncKeyUI();
-}
-function saveKey2(){
-  const k = document.getElementById('ki2').value.trim();
-  if(!k) return;
-  localStorage.setItem('pop_key', k);
-  document.getElementById('ki2').value = '';
   syncKeyUI();
 }
 function clearKey(){
   if(!confirm('Remove saved API key?')) return;
-  localStorage.removeItem('pop_key');
+  localStorage.removeItem('');
   document.getElementById('kb').classList.remove('gone');
   syncKeyUI();
 }
@@ -1474,101 +1453,6 @@ function doExport(){
 }
 
 /* ─── API SEARCH ─── */
-async function runSearch(){
-  const key=localStorage.getItem('pop_key');
-  if(!key){
-    document.getElementById('search-eb').innerHTML=`<div class="ebox">Please enter and save your Anthropic API key above before searching.</div>`;
-    return;
-  }
-  const kwExtra=document.getElementById('s-kw').value.trim();
-  const typeFilter=document.getElementById('s-type').value;
-  const exclude=document.getElementById('s-excl').value.trim();
-  const geo=document.getElementById('s-geo').value.trim();
-
-  document.getElementById('search-eb').innerHTML='';
-  document.getElementById('pending-section').style.display='none';
-  document.getElementById('rb').disabled=true;
-  document.getElementById('rb').textContent='Searching…';
-
-  const filteredSources=(typeFilter==='all'?sources:sources.filter(s=>s.type===typeFilter)).filter(s=>s.enabled!==false);
-  const srcList=filteredSources.map(s=>`- ${s.name} (${s.type}): ${s.url}${s.kw?' | focus: '+s.kw:''}`).join('\n');
-
-  let focus='health communications, social marketing, behavior change, community outreach, maternal/child health, health equity, public health education, strategic communications consulting';
-  if(kwExtra) focus=kwExtra+', '+focus;
-  if(geo)     focus+='. Geographic focus: '+geo;
-  if(exclude) focus+='. Exclude opportunities focused on: '+exclude;
-
-  const prompt=`Find active RFPs matching health communications consulting. Focus: ${focus}
-
-Sources:
-${srcList}
-
-Return JSON array only. Fields per item: "title","org","type"(Government/Foundation/Nonprofit / Association/Academic),"deadline"(YYYY-MM-DD/Rolling/Unknown),"summary"(1-2 sentences),"url".
-JSON only, no markdown.`;
-
-  try{
-    const resp=await fetch('https://pop-proxy.netlify.app/.netlify/functions/proxy',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},
-      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1500,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:prompt}]})
-    });
-    if(!resp.ok){const e=await resp.json().catch(()=>({error:{message:'HTTP '+resp.status}}));throw new Error(e.error?.message||'API error '+resp.status);}
-    const data=await resp.json();
-
-    // The model uses web_search tool — response has tool_use, tool_result, and text blocks
-    // We want only the LAST text block which contains the final JSON answer
-    const textBlocks = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text);
-    const text = textBlocks[textBlocks.length - 1] || '';
-
-    // Strip markdown code fences if present
-    const cleaned = text.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
-
-    // Try multiple extraction strategies
-    let parsed = null;
-
-    // Strategy 1: entire response is a JSON array
-    if(cleaned.startsWith('[')){
-      try{ parsed = JSON.parse(cleaned); }catch(e){}
-    }
-
-    // Strategy 2: find JSON array with balanced bracket matching
-    if(!parsed){
-      let depth=0, start=-1, end=-1;
-      for(let i=0;i<cleaned.length;i++){
-        if(cleaned[i]==='['){ if(depth===0) start=i; depth++; }
-        else if(cleaned[i]===']'){ depth--; if(depth===0){ end=i; break; } }
-      }
-      if(start>=0 && end>start){
-        try{ parsed = JSON.parse(cleaned.slice(start, end+1)); }catch(e){}
-      }
-    }
-
-    // Strategy 3: try parsing entire cleaned text as JSON
-    if(!parsed){
-      try{ parsed = JSON.parse(cleaned); }catch(e){}
-    }
-
-    if(!parsed || !Array.isArray(parsed) || parsed.length===0){
-      // Show what came back for debugging, then friendly message
-      console.warn('Raw response:', text);
-      throw new Error('No results found for that search. Try different keywords or check that sources are enabled.');
-    }
-
-    pending = parsed.map((r,i)=>({...r,id:Date.now()+i}));
-    renderPending();
-  }catch(e){
-    document.getElementById('search-eb').innerHTML=`<div class="ebox">${e.message}</div>`;
-    // Only start countdown if we actually hit the API (rate limit or successful call)
-    // Don't count down for fetch failures or key errors
-    const msg = e.message || '';
-    if(msg.includes('rate limit') || msg.includes('No results') || msg.includes('parse')){
-      }
-  }finally{
-    document.getElementById('rb').disabled=false;
-    document.getElementById('rb').textContent='Search all sources →';
-  }
-}
-
 function renderPending(){
   const el=document.getElementById('pending-list');
   const sec=document.getElementById('pending-section');
@@ -1761,51 +1645,6 @@ function removePortal(id){
 
 
 /* ─── RATE LIMIT COUNTDOWN ─── */
-/* ─── MANUAL RATE LIMIT TIMER ─── */
-let _hdrTimer = null;
-function toggleHeaderTimer() {
-  if (_hdrTimer) {
-    // Already running — cancel it
-    clearInterval(_hdrTimer);
-    _hdrTimer = null;
-    resetHeaderTimer();
-    return;
-  }
-  let secs = 60;
-  const btn = document.getElementById('hdr-timer-btn');
-  const disp = document.getElementById('hdr-timer-display');
-  disp.style.display = 'inline-block';
-  btn.style.borderColor = 'rgba(232,24,122,0.5)';
-  btn.style.color = 'rgba(255,255,255,0.9)';
-  btn.textContent = '✕ cancel';
-
-  function tick() {
-    secs--;
-    if (secs <= 0) {
-      clearInterval(_hdrTimer);
-      _hdrTimer = null;
-      disp.textContent = '✓';
-      disp.style.color = '#1A8C5B';
-      btn.textContent = '⏱ 60s cooldown';
-      btn.style.borderColor = 'rgba(26,140,91,0.5)';
-      btn.style.color = 'rgba(26,140,91,0.9)';
-      setTimeout(resetHeaderTimer, 3000);
-      return;
-    }
-    disp.textContent = secs + 's';
-    disp.style.color = secs <= 15 ? '#D4A017' : '#E8187A';
-  }
-  tick();
-  _hdrTimer = setInterval(tick, 1000);
-}
-function resetHeaderTimer() {
-  const btn = document.getElementById('hdr-timer-btn');
-  const disp = document.getElementById('hdr-timer-display');
-  if(btn) { btn.textContent = '⏱ 60s cooldown'; btn.style.borderColor='rgba(255,255,255,0.15)'; btn.style.color='rgba(255,255,255,0.6)'; }
-  if(disp) { disp.style.display='none'; disp.textContent=''; disp.style.color='var(--pink)'; }
-}
-
-
 /* ─── COPY PROMPT ─── */
 function cp(id, btn) {
   const el = document.getElementById(id);
@@ -1823,100 +1662,6 @@ function cp(id, btn) {
     btn.textContent = 'Copied ✓';
     setTimeout(() => { btn.textContent = 'Copy prompt'; }, 1800);
   });
-}
-
-/* ─── IMPORT FROM CLAUDE ─── */
-function importFromClaude() {
-  const raw = document.getElementById('claude-import-text').value.trim();
-  const status = document.getElementById('import-status');
-  if (!raw) { status.textContent = 'Please paste Claude results first.'; return; }
-
-  const added = [];
-  const lines = raw.split('
-');
-  let current = {};
-
-  // Try JSON array first
-  try {
-    const cleaned = raw.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
-    const start = cleaned.indexOf('[');
-    const jsonStr = start >= 0 ? cleaned.slice(start) : cleaned;
-    const items = JSON.parse(jsonStr);
-    if (Array.isArray(items) && items.length) {
-      items.forEach(item => {
-        if (item.title || item.org) {
-          pipeline.push({
-            id: Date.now() + Math.random(),
-            title: item.title || item.name || 'Untitled',
-            org:   item.org || item.organization || item.funder || '',
-            type:  item.type || 'Government',
-            deadline: item.deadline || '',
-            url:   item.url || item.link || '',
-            summary: item.description || item.summary || '',
-            status: 'new',
-            gngScore: null,
-            notes: '',
-            value: ''
-          });
-          added.push(item.title || item.org);
-        }
-      });
-      persist(); doFilter(); updatePipeline();
-      status.textContent = `✓ Added ${added.length} opportunities`;
-      status.style.color = 'var(--green)';
-      document.getElementById('claude-import-text').value = '';
-      setTimeout(() => { status.textContent = ''; }, 3000);
-      return;
-    }
-  } catch(e) {}
-
-  // Fallback: parse formatted text line by line
-  const titlePats  = [/^\d+\.\s+\*{0,2}(.+?)\*{0,2}$/, /^[-•]\s+\*{0,2}(.+?)\*{0,2}$/, /^\*{1,2}(.+?)\*{1,2}$/];
-  const orgPats    = [/\*{0,2}(?:org|organization|agency|funder)[:\s]+\*{0,2}(.+)/i];
-  const deadPats   = [/\*{0,2}deadline[:\s]+\*{0,2}(.+)/i];
-  const urlPats    = [/\*{0,2}(?:link|url|source)[:\s]+\*{0,2}(https?:\/\/\S+)/i, /(https?:\/\/\S+)/];
-  const descPats   = [/\*{0,2}description[:\s]+\*{0,2}(.+)/i, /\*{0,2}summary[:\s]+\*{0,2}(.+)/i];
-
-  function tryMatch(line, pats) {
-    for (const p of pats) { const m = line.match(p); if (m) return m[1].trim().replace(/\*+/g,''); }
-    return null;
-  }
-
-  function saveCurrentItem() {
-    if (current.title) {
-      pipeline.push({
-        id: Date.now() + Math.random(),
-        title: current.title, org: current.org||'', type: current.type||'Government',
-        deadline: current.deadline||'', url: current.url||'', summary: current.desc||'',
-        status: 'new', gngScore: null, notes: '', value: ''
-      });
-      added.push(current.title);
-    }
-    current = {};
-  }
-
-  lines.forEach(line => {
-    const trimmed = line.trim();
-    if (!trimmed) { if (current.title) saveCurrentItem(); return; }
-    const titleMatch = tryMatch(trimmed, titlePats);
-    if (titleMatch && titleMatch.length > 5) { if (current.title) saveCurrentItem(); current.title = titleMatch; return; }
-    const org  = tryMatch(trimmed, orgPats);  if (org)  { current.org  = org;  return; }
-    const dead = tryMatch(trimmed, deadPats); if (dead) { current.deadline = dead; return; }
-    const url  = tryMatch(trimmed, urlPats);  if (url)  { current.url  = url;  return; }
-    const desc = tryMatch(trimmed, descPats); if (desc) { current.desc = desc; return; }
-  });
-  if (current.title) saveCurrentItem();
-
-  if (added.length) {
-    persist(); doFilter(); updatePipeline();
-    status.textContent = `✓ Added ${added.length} opportunities`;
-    status.style.color = 'var(--green)';
-    document.getElementById('claude-import-text').value = '';
-    setTimeout(() => { status.textContent = ''; }, 3000);
-  } else {
-    status.textContent = 'Could not find opportunities in that text. Try a different format.';
-    status.style.color = 'var(--pink)';
-  }
 }
 
 

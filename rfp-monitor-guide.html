@@ -264,13 +264,13 @@ footer a{color:var(--pink);text-decoration:none;}
       <h2><span class="section-num">2</span> Initial Setup</h2>
 
       <h3 id="api-key">Getting your API Key</h3>
-      <p>The RFP Monitor requires an Anthropic API key to run searches. You only need to enter this once per device.</p>
+      <p>The RFP Monitor requires an Anthropic Claude Pro subscription to run searches. You only need to enter this once per device.</p>
       <ol>
         <li>Go to <strong>console.anthropic.com</strong> and sign in</li>
         <li>Click <strong>API Keys</strong> in the left sidebar</li>
         <li>Click <strong>Create Key</strong> — name it "RFP Monitor"</li>
-        <li>Copy the full key immediately — it starts with <code>sk-ant-</code> and is only shown once</li>
-        <li>Open the RFP Monitor and paste the key into the API key field</li>
+        <li>Copy the full key immediately — it starts with <code></code> and is only shown once</li>
+        <li>Open the RFP Monitor and paste the key into the Claude Pro subscription field</li>
         <li>Click <strong>Save key</strong></li>
       </ol>
       <div class="warn-box"><strong>Important:</strong> The key is only shown once when created. If you navigate away before copying it, you will need to delete it and create a new one. Always copy it immediately.</div>
@@ -348,44 +348,21 @@ footer a{color:var(--pink);text-decoration:none;}
     </div>
 
     <!-- RATE LIMIT & TIMER -->
-    <div class="guide-section" id="rate-limit">
-      <h2><span class="section-num">★</span> Rate Limit & Cooldown Timer</h2>
-      <p>The Anthropic API limits you to 30,000 input tokens per minute. Each search uses approximately 8,000–15,000 tokens depending on how many sources are enabled. Searching too quickly back-to-back will trigger a rate limit error.</p>
-      <div class="tip-box"><strong>Wait 60 seconds between searches.</strong> The rate limit resets every minute automatically.</div>
-
-      <h3 id="manual-timer">Manual Cooldown Timer</h3>
-      <p>A <strong>⏱ 60s cooldown</strong> button lives permanently in the header bar (top right, next to ← Hub). After your search results appear, click it to start a 60-second countdown so you know exactly when it is safe to search again.</p>
-      <ul>
-        <li>Counter turns <strong>amber</strong> when under 15 seconds remaining</li>
-        <li>Shows <strong>✓ green</strong> when ready — resets automatically after 3 seconds</li>
-        <li>Click again mid-countdown to cancel it</li>
-        <li>Completely separate from search logic — clicking it never triggers or affects a search</li>
-      </ul>
-      <div class="note-box">The timer is manual by design. You start it after results appear, so it counts down while you review results — not while waiting for the search to complete.</div>
-
-      <h3 id="failed-to-fetch">"Failed to fetch" errors</h3>
-      <p>"Failed to fetch" is a network error — it means the browser could not reach the Netlify proxy. The search never ran and no tokens were used. It is not a rate limit issue. Common causes:</p>
-      <ul>
-        <li><strong>Proxy went cold</strong> — free Netlify functions occasionally need a moment to wake up. Try again after 10–15 seconds.</li>
-        <li><strong>Brief internet drop</strong> — a momentary connection loss during the 20–40 second search window</li>
-        <li><strong>Proxy not deployed</strong> — check <strong>app.netlify.com → pop-proxy → Functions</strong> to confirm <code>proxy</code> is listed</li>
-      </ul>
-
-      <h3>Cost reference</h3>
-      <table class="guide-table">
-        <thead><tr><th>Item</th><th>Details</th></tr></thead>
-        <tbody>
-          <tr><td>Cost per search</td><td>~5¢ (input + output tokens)</td></tr>
-          <tr><td>$5 in credits</td><td>~100 searches</td></tr>
-          <tr><td>At weekly use</td><td>$5 lasts approximately 8–12 months</td></tr>
-          <tr><td>Rate limit</td><td>30,000 input tokens/minute — resets every 60 seconds</td></tr>
-          <tr><td>Check usage</td><td>console.anthropic.com → Usage</td></tr>
-        </tbody>
-      </table>
+        <div class="guide-section" id="rate-limit">
+      <h2><span class="section-num">★</span> Cost & Searching</h2>
+      <p>The RFP Monitor no longer uses the Anthropic API for search. All searching is done through your existing Claude Pro subscription at claude.ai — at no additional cost.</p>
+      <div class="tip-box"><strong>Zero per-search cost.</strong> Your Claude Pro subscription covers all searches. No API credits needed.</div>
+      <h3>Workflow</h3>
+      <ol>
+        <li>Go to the <strong>Search</strong> tab and click <strong>Copy prompt</strong></li>
+        <li>Open <strong>claude.ai</strong> in a new tab, paste the prompt</li>
+        <li>Copy Claude's full response</li>
+        <li>Return to your portal → <strong>Pipeline</strong> tab → paste into <strong>Import from Claude</strong></li>
+        <li>Click <strong>+ Add all to pipeline</strong></li>
+      </ol>
     </div>
 
-    <!-- PIPELINE -->
-    <div class="guide-section" id="pipeline">
+<div class="guide-section" id="pipeline">
       <h2><span class="section-num">5</span> Managing Your Pipeline</h2>
 
       <h3 id="statuses">Opportunity Statuses</h3>
@@ -422,8 +399,8 @@ footer a{color:var(--pink);text-decoration:none;}
         <thead><tr><th>Error</th><th>Fix</th></tr></thead>
         <tbody>
           <tr><td>Failed to fetch</td><td>Network error — search never ran. Wait 10–15 seconds and try again. Check app.netlify.com → pop-proxy → Functions to confirm proxy is live.</td></tr>
-          <tr><td>Invalid x-api-key</td><td>Re-enter your API key. Create a new one at console.anthropic.com if needed — keys are only shown once.</td></tr>
-          <tr><td>Rate limit error</td><td>Wait 60 seconds and retry. Click ⏱ 60s cooldown in the header to track the reset. Reduce enabled sources if it keeps happening.</td></tr>
+          <tr><td>Invalid x-api-key</td><td>Re-enter your Claude Pro subscription. Create a new one at console.anthropic.com if needed — keys are only shown once.</td></tr>
+          <tr><td>Claude returns no results</td><td>Try a different prompt or broader keywords. Run 2–3 different prompts per session for best coverage.</td></tr>
           <tr><td>Claude returns no results</td><td>Try a different prompt or broader keywords. Check that Claude Pro web search is active.</td></tr>
           <tr><td>Import from Claude not working</td><td>Make sure you paste the full Claude response. Both JSON and formatted text are supported.</td></tr>
           <tr><td>Pipeline disappeared</td><td>Browser localStorage was cleared. Data is device-local — this is a known limitation.</td></tr>
