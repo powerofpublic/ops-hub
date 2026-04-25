@@ -1470,17 +1470,60 @@ JSON only, no markdown.`;
     });
     if(!resp.ok){const e=await resp.json().catch(()=>({error:{message:'HTTP '+resp.status}}));throw new Error(e.error?.message||'API error '+resp.status);}
     const data=await resp.json();
-    let text=''; for(const b of(data.content||[]))if(b.type==='text')text+=b.text;
-    const m=text.match(/\[[\s\S]*\]/);
-    if(!m) throw new Error('Could not parse results. Please try again.');
-    pending=JSON.parse(m[0]).map((r,i)=>({...r,id:Date.now()+i}));
+
+    // The model uses web_search tool — response has tool_use, tool_result, and text blocks
+    // We want only the LAST text block which contains the final JSON answer
+    const textBlocks = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text);
+    const text = textBlocks[textBlocks.length - 1] || '';
+
+    // Strip markdown code fences if present
+    const cleaned = text.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
+
+    // Try multiple extraction strategies
+    let parsed = null;
+
+    // Strategy 1: entire response is a JSON array
+    if(cleaned.startsWith('[')){
+      try{ parsed = JSON.parse(cleaned); }catch(e){}
+    }
+
+    // Strategy 2: find JSON array with balanced bracket matching
+    if(!parsed){
+      let depth=0, start=-1, end=-1;
+      for(let i=0;i<cleaned.length;i++){
+        if(cleaned[i]==='['){ if(depth===0) start=i; depth++; }
+        else if(cleaned[i]===']'){ depth--; if(depth===0){ end=i; break; } }
+      }
+      if(start>=0 && end>start){
+        try{ parsed = JSON.parse(cleaned.slice(start, end+1)); }catch(e){}
+      }
+    }
+
+    // Strategy 3: try parsing entire cleaned text as JSON
+    if(!parsed){
+      try{ parsed = JSON.parse(cleaned); }catch(e){}
+    }
+
+    if(!parsed || !Array.isArray(parsed) || parsed.length===0){
+      // Show what came back for debugging, then friendly message
+      console.warn('Raw response:', text);
+      throw new Error('No results found for that search. Try different keywords or check that sources are enabled.');
+    }
+
+    pending = parsed.map((r,i)=>({...r,id:Date.now()+i}));
     renderPending();
+    startRateCountdown();
   }catch(e){
     document.getElementById('search-eb').innerHTML=`<div class="ebox">${e.message}</div>`;
+    // Only start countdown if we actually hit the API (rate limit or successful call)
+    // Don't count down for fetch failures or key errors
+    const msg = e.message || '';
+    if(msg.includes('rate limit') || msg.includes('No results') || msg.includes('parse')){
+      startRateCountdown();
+    }
   }finally{
     document.getElementById('rb').disabled=false;
     document.getElementById('rb').textContent='Search all sources →';
-    startRateCountdown();
   }
 }
 
