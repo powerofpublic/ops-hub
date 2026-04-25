@@ -277,7 +277,22 @@
       .search-opts { grid-template-columns: 1fr; }
       .portal-grid { grid-template-columns: 1fr; }
     }
-  </style>
+  
+    .portal-link { position:relative; }
+    .portal-check { position:absolute;top:6px;right:6px;width:16px;height:16px;cursor:pointer;accent-color:var(--emerald); }
+    .portal-link.checked { opacity:0.55;background:var(--surface2); }
+    .portal-link.checked .portal-link-name { text-decoration:line-through;color:var(--muted); }
+    .portal-check-label { font-size:10px;color:var(--emerald);font-weight:700;display:none; }
+    .portal-link.checked .portal-check-label { display:inline; }
+
+
+    .dl-urgent { background:#FFF0F0;color:#CC0000;border-color:#FFCCCC;font-weight:700;animation:pulse-urgent 1.5s infinite; }
+    .dl-warn   { background:#FFF8EC;color:#9A5800;border-color:#F5D98A; }
+    .dl-past   { background:#F5F5F5;color:#999;border-color:#DDD;text-decoration:line-through; }
+    .dl-unknown{ background:#F5F5F5;color:#999;border-color:#DDD; }
+    @keyframes pulse-urgent { 0%,100%{opacity:1} 50%{opacity:.7} }
+
+</style>
 </head>
 <body>
 
@@ -339,13 +354,7 @@
   
 
   <!-- TABS -->
-  <div class="tabs">
-    <button class="tab on"  onclick="go('pipeline')">Pipeline</button>
-    <button class="tab"     onclick="go('search')">Search</button>
-    <button class="tab"     onclick="go('portals')">Manual Portals</button>
-    <button class="tab"     onclick="go('winloss')">Win / Loss</button>
-    <button class="tab"     onclick="go('digest')">Email Digest</button>
-  </div>
+  
 
   <div id="tab-pipeline" class="panel on">
     <div class="ctrls">
@@ -454,63 +463,63 @@
     </div>
 
     <div class="portal-section">
-      <h3>Government &amp; procurement</h3>
+      <h3>Government &amp; Procurement</h3>
       <p class="portal-note">Federal, state, and local procurement systems plus RFP aggregators.</p>
       <div class="portal-grid">        <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">SAM.gov (Federal)</div>
             <div class="portal-link-desc">sam.gov</div>
           </div>
-          <a href="https://sam.gov/search/?index=opp&sort=-modifiedDate&sfm%5Bstatus%5D%5B0%5D=Active" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://sam.gov/search/?index=opp&sort=-modifiedDate&sfm%5Bstatus%5D%5B0%5D=Active" onchange="togglePortalCheck('https://sam.gov/search/?index=opp&sort=-modifiedDate&sfm%5Bstatus%5D%5B0%5D=Active',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://sam.gov/search/?index=opp&sort=-modifiedDate&sfm%5Bstatus%5D%5B0%5D=Active" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">rfpmart.com — Health & Marketing</div>
             <div class="portal-link-desc">rfpmart.com</div>
           </div>
-          <a href="https://rfpmart.com/marketing-and-branding-rfp-government.php" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://rfpmart.com/marketing-and-branding-rfp-government.php" onchange="togglePortalCheck('https://rfpmart.com/marketing-and-branding-rfp-government.php',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://rfpmart.com/marketing-and-branding-rfp-government.php" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">HigherGov — DC OCP</div>
             <div class="portal-link-desc">highergov.com</div>
           </div>
-          <a href="https://www.highergov.com/sl/agency/contracting-and-procurement/" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://www.highergov.com/sl/agency/contracting-and-procurement/" onchange="togglePortalCheck('https://www.highergov.com/sl/agency/contracting-and-procurement/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://www.highergov.com/sl/agency/contracting-and-procurement/" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">Georgia Procurement Registry</div>
             <div class="portal-link-desc">ssl.doas.state.ga.us</div>
           </div>
-          <a href="https://ssl.doas.state.ga.us/gpr/" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://ssl.doas.state.ga.us/gpr/" onchange="togglePortalCheck('https://ssl.doas.state.ga.us/gpr/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://ssl.doas.state.ga.us/gpr/" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">NC eVP Solicitations</div>
             <div class="portal-link-desc">evp.nc.gov</div>
           </div>
-          <a href="https://evp.nc.gov/solicitations/" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://evp.nc.gov/solicitations/" onchange="togglePortalCheck('https://evp.nc.gov/solicitations/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://evp.nc.gov/solicitations/" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">Delaware Bid Directory</div>
             <div class="portal-link-desc">mmp.delaware.gov</div>
           </div>
-          <a href="https://mmp.delaware.gov/Bids/" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://mmp.delaware.gov/Bids/" onchange="togglePortalCheck('https://mmp.delaware.gov/Bids/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://mmp.delaware.gov/Bids/" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">grants.gov (Federal grants)</div>
             <div class="portal-link-desc">grants.gov</div>
           </div>
-          <a href="https://grants.gov/search-grants" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://grants.gov/search-grants" onchange="togglePortalCheck('https://grants.gov/search-grants',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://grants.gov/search-grants" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">rfpmart — Social Media & Outreach</div>
             <div class="portal-link-desc">rfpmart.com</div>
           </div>
-          <a href="https://rfpmart.com/social-media-internet-marketing-rfp-government.php" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://rfpmart.com/social-media-internet-marketing-rfp-government.php" onchange="togglePortalCheck('https://rfpmart.com/social-media-internet-marketing-rfp-government.php',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://rfpmart.com/social-media-internet-marketing-rfp-government.php" target="_blank" rel="noopener">Open ↗</a>
         </div></div>
     </div>
 
@@ -522,103 +531,103 @@
             <div class="portal-link-name">CDC Foundation</div>
             <div class="portal-link-desc">cdcfoundation.org</div>
           </div>
-          <a href="https://cdcfoundation.org/request-for-proposals" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://cdcfoundation.org/request-for-proposals" onchange="togglePortalCheck('https://cdcfoundation.org/request-for-proposals',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://cdcfoundation.org/request-for-proposals" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">Philanthropy News Digest</div>
             <div class="portal-link-desc">philanthropynewsdigest.org</div>
           </div>
-          <a href="https://philanthropynewsdigest.org/rfps" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://philanthropynewsdigest.org/rfps" onchange="togglePortalCheck('https://philanthropynewsdigest.org/rfps',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://philanthropynewsdigest.org/rfps" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">Elevance Health Foundation</div>
             <div class="portal-link-desc">elevancehealth.foundation</div>
           </div>
-          <a href="https://elevancehealth.foundation/for-grantseekers" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://elevancehealth.foundation/for-grantseekers" onchange="togglePortalCheck('https://elevancehealth.foundation/for-grantseekers',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://elevancehealth.foundation/for-grantseekers" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">Horizon Foundation (MD)</div>
             <div class="portal-link-desc">thehorizonfoundation.org</div>
           </div>
-          <a href="https://thehorizonfoundation.org/tag/rfp/" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://thehorizonfoundation.org/tag/rfp/" onchange="togglePortalCheck('https://thehorizonfoundation.org/tag/rfp/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://thehorizonfoundation.org/tag/rfp/" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">Grantmakers in Health</div>
             <div class="portal-link-desc">gih.org</div>
           </div>
-          <a href="https://gih.org" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://gih.org" onchange="togglePortalCheck('https://gih.org',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://gih.org" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">New York Health Foundation</div>
             <div class="portal-link-desc">nyhealthfoundation.org</div>
           </div>
-          <a href="https://nyhealthfoundation.org/rfp/" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://nyhealthfoundation.org/rfp/" onchange="togglePortalCheck('https://nyhealthfoundation.org/rfp/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://nyhealthfoundation.org/rfp/" target="_blank" rel="noopener">Open ↗</a>
         </div></div>
     </div>
 
     <div class="portal-section">
-      <h3>Nonprofit &amp; associations</h3>
+      <h3>Nonprofit &amp; Associations</h3>
       <p class="portal-note">Public health associations and communications-specific RFP aggregators.</p>
       <div class="portal-grid">        <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">O'Dwyer's PR — RFPs</div>
             <div class="portal-link-desc">odwyerpr.com</div>
           </div>
-          <a href="https://www.odwyerpr.com/rfps/index.html" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://www.odwyerpr.com/rfps/index.html" onchange="togglePortalCheck('https://www.odwyerpr.com/rfps/index.html',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://www.odwyerpr.com/rfps/index.html" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">NACCHO</div>
             <div class="portal-link-desc">naccho.org</div>
           </div>
-          <a href="https://naccho.org" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://naccho.org" onchange="togglePortalCheck('https://naccho.org',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://naccho.org" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">Public Health Institute (PHI)</div>
             <div class="portal-link-desc">phi.org</div>
           </div>
-          <a href="https://phi.org/work-with-us/rfp-vendor-opportunities/" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://phi.org/work-with-us/rfp-vendor-opportunities/" onchange="togglePortalCheck('https://phi.org/work-with-us/rfp-vendor-opportunities/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://phi.org/work-with-us/rfp-vendor-opportunities/" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">NNPHI</div>
             <div class="portal-link-desc">nnphi.org</div>
           </div>
-          <a href="https://nnphi.org" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://nnphi.org" onchange="togglePortalCheck('https://nnphi.org',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://nnphi.org" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">American Public Health Association</div>
             <div class="portal-link-desc">apha.org</div>
           </div>
-          <a href="https://apha.org" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://apha.org" onchange="togglePortalCheck('https://apha.org',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://apha.org" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">Corporation for Supportive Housing</div>
             <div class="portal-link-desc">csh.org</div>
           </div>
-          <a href="https://csh.org" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://csh.org" onchange="togglePortalCheck('https://csh.org',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://csh.org" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">Everything PR — RFPs</div>
             <div class="portal-link-desc">everything-pr.com</div>
           </div>
-          <a href="https://everything-pr.com/rfp/" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://everything-pr.com/rfp/" onchange="togglePortalCheck('https://everything-pr.com/rfp/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://everything-pr.com/rfp/" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">RFP Database (rfpdb.com)</div>
             <div class="portal-link-desc">rfpdb.com</div>
           </div>
-          <a href="https://rfpdb.com/" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://rfpdb.com/" onchange="togglePortalCheck('https://rfpdb.com/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://rfpdb.com/" target="_blank" rel="noopener">Open ↗</a>
         </div></div>
     </div>
 
@@ -630,7 +639,7 @@
             <div class="portal-link-name">UNC Gillings SPH</div>
             <div class="portal-link-desc">sph.unc.edu</div>
           </div>
-          <a href="https://sph.unc.edu/research/common-public-health-resources/rfp/" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://sph.unc.edu/research/common-public-health-resources/rfp/" onchange="togglePortalCheck('https://sph.unc.edu/research/common-public-health-resources/rfp/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://sph.unc.edu/research/common-public-health-resources/rfp/" target="_blank" rel="noopener">Open ↗</a>
         </div></div>
     </div>
 
@@ -638,171 +647,171 @@
     <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:16px;">Login-required portals</p>
 
     <div class="portal-section">
-      <h3>State procurement portals</h3>
+      <h3>State Procurement Portals</h3>
       <p class="portal-note">Official state eProcurement systems. Browse publicly; login only to bid.</p>
       <div class="portal-grid">        <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">eMMA — Maryland</div>
             <div class="portal-link-desc">eMaryland Marketplace Advantage · all MD state agencies</div>
           </div>
-          <a href="https://emma.maryland.gov/page.aspx/en/rfp/request_browse_public" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://emma.maryland.gov/page.aspx/en/rfp/request_browse_public" onchange="togglePortalCheck('https://emma.maryland.gov/page.aspx/en/rfp/request_browse_public',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://emma.maryland.gov/page.aspx/en/rfp/request_browse_public" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">eVA / VBO — Virginia</div>
             <div class="portal-link-desc">Virginia eProcurement · statewide solicitations</div>
           </div>
-          <a href="https://www.eva.virginia.gov/index.htm" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://www.eva.virginia.gov/index.htm" onchange="togglePortalCheck('https://www.eva.virginia.gov/index.htm',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://www.eva.virginia.gov/index.htm" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">DC OCP — Washington, DC</div>
             <div class="portal-link-desc">Office of Contracting and Procurement · all DC agencies</div>
           </div>
-          <a href="https://contracts.ocp.dc.gov/solicitations/search" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://contracts.ocp.dc.gov/solicitations/search" onchange="togglePortalCheck('https://contracts.ocp.dc.gov/solicitations/search',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://contracts.ocp.dc.gov/solicitations/search" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">NC eVP — North Carolina</div>
             <div class="portal-link-desc">NC eProcurement · state solicitations</div>
           </div>
-          <a href="https://evp.nc.gov/solicitations/" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://evp.nc.gov/solicitations/" onchange="togglePortalCheck('https://evp.nc.gov/solicitations/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://evp.nc.gov/solicitations/" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">GPR — Georgia</div>
             <div class="portal-link-desc">Georgia Procurement Registry · state bids</div>
           </div>
-          <a href="https://ssl.doas.state.ga.us/gpr/" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://ssl.doas.state.ga.us/gpr/" onchange="togglePortalCheck('https://ssl.doas.state.ga.us/gpr/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://ssl.doas.state.ga.us/gpr/" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">Delaware Bid Directory</div>
             <div class="portal-link-desc">State of Delaware procurement opportunities</div>
           </div>
-          <a href="https://mmp.delaware.gov/Bids/" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://mmp.delaware.gov/Bids/" onchange="togglePortalCheck('https://mmp.delaware.gov/Bids/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://mmp.delaware.gov/Bids/" target="_blank" rel="noopener">Open ↗</a>
         </div></div>
     </div>
 
     <div class="portal-section">
-      <h3>DC-adjacent &amp; regional</h3>
+      <h3>DC-Adjacent &amp; Regional</h3>
       <p class="portal-note">DC, Maryland, and regional organizations with procurement or grant opportunities.</p>
       <div class="portal-grid">        <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">Events DC</div>
             <div class="portal-link-desc">Events DC · RFPs and vendor opportunities</div>
           </div>
-          <a href="https://eventsdc.com/rfp" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://eventsdc.com/rfp" onchange="togglePortalCheck('https://eventsdc.com/rfp',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://eventsdc.com/rfp" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">Metropolitan Washington COG</div>
             <div class="portal-link-desc">COG procurement and consulting opportunities</div>
           </div>
-          <a href="https://www.mwcog.org/about-us/procurement/" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://www.mwcog.org/about-us/procurement/" onchange="togglePortalCheck('https://www.mwcog.org/about-us/procurement/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://www.mwcog.org/about-us/procurement/" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">WMATA — Metro</div>
             <div class="portal-link-desc">Washington Metro · vendor and consulting RFPs</div>
           </div>
-          <a href="https://www.wmata.com/business/contracting/solicitations.cfm" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://www.wmata.com/business/contracting/solicitations.cfm" onchange="togglePortalCheck('https://www.wmata.com/business/contracting/solicitations.cfm',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://www.wmata.com/business/contracting/solicitations.cfm" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">DC Health (DCDOH)</div>
             <div class="portal-link-desc">DC Dept of Health · grants and procurement</div>
           </div>
-          <a href="https://dchealth.dc.gov/service/grants-and-procurement" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://dchealth.dc.gov/service/grants-and-procurement" onchange="togglePortalCheck('https://dchealth.dc.gov/service/grants-and-procurement',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://dchealth.dc.gov/service/grants-and-procurement" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">DHCF — DC Medicaid</div>
             <div class="portal-link-desc">DC Health Care Finance · RFPs and grants</div>
           </div>
-          <a href="https://dhcf.dc.gov/page/procurement" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://dhcf.dc.gov/page/procurement" onchange="togglePortalCheck('https://dhcf.dc.gov/page/procurement',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://dhcf.dc.gov/page/procurement" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">DC Office of Planning</div>
             <div class="portal-link-desc">DC planning and community development RFPs</div>
           </div>
-          <a href="https://planning.dc.gov/page/rfps-and-procurements" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://planning.dc.gov/page/rfps-and-procurements" onchange="togglePortalCheck('https://planning.dc.gov/page/rfps-and-procurements',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://planning.dc.gov/page/rfps-and-procurements" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">DC DGS Solicitations</div>
             <div class="portal-link-desc">DC Dept of General Services · all solicitations</div>
           </div>
-          <a href="https://dgs.dc.gov/service/solicitations" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://dgs.dc.gov/service/solicitations" onchange="togglePortalCheck('https://dgs.dc.gov/service/solicitations',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://dgs.dc.gov/service/solicitations" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">Prince George's Co. (MD)</div>
             <div class="portal-link-desc">PG County procurement and RFPs</div>
           </div>
-          <a href="https://www.princegeorgescountymd.gov/1226/Bid-Solicitations" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://www.princegeorgescountymd.gov/1226/Bid-Solicitations" onchange="togglePortalCheck('https://www.princegeorgescountymd.gov/1226/Bid-Solicitations',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://www.princegeorgescountymd.gov/1226/Bid-Solicitations" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">Montgomery Co. (MD)</div>
             <div class="portal-link-desc">Montgomery County solicitations</div>
           </div>
-          <a href="https://www.montgomerycountymd.gov/purchasing/solicitations.html" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://www.montgomerycountymd.gov/purchasing/solicitations.html" onchange="togglePortalCheck('https://www.montgomerycountymd.gov/purchasing/solicitations.html',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://www.montgomerycountymd.gov/purchasing/solicitations.html" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">Arlington Co. (VA)</div>
             <div class="portal-link-desc">Arlington County procurement</div>
           </div>
-          <a href="https://www.arlingtonva.us/Government/Departments/Management-and-Finance/Purchasing/Solicitations" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://www.arlingtonva.us/Government/Departments/Management-and-Finance/Purchasing/Solicitations" onchange="togglePortalCheck('https://www.arlingtonva.us/Government/Departments/Management-and-Finance/Purchasing/Solicitations',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://www.arlingtonva.us/Government/Departments/Management-and-Finance/Purchasing/Solicitations" target="_blank" rel="noopener">Open ↗</a>
         </div></div>
     </div>
 
     <div class="portal-section">
-      <h3>PR &amp; communications RFP lists</h3>
+      <h3>PR &amp; Communications RFP Lists</h3>
       <p class="portal-note">Curated lists of communications and marketing RFPs from industry sources.</p>
       <div class="portal-grid">        <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">O'Dwyer's PR — RFPs, RFIs & RFQs</div>
             <div class="portal-link-desc">PR and communications industry RFPs</div>
           </div>
-          <a href="https://www.odwyerpr.com/rfps/index.html" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://www.odwyerpr.com/rfps/index.html" onchange="togglePortalCheck('https://www.odwyerpr.com/rfps/index.html',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://www.odwyerpr.com/rfps/index.html" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">Everything PR — RFPs</div>
             <div class="portal-link-desc">PR agency and communications RFPs</div>
           </div>
-          <a href="https://everything-pr.com/rfp/" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://everything-pr.com/rfp/" onchange="togglePortalCheck('https://everything-pr.com/rfp/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://everything-pr.com/rfp/" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">RFP Database (rfpdb.com)</div>
             <div class="portal-link-desc">Searchable RFP database across all industries</div>
           </div>
-          <a href="https://rfpdb.com/" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://rfpdb.com/" onchange="togglePortalCheck('https://rfpdb.com/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://rfpdb.com/" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">rfpmart — Marketing & Branding</div>
             <div class="portal-link-desc">Marketing, branding, and communications RFPs</div>
           </div>
-          <a href="https://rfpmart.com/marketing-and-branding-rfp-government.php" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://rfpmart.com/marketing-and-branding-rfp-government.php" onchange="togglePortalCheck('https://rfpmart.com/marketing-and-branding-rfp-government.php',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://rfpmart.com/marketing-and-branding-rfp-government.php" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">rfpmart — Social Media & Outreach</div>
             <div class="portal-link-desc">Social media and community outreach RFPs</div>
           </div>
-          <a href="https://rfpmart.com/social-media-internet-marketing-rfp-government.php" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://rfpmart.com/social-media-internet-marketing-rfp-government.php" onchange="togglePortalCheck('https://rfpmart.com/social-media-internet-marketing-rfp-government.php',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://rfpmart.com/social-media-internet-marketing-rfp-government.php" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">HigherGov — Communications & Marketing</div>
             <div class="portal-link-desc">Federal and state communications contracts</div>
           </div>
-          <a href="https://www.highergov.com/sl/agency/contracting-and-procurement/" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://www.highergov.com/sl/agency/contracting-and-procurement/" onchange="togglePortalCheck('https://www.highergov.com/sl/agency/contracting-and-procurement/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://www.highergov.com/sl/agency/contracting-and-procurement/" target="_blank" rel="noopener">Open ↗</a>
         </div></div>
     </div>
 
@@ -814,12 +823,12 @@
             <div class="portal-link-name">BPW Procurement</div>
             <div class="portal-link-desc">Maryland Board of Public Works · state contracts</div>
           </div>
-          <a href="https://bpw.maryland.gov/Pages/procurement.aspx" target="_blank" rel="noopener">Open ↗</a>
+          <input type="checkbox" class="portal-check" data-url="https://bpw.maryland.gov/Pages/procurement.aspx" onchange="togglePortalCheck('https://bpw.maryland.gov/Pages/procurement.aspx',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://bpw.maryland.gov/Pages/procurement.aspx" target="_blank" rel="noopener">Open ↗</a>
         </div></div>
     </div>
 
     <div class="portal-section">
-      <h3>My portals</h3>
+      <h3>My Portals</h3>
       <p class="portal-note">Ask Claude to add portals here permanently.</p>
       <div class="portal-grid" id="user-portal-grid"></div>
     </div>
@@ -842,23 +851,24 @@
 
   <div id="tab-digest" class="panel">
     <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
-        <div>
-          <div class="card-title">Weekly digest</div>
-          <p style="font-size:12.5px;color:var(--muted);line-height:1.55;">A formatted summary of your active pipeline. Copy and paste into an email to yourself or a status update.</p>
-        </div>
-        <div style="display:flex;gap:8px;">
-          <button class="btn primary" onclick="buildDigest()">Generate digest</button>
-          <button class="btn" onclick="copyDigest()">Copy to clipboard</button>
-        </div>
+      <div class="card-title">Weekly Digest</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6;">Generate a plain-text summary of your active pipeline — deadlines, statuses, values, and notes — ready to copy and paste into an email or document.</p>
+      <button id="digest-copy-btn" onclick="exportDigest()" style="background:var(--pink);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;">Generate &amp; Copy Digest</button>
+      <div style="margin-top:12px;">
+        <textarea id="digest-output" style="display:none;width:100%;height:320px;font-family:monospace;font-size:12px;padding:12px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);resize:vertical;line-height:1.6;" readonly></textarea>
       </div>
-      <div class="digest-preview" id="digest-preview">Click "Generate digest" to create your weekly summary.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Saved Searches</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.6;">Save keywords you search often in the Pipeline. Click any saved search to apply it instantly.</p>
+      <div id="saved-searches-list" style="margin-bottom:12px;"></div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input id="new-search-inp" type="text" placeholder="Type a keyword to save..." style="flex:1;padding:7px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;"/>
+        <button onclick="(function(){const v=document.getElementById('new-search-inp').value.trim();if(!v)return;if(savedSearches.includes(v)){alert('Already saved.');return;}savedSearches.unshift(v);if(savedSearches.length>5)savedSearches=savedSearches.slice(0,5);localStorage.setItem('pop_saved_searches',JSON.stringify(savedSearches));document.getElementById('new-search-inp').value='';renderSavedSearches();})()" style="background:var(--pink);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;">Save</button>
+      </div>
     </div>
   </div>
-
-  <!-- ══ SOURCES ══ -->
-
-
 </main>
 
 
@@ -1059,17 +1069,18 @@ function tpill(t){
   return `<span class="pill ${m[t]||'pg'}">${t}</span>`;
 }
 function dlinfo(d){
-  if(!d||d==='Unknown') return {c:'dc',l:'Deadline unknown'};
-  if(d==='Rolling')     return {c:'do',l:'Rolling'};
-  const dt = new Date(d); if(isNaN(dt)) return {c:'dc',l:d};
-  const days = (dt - Date.now())/86400000;
-  const f = dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-  if(days < 0)   return {c:'dc',l:'Closed · '+f};
-  if(days <= 14) return {c:'du',l:'Due '+f};
-  if(days <= 45) return {c:'ds',l:'Due '+f};
-  return               {c:'do',l:'Due '+f};
+  if(!d||d==='Unknown') return {l:'No deadline',c:'dl-unknown'};
+  if(d==='Rolling')     return {l:'Rolling',c:'dl-ok'};
+  const days = Math.ceil((new Date(d)-new Date())/(1000*60*60*24));
+  const fmt  = new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  if(days<0)  return {l:`Expired ${fmt}`,c:'dl-past'};
+  if(days===0) return {l:'Due today!',c:'dl-urgent'};
+  if(days<=7)  return {l:`${days}d left — ${fmt}`,c:'dl-urgent'};
+  if(days<=21) return {l:`${days}d — ${fmt}`,c:'dl-warn'};
+  return {l:fmt,c:'dl-ok'};
 }
-function gngLabel(s){
+
+function gngLabel(s){ if(s==='considering') return 'Under Consideration';
   if(!s) return 'Score it';
   const n=parseInt(s);
   if(n>=70) return 'GO · '+n+'%';
@@ -1137,6 +1148,7 @@ function renderPipeline(list){
             <div class="dl ${dl.c}">${dl.l}</div>
             <select class="ss ss-${o.status}" onchange="updateStatus(${o.id},this.value)">
               <option value="new"       ${o.status==='new'?'selected':''}>New</option>
+              <option value="considering" ${o.status==='considering'?'selected':''}>Considering / Go No-Go</option>
               <option value="pursuing"  ${o.status==='pursuing'?'selected':''}>Pursuing</option>
               <option value="submitted" ${o.status==='submitted'?'selected':''}>Submitted</option>
               <option value="won"       ${o.status==='won'?'selected':''}>Won</option>
@@ -1153,6 +1165,7 @@ function renderPipeline(list){
         ${o.notes?`<div class="opp-notes-disp">${o.notes.replace(/\n/g,'<br>')}</div>`:''}
         <div class="opp-foot">
           ${o.url?`<a href="${o.url}" target="_blank" rel="noopener" class="btn sm">View source ↗</a>`:''}
+          ${o.status==='considering'?`<a href="go-no-go.html" class="btn sm" style="background:#EDE8FF;color:#7C3AED;border-color:#C4B5FD;">📋 Go/No-Go form →</a>`:''}
           <button class="btn sm ${gc?gc+' gng-score':''}" onclick="openGng(${o.id})">${gl}</button>
           <button class="btn sm" onclick="openNotes(${o.id})">📝 ${o.notes?'Edit notes':'Add notes'}</button>
           <button class="btn sm danger" onclick="deleteOpp(${o.id})" style="margin-left:auto;">Remove</button>
@@ -1597,6 +1610,8 @@ function removePortal(id){
 /* ─── INIT ─── */
 updatePipeline();
 doFilter();
+initPortalChecks();
+renderSavedSearches();
 renderUserPortals();
 
 function cp(id,btn){
@@ -1624,7 +1639,10 @@ function importFromClaude(){
       if(Array.isArray(items)&&items.length){
         items.forEach(item=>{
           if(item.title||item.org){
-            pipeline.push({id:Date.now()+Math.random(),
+            // Duplicate check
+          const isDup = pipeline.some(p => p.title.toLowerCase().trim() === (item.title||item.name||'').toLowerCase().trim());
+          if(isDup){ console.log('Duplicate skipped:', item.title); return; }
+          pipeline.push({id:Date.now()+Math.random(),
               title:item.title||item.name||'Untitled',
               org:item.org||item.organization||item.funder||item.agency||'',
               type:item.type||'Government',deadline:item.deadline||'',
@@ -1644,6 +1662,179 @@ function importFromClaude(){
   status.textContent='Could not parse. Paste the full Claude response.';
   status.style.color='var(--pink)';
 }
+
+/* ─── PORTAL CHECKLIST ─── */
+function getPortalWeekKey(){
+  const now=new Date();
+  const jan1=new Date(now.getFullYear(),0,1);
+  const week=Math.ceil((((now-jan1)/86400000)+jan1.getDay()+1)/7);
+  return 'pop_portals_checked_'+now.getFullYear()+'_w'+week;
+}
+function getCheckedPortals(){
+  try{return JSON.parse(localStorage.getItem(getPortalWeekKey())||'[]');}catch{return[];}
+}
+function togglePortalCheck(url,cb){
+  let checked=getCheckedPortals();
+  if(cb.checked){
+    if(!checked.includes(url))checked.push(url);
+  } else {
+    checked=checked.filter(u=>u!==url);
+  }
+  localStorage.setItem(getPortalWeekKey(),JSON.stringify(checked));
+  const card=cb.closest('.portal-link');
+  if(card)card.classList.toggle('checked',cb.checked);
+  updatePortalProgress();
+}
+function initPortalChecks(){
+  const checked=getCheckedPortals();
+  document.querySelectorAll('.portal-check').forEach(cb=>{
+    const url=cb.dataset.url;
+    cb.checked=checked.includes(url);
+    const card=cb.closest('.portal-link');
+    if(card)card.classList.toggle('checked',cb.checked);
+  });
+  updatePortalProgress();
+}
+function updatePortalProgress(){
+  const total=document.querySelectorAll('.portal-check').length;
+  const done=document.querySelectorAll('.portal-check:checked').length;
+  const el=document.getElementById('portal-progress');
+  if(el){
+    el.textContent=done+' / '+total+' portals reviewed this week';
+    el.style.color=done===total?'var(--green)':'var(--muted)';
+  }
+}
+function resetPortalChecks(){
+  localStorage.removeItem(getPortalWeekKey());
+  document.querySelectorAll('.portal-check').forEach(cb=>{
+    cb.checked=false;
+    const card=cb.closest('.portal-link');
+    if(card)card.classList.remove('checked');
+  });
+  updatePortalProgress();
+}
+
+/* ─── SAVED SEARCHES ─── */
+let savedSearches=JSON.parse(localStorage.getItem('pop_saved_searches')||'[]');
+function saveCurrentSearch(){
+  const kw=document.getElementById('fk')?document.getElementById('fk').value.trim():'';
+  if(!kw){alert('Type a keyword in the search box first.');return;}
+  if(savedSearches.includes(kw)){alert('This search is already saved.');return;}
+  savedSearches.unshift(kw);
+  if(savedSearches.length>5)savedSearches=savedSearches.slice(0,5);
+  localStorage.setItem('pop_saved_searches',JSON.stringify(savedSearches));
+  renderSavedSearches();
+}
+function deleteSavedSearch(kw){
+  savedSearches=savedSearches.filter(s=>s!==kw);
+  localStorage.setItem('pop_saved_searches',JSON.stringify(savedSearches));
+  renderSavedSearches();
+}
+function applySearch(kw){
+  const fk=document.getElementById('fk');
+  if(fk){fk.value=kw;doFilter();}
+  go('pipeline');
+}
+function renderSavedSearches(){
+  const el=document.getElementById('saved-searches-list');
+  if(!el)return;
+  if(!savedSearches.length){
+    el.innerHTML='<span style="font-size:12px;color:var(--muted);">No saved searches yet. Type keywords in the pipeline search box and click Save.</span>';
+    return;
+  }
+  el.innerHTML=savedSearches.map(kw=>`
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+      <button onclick="applySearch('${kw.replace(/'/g,"\'")}')" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;color:var(--text);flex:1;text-align:left;">${kw}</button>
+      <button onclick="deleteSavedSearch('${kw.replace(/'/g,"\'")}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:2px 6px;">✕</button>
+    </div>`).join('');
+}
+
+/* ─── WEEKLY DIGEST EXPORT ─── */
+function exportDigest(){
+  const active=pipeline.filter(o=>!['won','lost','nogo'].includes(o.status));
+  const won=pipeline.filter(o=>o.status==='won');
+  const urgent=pipeline.filter(o=>{
+    if(!o.deadline||o.deadline==='Rolling'||o.deadline==='Unknown')return false;
+    const days=Math.ceil((new Date(o.deadline)-new Date())/(1000*60*60*24));
+    return days>=0&&days<=14;
+  }).sort((a,b)=>new Date(a.deadline)-new Date(b.deadline));
+
+  const fmt=d=>{
+    if(!d||d==='Unknown'||d==='Rolling')return d||'TBD';
+    const days=Math.ceil((new Date(d)-new Date())/(1000*60*60*24));
+    return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+(days>=0?' ('+days+'d)':'');
+  };
+
+  let text='POWER OF PUBLIC — WEEKLY RFP DIGEST
+';
+  text+='Week of '+new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+'
+';
+  text+='═'.repeat(50)+'
+
+';
+
+  text+='PIPELINE SUMMARY
+';
+  text+=`Active opportunities: ${active.length}
+`;
+  text+=`Total pipeline value: ${pipeline.reduce((s,o)=>s+(parseFloat(o.value)||0),0).toLocaleString('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0})}
+
+`;
+
+  if(urgent.length){
+    text+='⚠ DEADLINES IN NEXT 14 DAYS
+';
+    urgent.forEach(o=>text+=`  • ${o.title} — ${o.org} — ${fmt(o.deadline)}
+`);
+    text+='
+';
+  }
+
+  const statuses=['new','considering','pursuing','submitted'];
+  statuses.forEach(s=>{
+    const group=active.filter(o=>o.status===s);
+    if(!group.length)return;
+    text+=statusLabel(s).toUpperCase()+' ('+group.length+')
+';
+    group.forEach(o=>{
+      text+=`  • ${o.title}`;
+      if(o.org)text+=` — ${o.org}`;
+      if(o.deadline&&o.deadline!=='Unknown')text+=` — ${fmt(o.deadline)}`;
+      if(o.value)text+=` — ${fmtVal(o.value)}`;
+      text+='
+';
+      if(o.notes)text+=`    Notes: ${o.notes.replace(/\n/g,' ')}
+`;
+    });
+    text+='
+';
+  });
+
+  if(won.length){
+    text+='WON THIS CYCLE
+';
+    won.forEach(o=>text+=`  ✓ ${o.title} — ${o.org||''}
+`);
+    text+='
+';
+  }
+
+  text+='─'.repeat(50)+'
+';
+  text+='Generated '+new Date().toLocaleString()+' · Power of Public Operations Hub';
+
+  // Copy to clipboard and show in digest tab
+  navigator.clipboard.writeText(text).then(()=>{
+    const el=document.getElementById('digest-output');
+    if(el){el.value=text;el.style.display='block';}
+    const btn=document.getElementById('digest-copy-btn');
+    if(btn){btn.textContent='✓ Copied to clipboard!';setTimeout(()=>btn.textContent='Generate & Copy Digest',2000);}
+  }).catch(()=>{
+    const el=document.getElementById('digest-output');
+    if(el){el.value=text;el.style.display='block';}
+  });
+}
+
 
 </script>
 </body>
