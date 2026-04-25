@@ -1445,7 +1445,6 @@ async function runSearch(){
   document.getElementById('pending-section').style.display='none';
   document.getElementById('rb').disabled=true;
   document.getElementById('rb').textContent='Searching…';
-  startRateCountdown();
 
   const filteredSources=(typeFilter==='all'?sources:sources.filter(s=>s.type===typeFilter)).filter(s=>s.enabled!==false);
   const srcList=filteredSources.map(s=>`- ${s.name} (${s.type}): ${s.url}${s.kw?' | focus: '+s.kw:''}`).join('\n');
@@ -1481,6 +1480,7 @@ JSON only, no markdown.`;
   }finally{
     document.getElementById('rb').disabled=false;
     document.getElementById('rb').textContent='Search all sources →';
+    startRateCountdown();
   }
 }
 
@@ -1679,15 +1679,19 @@ function removePortal(id){
 let _rateTimer = null;
 
 function startRateCountdown() {
-  // Clear any existing timer
   if (_rateTimer) clearInterval(_rateTimer);
 
-  const wrap  = document.getElementById('rate-limit-wrap');
-  const label = document.getElementById('rate-count');
-  const bar   = document.getElementById('rate-bar');
-  const btn   = document.getElementById('rb');
+  const wrap = document.getElementById('rate-limit-wrap');
+  const bar  = document.getElementById('rate-bar');
+  const btn  = document.getElementById('rb');
 
   wrap.style.display = 'block';
+  bar.style.background = 'linear-gradient(90deg,var(--pink),var(--amber))';
+
+  // Reset label to initial state
+  document.getElementById('rate-label').innerHTML =
+    'Next search available in <span id="rate-count" style="color:var(--pink);font-weight:700;">1:00</span>';
+
   let secs = 60;
 
   function tick() {
@@ -1695,24 +1699,21 @@ function startRateCountdown() {
     const pct = (secs / 60) * 100;
     bar.style.width = pct + '%';
 
+    // Always look up rate-count fresh — avoids stale reference after innerHTML reset
+    const countEl = document.getElementById('rate-count');
+
     if (secs <= 0) {
       clearInterval(_rateTimer);
       _rateTimer = null;
-      label.textContent = '0:00';
+      if (countEl) countEl.textContent = '0:00';
       bar.style.width = '0%';
-      bar.style.background = 'var(--green, #1A8C5B)';
-      // Update label to ready state
+      bar.style.background = '#1A8C5B';
       document.getElementById('rate-label').innerHTML =
-        '<span style="color:var(--green,#1A8C5B);font-weight:700;">✓ Ready to search</span>';
-      // Re-enable button if search has finished
-      if (btn.textContent !== 'Searching…') {
-        btn.disabled = false;
-        btn.textContent = 'Search all sources →';
-      }
-      // Auto-hide after 4 seconds
+        '<span style="color:#1A8C5B;font-weight:700;">✓ Ready to search</span>';
       setTimeout(() => {
         wrap.style.display = 'none';
         bar.style.background = 'linear-gradient(90deg,var(--pink),var(--amber))';
+        bar.style.width = '100%';
         document.getElementById('rate-label').innerHTML =
           'Next search available in <span id="rate-count" style="color:var(--pink);font-weight:700;">1:00</span>';
       }, 4000);
@@ -1721,8 +1722,7 @@ function startRateCountdown() {
 
     const m = Math.floor(secs / 60);
     const s = String(secs % 60).padStart(2, '0');
-    label.textContent = `${m}:${s}`;
-    // Turn amber when under 15 seconds
+    if (countEl) countEl.textContent = `${m}:${s}`;
     if (secs <= 15) bar.style.background = 'var(--amber)';
   }
 
