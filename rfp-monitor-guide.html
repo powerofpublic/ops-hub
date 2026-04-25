@@ -6,107 +6,67 @@
 <title>RFP Monitor — User Guide · Power of Public</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root {
-  --navy:#1A1A2E; --pink:#E8187A; --amber:#D4A017; --emerald:#1A8C5B;
-  --cream:#F5F0E8; --tan:#EDE8DC; --bg:#F2EDE4; --surface:#FFFFFF;
-  --border:#D5CCBC; --muted:#6B6560; --dark:#2D2D2D;
-  --blush:#FBF3F8; --blush-border:#F0C8DF; --pink-dark:#B5467A;
-}
+:root{--navy:#1A1A2E;--pink:#E8187A;--amber:#D4A017;--emerald:#1A8C5B;--cream:#F5F0E8;--tan:#EDE8DC;--bg:#F2EDE4;--surface:#FFFFFF;--border:#D5CCBC;--muted:#6B6560;--dark:#2D2D2D;--blush:#FBF3F8;--blush-border:#F0C8DF;--pink-dark:#B5467A;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;color:var(--dark);font-size:15px;line-height:1.75;}
-
-/* HEADER */
 header{background:var(--navy);border-bottom:3px solid transparent;border-image:linear-gradient(90deg,var(--pink),var(--amber),var(--emerald)) 1;position:sticky;top:0;z-index:100;}
 .header-inner{max-width:1100px;margin:0 auto;padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;}
-.logo{font-family:'Playfair Display',serif;font-size:18px;font-weight:900;color:#fff;}
-.logo span{color:var(--pink);}
-.hdr-links{display:flex;gap:12px;}
-.hdr-btn{font-size:11px;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:5px 12px;text-decoration:none;transition:all .15s;}
-.hdr-btn:hover{color:#fff;border-color:rgba(255,255,255,0.4);}
-
-/* LAYOUT */
+.logo{font-family:'Playfair Display',serif;font-size:18px;font-weight:900;color:#fff;}.logo span{color:var(--pink);}
+.hdr-links{display:flex;gap:10px;}
+.hdr-btn{font-size:11px;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:5px 12px;text-decoration:none;}
+.hdr-btn:hover{color:#fff;}
 .page-wrap{max-width:1100px;margin:0 auto;padding:40px 28px 80px;display:grid;grid-template-columns:240px 1fr;gap:40px;align-items:start;}
-
-/* SIDEBAR TOC */
-.toc{position:sticky;top:80px;background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px;font-size:13px;}
+.toc{position:sticky;top:80px;background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px;font-size:13px;max-height:calc(100vh - 100px);overflow-y:auto;}
 .toc-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:900;color:var(--navy);margin-bottom:14px;padding-bottom:10px;border-bottom:1.5px solid var(--border);}
-.toc-section{margin-bottom:4px;}
-.toc-section a{display:block;color:var(--muted);text-decoration:none;padding:4px 8px;border-radius:6px;transition:all .12s;font-weight:500;}
-.toc-section a:hover{background:var(--blush);color:var(--pink);}
-.toc-section a.active{background:var(--blush);color:var(--pink);font-weight:600;}
-.toc-sub a{font-size:12px;padding:3px 8px 3px 20px;color:var(--muted);display:block;text-decoration:none;border-radius:6px;transition:all .12s;}
-.toc-sub a:hover{color:var(--pink);}
-.toc-divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
-.toc-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:4px 8px;margin-top:8px;}
-
-/* CONTENT */
-.content{}
+.toc-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:6px 8px 2px;}
+.toc-section{margin-bottom:2px;}
+.toc-section>a{display:block;color:var(--dark);text-decoration:none;padding:5px 8px;border-radius:6px;font-weight:600;font-size:12.5px;}
+.toc-section>a:hover,.toc-section>a.active{background:var(--blush);color:var(--pink);}
+.toc-sub a{font-size:11.5px;padding:3px 8px 3px 18px;color:var(--muted);display:block;text-decoration:none;border-radius:6px;}
+.toc-sub a:hover,.toc-sub a.active{color:var(--pink);background:var(--blush);}
+.toc-divider{border:none;border-top:1px solid var(--border);margin:8px 0;}
 .guide-hero{margin-bottom:36px;}
 .guide-hero h1{font-family:'Playfair Display',serif;font-size:40px;font-weight:900;color:var(--navy);line-height:1.15;margin-bottom:8px;}
 .guide-hero h1 em{color:var(--pink);font-style:normal;}
-.guide-hero p{font-size:15px;color:var(--muted);max-width:580px;}
-.guide-hero .meta{font-size:12px;color:var(--muted);margin-top:10px;display:flex;gap:16px;flex-wrap:wrap;}
-.guide-hero .meta span{background:var(--tan);border-radius:20px;padding:3px 12px;}
-
-/* SECTIONS */
-.guide-section{margin-bottom:48px;}
-.guide-section h2{font-family:'Playfair Display',serif;font-size:26px;font-weight:900;color:var(--navy);margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:10px;}
-.guide-section h2 .section-num{background:var(--pink);color:#fff;border-radius:6px;font-size:12px;font-weight:700;padding:3px 9px;font-family:'Plus Jakarta Sans',sans-serif;}
-.guide-section h3{font-size:17px;font-weight:700;color:var(--dark);margin:24px 0 10px;}
-.guide-section p{margin-bottom:12px;color:var(--dark);}
-.guide-section ul{padding-left:20px;margin-bottom:12px;}
-.guide-section ul li{margin-bottom:6px;color:var(--dark);}
-.guide-section ol{padding-left:20px;margin-bottom:12px;}
-.guide-section ol li{margin-bottom:8px;color:var(--dark);}
-
-/* BOXES */
+.guide-hero p{font-size:15px;color:var(--muted);}
+.meta{font-size:12px;color:var(--muted);margin-top:10px;display:flex;gap:12px;flex-wrap:wrap;}
+.meta span{background:var(--tan);border-radius:20px;padding:3px 12px;}
+.guide-section{margin-bottom:48px;scroll-margin-top:80px;}
+.guide-section h2{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;color:var(--navy);margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:10px;}
+.snum{background:var(--pink);color:#fff;border-radius:6px;font-size:12px;font-weight:700;padding:3px 9px;font-family:'Plus Jakarta Sans',sans-serif;}
+h3{font-size:17px;font-weight:700;color:var(--dark);margin:24px 0 10px;scroll-margin-top:80px;}
+p{margin-bottom:12px;}
+ul,ol{padding-left:20px;margin-bottom:12px;}
+li{margin-bottom:6px;}
 .tip-box{background:var(--blush);border:1.5px solid var(--blush-border);border-left:4px solid var(--pink);border-radius:10px;padding:14px 18px;margin:14px 0;font-size:14px;color:#5A2040;}
-.tip-box strong{color:var(--pink-dark);}
 .note-box{background:#FFF8EC;border:1.5px solid #F5D98A;border-left:4px solid var(--amber);border-radius:10px;padding:14px 18px;margin:14px 0;font-size:14px;color:#5A3E00;}
 .warn-box{background:#FFF0F5;border:1.5px solid #F8C8D8;border-left:4px solid var(--pink);border-radius:10px;padding:14px 18px;margin:14px 0;font-size:14px;color:#5A2040;}
-.info-box{background:#F0F9F4;border:1.5px solid #A8DFC0;border-left:4px solid var(--emerald);border-radius:10px;padding:14px 18px;margin:14px 0;font-size:14px;color:#1A3D2B;}
-
-/* TABLE */
 .guide-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px;}
 .guide-table th{background:var(--navy);color:#fff;padding:10px 14px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
 .guide-table td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top;}
 .guide-table tr:nth-child(even) td{background:var(--cream);}
 .guide-table tr:last-child td{border-bottom:none;}
-
-/* NUMBERED TIPS */
-.tip-list{display:flex;flex-direction:column;gap:12px;margin:14px 0;}
-.tip-item{display:flex;gap:14px;align-items:flex-start;background:var(--blush);border:1px solid var(--blush-border);border-radius:10px;padding:14px 16px;}
-.tip-num{background:var(--pink);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px;}
-.tip-text{font-size:13.5px;color:#5A2040;line-height:1.6;}
-.tip-text strong{color:var(--pink-dark);}
-
-/* KEYWORD TABLE */
-.kw-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;}
-.kw-card{background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;font-size:13px;}
-.kw-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:3px;}
-.kw-value{color:var(--dark);font-weight:500;}
-
-/* BADGE */
 .badge{display:inline-block;font-size:10.5px;font-weight:700;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em;}
 .badge-pink{background:var(--blush);color:var(--pink);}
 .badge-green{background:#EBF7F2;color:var(--emerald);}
 .badge-amber{background:#FEF7E8;color:#9A7312;}
 .badge-navy{background:#EEF2FF;color:var(--navy);}
-
-/* FOOTER */
+.badge-purple{background:#F5F3FF;color:#7C3AED;}
+.tip-list{display:flex;flex-direction:column;gap:10px;margin:14px 0;}
+.tip-item{display:flex;gap:14px;align-items:flex-start;background:var(--blush);border:1px solid var(--blush-border);border-radius:10px;padding:14px 16px;}
+.tip-num{background:var(--pink);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px;}
+.tip-text{font-size:13.5px;color:#5A2040;line-height:1.6;}
+.tip-text strong{color:var(--pink-dark);}
+.kw-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;}
+.kw-card{background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;font-size:13px;}
+.kw-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:3px;}
+.kw-value{color:var(--dark);font-weight:500;}
 footer{background:var(--navy);text-align:center;padding:20px;font-size:11.5px;color:rgba(255,255,255,0.3);}
 footer a{color:var(--pink);text-decoration:none;}
-
-@media(max-width:768px){
-  .page-wrap{grid-template-columns:1fr;}
-  .toc{position:static;margin-bottom:20px;}
-  .guide-hero h1{font-size:28px;}
-  .kw-grid{grid-template-columns:1fr;}
-}
+@media(max-width:768px){.page-wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;}.guide-hero h1{font-size:28px;}.kw-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
-
 <header>
   <div class="header-inner">
     <div class="logo">Power of Public<span>.</span></div>
@@ -118,331 +78,268 @@ footer a{color:var(--pink);text-decoration:none;}
 </header>
 
 <div class="page-wrap">
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <div class="toc-label">Quick Start</div>
+  <div class="toc-section"><a href="#quick-tips">Top 5 Search Tips</a></div>
+  <div class="toc-section"><a href="#best-day">Best Day & Rhythm</a></div>
+  <div class="toc-section"><a href="#keywords">Keyword Strategy</a></div>
+  <hr class="toc-divider">
+  <div class="toc-label">Tabs</div>
+  <div class="toc-section"><a href="#pipeline">1. Pipeline</a></div>
+  <div class="toc-sub">
+    <a href="#statuses">Statuses</a>
+    <a href="#deadline-badges">Deadline Badges</a>
+    <a href="#import">Import from Claude</a>
+    <a href="#notes">Notes</a>
+    <a href="#value">Value Tracking</a>
+    <a href="#duplicate">Duplicate Detection</a>
+  </div>
+  <div class="toc-section"><a href="#search-tab">2. Search</a></div>
+  <div class="toc-sub">
+    <a href="#prompts">The Five Prompts</a>
+    <a href="#workflow">Search Workflow</a>
+  </div>
+  <div class="toc-section"><a href="#portals">3. Manual Portals</a></div>
+  <div class="toc-sub">
+    <a href="#portal-sections">All Sections</a>
+    <a href="#portal-checklist">Weekly Checklist</a>
+    <a href="#adding-portals">Adding Portals</a>
+  </div>
+  <div class="toc-section"><a href="#winloss">4. Win / Loss</a></div>
+  <div class="toc-section"><a href="#digest">5. Email Digest</a></div>
+  <div class="toc-sub">
+    <a href="#digest-export">Weekly Export</a>
+    <a href="#saved-searches">Saved Searches</a>
+  </div>
+  <hr class="toc-divider">
+  <div class="toc-label">Reference</div>
+  <div class="toc-section"><a href="#adding-sources">Adding Sources</a></div>
+  <div class="toc-section"><a href="#troubleshooting">Troubleshooting</a></div>
+</nav>
 
-  <!-- SIDEBAR TOC -->
-  <nav class="toc">
-    <div class="toc-title">Contents</div>
-    <div class="toc-label">Quick Start</div>
-    <div class="toc-section"><a href="#quick-tips">Top 5 Search Tips</a></div>
-    <div class="toc-section"><a href="#best-day">Best Day to Search</a></div>
-    <div class="toc-section"><a href="#keywords">Keyword Strategy</a></div>
-    <hr class="toc-divider">
-    <div class="toc-label">Guide</div>
-    <div class="toc-section"><a href="#overview">1. Overview</a></div>
-    <div class="toc-section"><a href="#setup">2. Setup</a></div>
-    <div class="toc-sub"><a href="#api-key">API Key</a></div>
-    <div class="toc-sub"><a href="#credits">Credits & Cost</a></div>
-    <div class="toc-section"><a href="#searching">3. Running a Search</a></div>
-    <div class="toc-sub"><a href="#search-tab">Search Tab</a></div>
-    <div class="toc-sub"><a href="#results">Reviewing Results</a></div>
-    <div class="toc-section"><a href="#sources">4. Managing Sources</a></div>
-    <div class="toc-sub"><a href="#auto-sources">Auto Sources</a></div>
-    <div class="toc-sub"><a href="#toggles">Enabling & Disabling</a></div>
-    <div class="toc-sub"><a href="#adding-sources">Adding Sources</a></div>
-    <div class="toc-sub"><a href="#manual-portals">Manual Portals</a></div>
-    <div class="toc-section"><a href="#pipeline">5. Pipeline</a></div>
-    <div class="toc-sub"><a href="#statuses">Statuses</a></div>
-    <div class="toc-sub"><a href="#scorecard">Go/No-Go Scorecard</a></div>
-    <div class="toc-section"><a href="#digest">6. Weekly Digest</a></div>
-    <div class="toc-section"><a href="#troubleshooting">7. Troubleshooting</a></div>
-    <div class="toc-section"><a href="#reference">8. Reference</a></div>
-  </nav>
+<main>
+  <div class="guide-hero">
+    <h1>RFP Monitor<br><em>User Guide</em></h1>
+    <p>Complete guide to searching for opportunities, managing your pipeline, and using every feature.</p>
+    <div class="meta"><span>Power of Public, LLC</span><span>Operations Hub</span><span>April 2026</span></div>
+  </div>
 
-  <!-- CONTENT -->
-  <main class="content">
-
-    <div class="guide-hero">
-      <h1>RFP Monitor<br><em>User Guide</em></h1>
-      <p>A practical guide to searching for opportunities, managing your pipeline, and getting the most from every session.</p>
-      <div class="meta">
-        <span>Power of Public, LLC</span>
-        <span>Operations Hub</span>
-        <span>April 2026</span>
-      </div>
+  <div class="guide-section" id="quick-tips">
+    <h2><span class="snum">★</span> Top 5 Search Tips</h2>
+    <div class="tip-list">
+      <div class="tip-item"><div class="tip-num">1</div><div class="tip-text"><strong>Search on Tuesday or Wednesday morning.</strong> Government agencies post Monday–Tuesday. Mid-week searches catch everything before deadlines close — with time left to act.</div></div>
+      <div class="tip-item"><div class="tip-num">2</div><div class="tip-text"><strong>Use 3–5 specific words, not one.</strong> "Health communications RFP Maryland" returns far better results than "communications" alone.</div></div>
+      <div class="tip-item"><div class="tip-num">3</div><div class="tip-text"><strong>Rotate keywords every session.</strong> "Public health outreach," "behavior change consulting," and "community engagement RFP" each surface different opportunities. Never use the same search twice in a row.</div></div>
+      <div class="tip-item"><div class="tip-num">4</div><div class="tip-text"><strong>Run 2–3 different prompts per session.</strong> Each prompt in the Search tab targets different sources. Running all three types gives the broadest weekly coverage.</div></div>
+      <div class="tip-item"><div class="tip-num">5</div><div class="tip-text"><strong>All searching is free.</strong> The RFP Monitor uses your Claude Pro subscription at claude.ai — no API key, no per-search cost, no rate limits.</div></div>
     </div>
+  </div>
 
-    <!-- QUICK TIPS -->
-    <div class="guide-section" id="quick-tips">
-      <h2><span class="section-num">★</span> Top 5 Search Tips</h2>
-      <div class="tip-list">
-        <div class="tip-item">
-          <div class="tip-num">1</div>
-          <div class="tip-text"><strong>Search on Tuesday or Wednesday morning.</strong> Government agencies post new solicitations Monday–Tuesday. Searching mid-week catches everything before deadlines close — and leaves you time to act on what you find.</div>
-        </div>
-        <div class="tip-item">
-          <div class="tip-num">2</div>
-          <div class="tip-text"><strong>Use 3–5 specific words, not one.</strong> "Health communications RFP Maryland" returns far better results than "communications" alone. The more context you give, the more targeted the results.</div>
-        </div>
-        <div class="tip-item">
-          <div class="tip-num">3</div>
-          <div class="tip-text"><strong>Rotate keywords every session.</strong> "Public health outreach," "behavior change consulting," and "community engagement RFP" each surface different opportunities. Never rely on the same search twice in a row.</div>
-        </div>
-        <div class="tip-item">
-          <div class="tip-num">4</div>
-          <div class="tip-text"><strong>Keep 5–8 sources enabled per search.</strong> Each source card has an On/Off toggle — green means included in the next search, gray means excluded. Too many at once can hit your API rate limit.</div>
-        </div>
-        <div class="tip-item">
-          <div class="tip-num">5</div>
-          <div class="tip-text"><strong>Rate limit error? Wait 60 seconds, then click ⏱ 60s cooldown in the header</strong> to track the reset. Each search costs approximately 5¢ — your $5 covers roughly 100 searches at weekly use.</div>
-        </div>
-      </div>
+  <div class="guide-section" id="best-day">
+    <h2><span class="snum">★</span> Best Day & Weekly Rhythm</h2>
+    <div class="tip-box"><strong>Tuesday or Wednesday morning</strong> is the ideal time for your weekly search session.</div>
+    <p>Government procurement offices post solicitations Monday–Tuesday. Foundations and nonprofits post mid-week. Mid-week searches catch everything since the previous week with time to respond.</p>
+    <table class="guide-table">
+      <thead><tr><th>Day</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Tue / Wed morning</strong></td><td>Run 2–3 search prompts from the Search tab, paste results into Import from Claude, review and add to pipeline</td></tr>
+        <tr><td><strong>Thursday</strong></td><td>Open Manual Portals tab — check off sites using the weekly checklist, update pipeline opportunity statuses</td></tr>
+        <tr><td><strong>Friday</strong></td><td>Generate and copy the weekly digest from the Email Digest tab</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="guide-section" id="keywords">
+    <h2><span class="snum">★</span> Keyword Rotation Strategy</h2>
+    <p>Rotate these combinations across sessions — each surfaces different opportunities:</p>
+    <div class="kw-grid">
+      <div class="kw-card"><div class="kw-label">Session 1</div><div class="kw-value">health communications consulting RFP</div></div>
+      <div class="kw-card"><div class="kw-label">Session 2</div><div class="kw-value">public health outreach community engagement</div></div>
+      <div class="kw-card"><div class="kw-label">Session 3</div><div class="kw-value">social marketing behavior change Maryland DC</div></div>
+      <div class="kw-card"><div class="kw-label">Session 4</div><div class="kw-value">maternal health communications grant federal</div></div>
+      <div class="kw-card"><div class="kw-label">Session 5</div><div class="kw-value">health education strategic communications nonprofit</div></div>
+      <div class="kw-card"><div class="kw-label">Session 6</div><div class="kw-value">community health awareness campaign consulting</div></div>
     </div>
+    <div class="note-box">Save your best keyword combinations using the Saved Searches feature in the Email Digest tab — up to 5 can be stored and applied with one click.</div>
+  </div>
 
-    <!-- BEST DAY -->
-    <div class="guide-section" id="best-day">
-      <h2><span class="section-num">★</span> Best Day & Time to Search</h2>
-      <div class="tip-box"><strong>Tuesday or Wednesday morning</strong> is the ideal time for your weekly search session.</div>
-      <p>Most federal and government procurement offices post new solicitations at the start of the work week. Foundations and nonprofits tend to post mid-week. Searching Tuesday or Wednesday morning catches everything posted since the previous week — with enough time left in the week to respond to anything promising.</p>
-      <h3>Why not Monday or Friday?</h3>
-      <ul>
-        <li><strong>Avoid Mondays</strong> — postings from that morning won't be indexed by search engines yet</li>
-        <li><strong>Avoid Fridays</strong> — deadlines frequently fall on Fridays, leaving no time to act on new findings</li>
-      </ul>
-      <h3>Recommended weekly rhythm</h3>
-      <table class="guide-table">
-        <thead><tr><th>Day</th><th>Action</th></tr></thead>
-        <tbody>
-          <tr><td><strong>Tue / Wed morning</strong></td><td>Run 2–3 searches with different keyword combinations. Review results and add to pipeline.</td></tr>
-          <tr><td><strong>Thursday</strong></td><td>Check manual portals (login-required sites). Update statuses on existing pipeline opportunities.</td></tr>
-          <tr><td><strong>Friday</strong></td><td>Run the weekly digest. Note approaching deadlines for the following week.</td></tr>
-        </tbody>
-      </table>
-      <h3>How many searches?</h3>
-      <table class="guide-table">
-        <thead><tr><th>Timeframe</th><th>Recommended</th><th>Why</th></tr></thead>
-        <tbody>
-          <tr><td>Per minute</td><td>1 at a time</td><td>Each search can use up to your full rate limit — wait for completion</td></tr>
-          <tr><td>Per hour</td><td>4–6</td><td>Gives buffer between runs without hitting limits</td></tr>
-          <tr><td>Per day</td><td>10–15 max</td><td>Beyond this you'll mostly see duplicate results</td></tr>
-          <tr><td>Per week</td><td>2–3 sessions</td><td>The practical sweet spot for comprehensive coverage</td></tr>
-        </tbody>
-      </table>
-    </div>
+  <div class="guide-section" id="pipeline">
+    <h2><span class="snum">1</span> Pipeline Tab</h2>
+    <p>Your main workspace. Shows all opportunities with live deadline badges, status tracking, notes, value estimates, and one-click filtering.</p>
 
-    <!-- KEYWORD STRATEGY -->
-    <div class="guide-section" id="keywords">
-      <h2><span class="section-num">★</span> Keyword Rotation Strategy</h2>
-      <p>Running the same keywords every week returns the same results. Rotate these combinations across sessions to maximize coverage:</p>
-      <div class="kw-grid">
-        <div class="kw-card"><div class="kw-label">Session 1</div><div class="kw-value">health communications consulting RFP</div></div>
-        <div class="kw-card"><div class="kw-label">Session 2</div><div class="kw-value">public health outreach community engagement</div></div>
-        <div class="kw-card"><div class="kw-label">Session 3</div><div class="kw-value">social marketing behavior change Maryland DC</div></div>
-        <div class="kw-card"><div class="kw-label">Session 4</div><div class="kw-value">maternal health communications grant federal</div></div>
-        <div class="kw-card"><div class="kw-label">Session 5</div><div class="kw-value">health education strategic communications nonprofit</div></div>
-        <div class="kw-card"><div class="kw-label">Session 6</div><div class="kw-value">community health awareness campaign consulting</div></div>
-      </div>
-      <div class="note-box">Add your own combinations based on active proposals or new focus areas. The more specific to your current work, the better the results.</div>
-    </div>
+    <h3 id="statuses">Opportunity Statuses</h3>
+    <table class="guide-table">
+      <thead><tr><th>Status</th><th>Use when</th><th>Special feature</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge badge-pink">New</span></td><td>Just discovered — not yet evaluated</td><td>—</td></tr>
+        <tr><td><span class="badge badge-purple">Considering / Go No-Go</span></td><td>Actively evaluating — deciding whether to bid</td><td>Shows a purple <strong>📋 Go/No-Go form →</strong> button linking directly to your evaluation form</td></tr>
+        <tr><td><span class="badge badge-amber">Pursuing</span></td><td>Decided to bid — actively working on proposal</td><td>—</td></tr>
+        <tr><td><span class="badge badge-navy">Submitted</span></td><td>Proposal submitted, awaiting decision</td><td>—</td></tr>
+        <tr><td><span class="badge badge-green">Won</span></td><td>Contract awarded</td><td>Counted in Win / Loss tab</td></tr>
+        <tr><td>Lost / No-Go</td><td>Not selected or decided not to bid</td><td>Counted in Win / Loss tab</td></tr>
+      </tbody>
+    </table>
 
-    <!-- OVERVIEW -->
-    <div class="guide-section" id="overview">
-      <h2><span class="section-num">1</span> Overview</h2>
-      <p>The RFP Monitor searches multiple procurement, grant, and communications-specific sources simultaneously using the Anthropic API with Claude's web search capability. Results are returned for your review before being added to a full opportunity pipeline — from discovery through award.</p>
-      <h3>What it does</h3>
-      <ul>
-        <li>Searches up to 23 auto-searchable sources in one click</li>
-        <li>Returns matched opportunities for review before adding to your pipeline</li>
-        <li>Tracks opportunities through: New → Pursuing → Submitted → Won / Lost</li>
-        <li>Provides a Go/No-Go scorecard for each opportunity</li>
-        <li>Links to manual portals requiring login for weekly review</li>
-        <li>Generates a weekly digest summary of your pipeline</li>
-      </ul>
-      <h3>How it connects</h3>
-      <table class="guide-table">
-        <thead><tr><th>Component</th><th>Details</th></tr></thead>
-        <tbody>
-          <tr><td>Auto-search</td><td>Anthropic API (claude-sonnet-4-5) with web search tool</td></tr>
-          <tr><td>Proxy</td><td>pop-proxy.netlify.app — routes API calls through Netlify to bypass browser security restrictions</td></tr>
-          <tr><td>Data storage</td><td>Browser localStorage — pipeline and sources save locally per device</td></tr>
-          <tr><td>Manual portals</td><td>Direct links to login-required procurement portals</td></tr>
-        </tbody>
-      </table>
-    </div>
+    <h3 id="deadline-badges">Deadline Countdown Badges</h3>
+    <p>Every card shows a live deadline badge that updates daily:</p>
+    <table class="guide-table">
+      <thead><tr><th>Badge appearance</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td style="color:#CC0000;font-weight:700;">5d left — Apr 30 ● pulsing red</td><td>Under 7 days — urgent, act immediately</td></tr>
+        <tr><td style="color:#9A5800;">12d — May 7 (amber)</td><td>Under 21 days — approaching, plan now</td></tr>
+        <tr><td>May 30, 2026 (neutral)</td><td>More than 21 days out</td></tr>
+        <tr><td style="color:#999;text-decoration:line-through;">Expired Apr 15</td><td>Past deadline</td></tr>
+        <tr><td>Rolling</td><td>No fixed deadline</td></tr>
+      </tbody>
+    </table>
 
-    <!-- SETUP -->
-    <div class="guide-section" id="setup">
-      <h2><span class="section-num">2</span> Initial Setup</h2>
+    <h3 id="import">Import from Claude</h3>
+    <p>The Import from Claude box sits at the top of the Pipeline tab. After running a search in Claude Pro, paste the full response and click <strong>+ Add all to pipeline</strong>. The importer handles both JSON and plain formatted text.</p>
+    <ol>
+      <li>Go to the <strong>Search</strong> tab → click <strong>Copy prompt</strong></li>
+      <li>Open claude.ai → paste the prompt → run the search</li>
+      <li>Copy Claude's full response</li>
+      <li>Return to <strong>Pipeline</strong> tab → click <strong>Show / Hide</strong> on the Import box</li>
+      <li>Paste → click <strong>+ Add all to pipeline</strong></li>
+    </ol>
+    <div class="note-box">Duplicate detection is built in — if an opportunity with the same title already exists in your pipeline, it is silently skipped on import.</div>
 
-      <h3 id="api-key">Getting your API Key</h3>
-      <p>The RFP Monitor requires an Anthropic Claude Pro subscription to run searches. You only need to enter this once per device.</p>
-      <ol>
-        <li>Go to <strong>console.anthropic.com</strong> and sign in</li>
-        <li>Click <strong>API Keys</strong> in the left sidebar</li>
-        <li>Click <strong>Create Key</strong> — name it "RFP Monitor"</li>
-        <li>Copy the full key immediately — it starts with <code></code> and is only shown once</li>
-        <li>Open the RFP Monitor and paste the key into the Claude Pro subscription field</li>
-        <li>Click <strong>Save key</strong></li>
-      </ol>
-      <div class="warn-box"><strong>Important:</strong> The key is only shown once when created. If you navigate away before copying it, you will need to delete it and create a new one. Always copy it immediately.</div>
+    <h3 id="notes">Notes</h3>
+    <p>Click <strong>📝 Add notes</strong> on any card to record strategy thinking, contacts, or next steps. Notes are saved automatically, display on the card, and are included in the weekly digest export.</p>
 
-      <h3 id="credits">API Credits & Cost</h3>
-      <p>Add prepaid credits at <strong>console.anthropic.com → Billing</strong>. Credits are prepaid — you cannot be charged more than you load.</p>
-      <table class="guide-table">
-        <thead><tr><th>Item</th><th>Details</th></tr></thead>
-        <tbody>
-          <tr><td>Cost per search</td><td>~5¢ (input + output tokens combined)</td></tr>
-          <tr><td>$5 in credits covers</td><td>~100 searches</td></tr>
-          <tr><td>At weekly use</td><td>$5 lasts approximately 8–12 months</td></tr>
-          <tr><td>Check usage</td><td>console.anthropic.com → Usage</td></tr>
-          <tr><td>Rate limit</td><td>30,000 input tokens per minute — resets every 60 seconds</td></tr>
-        </tbody>
-      </table>
-    </div>
+    <h3 id="value">Value Tracking</h3>
+    <p>Enter an estimated contract value when adding or editing an opportunity. The <strong>Pipeline $</strong> stat in the header bar sums all values across your active pipeline automatically.</p>
 
-    <!-- SEARCHING -->
-        <div class="guide-section" id="searching">
-      <h2><span class="section-num">3</span> Running a Search</h2>
+    <h3 id="duplicate">Duplicate Detection</h3>
+    <ul>
+      <li><strong>On import</strong> — opportunities matching an existing title are silently skipped</li>
+      <li><strong>On manual add</strong> — an alert appears before adding a duplicate title</li>
+    </ul>
+  </div>
 
-      <h3 id="search-tab">How the Search tab works</h3>
-      <p>The Search tab provides five copy-ready prompts you use directly in your Claude Pro subscription at claude.ai — at no extra cost. Claude searches the live web and returns real, current RFPs with direct links and descriptions.</p>
+  <div class="guide-section" id="search-tab">
+    <h2><span class="snum">2</span> Search Tab</h2>
+    <p>Five ready-to-use prompts for finding current RFPs through your Claude Pro subscription at claude.ai — completely free, no API key needed.</p>
+    <div class="tip-box"><strong>Cost: $0.</strong> This uses your existing Claude Pro subscription. There is no API key, no Anthropic API credits, and no per-search charge.</div>
 
-      <table class="guide-table">
-        <thead><tr><th>Prompt</th><th>What it searches</th></tr></thead>
-        <tbody>
-          <tr><td>Federal & government</td><td>SAM.gov and Grants.gov — active RFPs, last 14 days</td></tr>
-          <tr><td>Foundations & nonprofits</td><td>Philanthropy News Digest, CDC Foundation, Grantmakers in Health, NACCHO, NNPHI</td></tr>
-          <tr><td>Communications-specific</td><td>O'Dwyer's PR, Everything PR, rfpdb.com</td></tr>
-          <tr><td>Regional — Maryland & DC</td><td>eMMA, DC OCP, Virginia EPROCURE, HigherGov</td></tr>
-          <tr><td>Broad weekly sweep</td><td>All sources, last 14 days, minimum 8 results</td></tr>
-        </tbody>
-      </table>
+    <h3 id="prompts">The Five Prompts</h3>
+    <table class="guide-table">
+      <thead><tr><th>Prompt</th><th>Sources searched</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Federal & Government</strong></td><td>SAM.gov, Grants.gov — active RFPs last 14 days</td></tr>
+        <tr><td><strong>Foundations & Nonprofits</strong></td><td>Philanthropy News Digest, CDC Foundation, Grantmakers in Health, NACCHO, NNPHI</td></tr>
+        <tr><td><strong>Communications-Specific</strong></td><td>O'Dwyer's PR, Everything PR, rfpdb.com</td></tr>
+        <tr><td><strong>Regional — Maryland & DC</strong></td><td>Maryland eMMA, DC OCP, Virginia EPROCURE, HigherGov</td></tr>
+        <tr><td><strong>Broad Weekly Sweep</strong></td><td>All source types, last 14 days, minimum 8 results</td></tr>
+      </tbody>
+    </table>
 
-      <h3 id="results">Workflow — Search to Pipeline</h3>
-      <ol>
-        <li>Go to the <strong>Search</strong> tab and click <strong>Copy prompt</strong></li>
-        <li>Open <strong>claude.ai</strong> in a new tab and paste the prompt into a new chat</li>
-        <li>Claude searches the live web and returns results with titles, deadlines, descriptions, and direct links</li>
-        <li>Copy the full Claude response</li>
-        <li>Return to your portal → <strong>Pipeline</strong> tab → paste into <strong>Import from Claude</strong></li>
-        <li>Click <strong>+ Add all to pipeline</strong> — everything imports in one click</li>
-      </ol>
-      <div class="tip-box"><strong>Run 2–3 different prompts per session</strong> for the best coverage. Each prompt targets different source types so results don't overlap.</div>
-      <div class="note-box">Best day: Tuesday or Wednesday morning. Government agencies post Monday–Tuesday so mid-week searches catch everything.</div>
+    <h3 id="workflow">Search Workflow</h3>
+    <ol>
+      <li>Click <strong>Copy prompt</strong> on any prompt card</li>
+      <li>Open <strong>claude.ai</strong> in a new tab, start a new chat, and paste</li>
+      <li>Claude searches the live web and returns real results with titles, deadlines, descriptions, and direct links</li>
+      <li>Copy the full Claude response</li>
+      <li>Return to <strong>Pipeline</strong> tab → paste into <strong>Import from Claude</strong> → click <strong>+ Add all to pipeline</strong></li>
+    </ol>
+  </div>
 
-    </div>
+  <div class="guide-section" id="portals">
+    <h2><span class="snum">3</span> Manual Portals Tab</h2>
+    <p>Direct links to all 49 procurement, grant, and communications sources organized into 9 sections. Click any link to open in a new tab. Use the weekly checklist to track your review progress.</p>
 
-    <div class="guide-section" id="sources">
-      <h2><span class="section-num">4</span> Managing Sources</h2>
+    <h3 id="portal-sections">All Portal Sections</h3>
+    <table class="guide-table">
+      <thead><tr><th>Section</th><th>What's included</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Government & Procurement</strong></td><td>SAM.gov, Grants.gov, rfpmart (health & social media), HigherGov, Georgia, NC, Delaware</td></tr>
+        <tr><td><strong>Foundations</strong></td><td>CDC Foundation, Philanthropy News Digest, Elevance, Horizon MD, Grantmakers in Health, NY Health Foundation</td></tr>
+        <tr><td><strong>Nonprofit & Associations</strong></td><td>O'Dwyer's, NACCHO, PHI, NNPHI, APHA, Corporation for Supportive Housing, Everything PR, rfpdb.com</td></tr>
+        <tr><td><strong>Academic</strong></td><td>UNC Gillings School of Public Health</td></tr>
+        <tr><td><strong>State Procurement Portals</strong></td><td>eMMA Maryland, eVA Virginia, DC OCP, NC eVP, Georgia GPR, Delaware Bid Directory</td></tr>
+        <tr><td><strong>DC-Adjacent & Regional</strong></td><td>Events DC, COG, WMATA, DC Health, DHCF, DC Planning, DC DGS, Prince George's Co., Montgomery Co., Arlington VA</td></tr>
+        <tr><td><strong>PR & Communications RFP Lists</strong></td><td>O'Dwyer's, Everything PR, rfpdb.com, rfpmart marketing, rfpmart social media, HigherGov communications</td></tr>
+        <tr><td><strong>Maryland Board of Public Works</strong></td><td>BPW Procurement</td></tr>
+        <tr><td><strong>My Portals</strong></td><td>Custom portals added by request</td></tr>
+      </tbody>
+    </table>
 
-      <h3 id="auto-sources">Sources — now in the Portals tab</h3>
-      <p>All 23 sources are now organized as direct links in the <strong>Portals tab</strong> — divided into Government & procurement, Foundations, Nonprofit & associations, and Academic sections alongside the login-required manual portals. Sources are permanently stored in the HTML file and never in your browser.</p>
+    <h3 id="portal-checklist">Weekly Checklist</h3>
+    <p>Every portal card has a checkbox. Check it off after reviewing that site. The progress counter at the top shows "12 / 49 portals reviewed this week." The checklist resets automatically each Monday. Click <strong>Reset week</strong> to clear it manually at any time.</p>
+    <div class="tip-box">Use Thursday as your manual portal review day — work through the login-required sections that Claude's web search cannot access automatically.</div>
 
-      <h3 id="toggles">Enabling & Disabling Sources</h3>
-      <p>Each source card in the Sources tab has an <strong>On/Off</strong> toggle button. Green = included in next search, gray = excluded. Your toggle settings save automatically to your browser. Start with 5–8 sources enabled to stay within rate limits.</p>
-      <div class="tip-box"><strong>Keep SAM.gov and Philanthropy News Digest enabled by default</strong> — they are the highest-volume sources for your niche.</div>
+    <h3 id="adding-portals">Adding or Removing Portals</h3>
+    <p>Portals are permanently stored in the HTML file — not your browser — so they appear consistently on all devices and are never lost when the file is updated. To add or remove a portal:</p>
+    <ol>
+      <li>Ask Claude: the portal name, URL, and which section it belongs to</li>
+      <li>Download the updated <code>rfp-monitor.html</code></li>
+      <li>Upload to your ops-hub GitHub repository</li>
+    </ol>
+  </div>
 
-      <h3 id="adding-sources">Adding or Removing Sources</h3>
-      <p>The Sources tab has a single combined info box — "About Auto-Searchable Sources" — that explains both what the sources are and how to manage them. There is no Add Source button in the UI. This is intentional.</p>
-      <div class="warn-box"><strong>Why there's no Add Source UI:</strong> Sources added through a browser UI save to localStorage and disappear when you clear browser data or switch devices. Storing them permanently in the HTML file is safer and more reliable.</div>
-      <p>To add or remove a source:</p>
-      <ol>
-        <li>Message Claude: <em>"Add [source name], URL: [url], Type: Government / Foundation / Nonprofit / Academic to the RFP Monitor"</em></li>
-        <li>Download the updated <code>rfp-monitor.html</code></li>
-        <li>Upload to GitHub — the source is live everywhere instantly</li>
-      </ol>
-      <div class="note-box">This two-minute process permanently bakes the source into the HTML so it survives any future update, device switch, or browser clear.</div>
+  <div class="guide-section" id="winloss">
+    <h2><span class="snum">4</span> Win / Loss Tab</h2>
+    <p>Your business development scorecard. Automatically tracks the outcomes of opportunities moved to Won, Lost, or No-Go status in the Pipeline tab. Shows win rate percentage, total value won, and a full outcome log.</p>
+    <div class="note-box"><strong>Win/Loss vs. Go/No-Go form:</strong> The Go/No-Go form helps you decide whether to pursue an opportunity (before bidding). The Win/Loss tab records what happened after you submitted (after the client decides). They serve different stages of the same process.</div>
+    <p>The tab updates automatically as you change statuses in the Pipeline — no manual data entry needed.</p>
+  </div>
 
-            <h3 id="manual-portals">Manual Portals</h3>
-      <p>Manual portals are sites requiring a login or CAPTCHA — they cannot be searched automatically. The Manual Portals tab provides direct links so you can check them quickly during your Thursday review session.</p>
-      <p>Like auto-searchable sources, portals are permanently stored in the HTML file — not your browser. There are no Add buttons in the UI. To add or remove a portal, ask Claude: share the name, URL, and which section it belongs to. Upload the updated file to GitHub and it is live everywhere instantly.</p>
-    </div>
+  <div class="guide-section" id="digest">
+    <h2><span class="snum">5</span> Email Digest Tab</h2>
+    <p>Two tools in one tab: a weekly pipeline export and a saved searches manager.</p>
 
-    <!-- RATE LIMIT & TIMER -->
-        <div class="guide-section" id="rate-limit">
-      <h2><span class="section-num">★</span> Cost & Searching</h2>
-      <p>The RFP Monitor no longer uses the Anthropic API for search. All searching is done through your existing Claude Pro subscription at claude.ai — at no additional cost.</p>
-      <div class="tip-box"><strong>Zero per-search cost.</strong> Your Claude Pro subscription covers all searches. No API credits needed.</div>
-      <h3>Workflow</h3>
-      <ol>
-        <li>Go to the <strong>Search</strong> tab and click <strong>Copy prompt</strong></li>
-        <li>Open <strong>claude.ai</strong> in a new tab, paste the prompt</li>
-        <li>Copy Claude's full response</li>
-        <li>Return to your portal → <strong>Pipeline</strong> tab → paste into <strong>Import from Claude</strong></li>
-        <li>Click <strong>+ Add all to pipeline</strong></li>
-      </ol>
-    </div>
+    <h3 id="digest-export">Weekly Digest Export</h3>
+    <p>Click <strong>Generate & Copy Digest</strong> to build a formatted plain-text summary of your full pipeline. The digest includes:</p>
+    <ul>
+      <li>Pipeline summary — active opportunity count and total estimated value</li>
+      <li>Urgent deadlines — anything due in the next 14 days, sorted by date</li>
+      <li>Opportunities grouped by status (New, Considering, Pursuing, Submitted)</li>
+      <li>Notes displayed under each opportunity</li>
+      <li>Won opportunities this cycle</li>
+    </ul>
+    <p>The digest copies to your clipboard automatically and also appears in a text box for manual copy. Paste into an email, a Word document, or anywhere you track business development activity.</p>
 
-<div class="guide-section" id="pipeline">
-      <h2><span class="section-num">5</span> Managing Your Pipeline</h2>
+    <h3 id="saved-searches">Saved Searches</h3>
+    <p>Type a keyword combination and click <strong>Save</strong> to store it. Up to 5 searches can be saved. Click any saved search to instantly apply it as a filter in the Pipeline tab. Click ✕ to delete a saved search.</p>
+    <div class="tip-box">Save your 5 most productive keyword combinations here so you can rotate through them each week without retyping.</div>
+  </div>
 
-      <h3 id="statuses">Opportunity Statuses</h3>
-      <table class="guide-table">
-        <thead><tr><th>Status</th><th>Use when</th></tr></thead>
-        <tbody>
-          <tr><td><span class="badge badge-navy">New</span></td><td>Just discovered — not yet evaluated</td></tr>
-          <tr><td><span class="badge badge-amber">Pursuing</span></td><td>Decided to bid — actively working on proposal</td></tr>
-          <tr><td><span class="badge badge-pink">Submitted</span></td><td>Proposal submitted, awaiting decision</td></tr>
-          <tr><td><span class="badge badge-green">Won</span></td><td>Contract awarded</td></tr>
-          <tr><td>Lost</td><td>Not selected or opportunity cancelled</td></tr>
-        </tbody>
-      </table>
+  <div class="guide-section" id="adding-sources">
+    <h2><span class="snum">★</span> Adding or Removing Sources</h2>
+    <p>All sources and portals are permanently stored in the HTML file — not your browser. To add or remove any source or portal, ask Claude: share the name, URL, and type (Government / Foundation / Nonprofit / Academic). Download the updated file and upload it to your ops-hub GitHub repository.</p>
+  </div>
 
-      <h3 id="scorecard">Go/No-Go Scorecard</h3>
-      <p>Click the scorecard button on any pipeline opportunity to run a quick evaluation. Rate six criteria: mission fit, timeline, budget, competitive position, existing relationship, and capacity. The tool calculates a score and recommended decision. This connects with your Go/No-Go form in the full Operations Hub.</p>
-    </div>
-
-    <!-- DIGEST -->
-    <div class="guide-section" id="digest">
-      <h2><span class="section-num">6</span> Weekly Digest</h2>
-      <p>The Digest tab generates a plain-language summary of your current pipeline — how many opportunities are active, what's coming up, and key deadlines. Run it every Friday as part of your weekly rhythm.</p>
-      <ul>
-        <li>Click <strong>Generate digest</strong> to create the summary</li>
-        <li>The digest reflects your pipeline at the moment you generate it</li>
-        <li>Copy and paste into an email or document as needed</li>
-      </ul>
-    </div>
-
-    <!-- TROUBLESHOOTING -->
-    <div class="guide-section" id="troubleshooting">
-      <h2><span class="section-num">7</span> Troubleshooting</h2>
-      <table class="guide-table">
-        <thead><tr><th>Error</th><th>Fix</th></tr></thead>
-        <tbody>
-          <tr><td>Failed to fetch</td><td>Network error — search never ran. Wait 10–15 seconds and try again. Check app.netlify.com → pop-proxy → Functions to confirm proxy is live.</td></tr>
-          <tr><td>Invalid x-api-key</td><td>Re-enter your Claude Pro subscription. Create a new one at console.anthropic.com if needed — keys are only shown once.</td></tr>
-          <tr><td>Claude returns no results</td><td>Try a different prompt or broader keywords. Run 2–3 different prompts per session for best coverage.</td></tr>
-          <tr><td>Claude returns no results</td><td>Try a different prompt or broader keywords. Check that Claude Pro web search is active.</td></tr>
-          <tr><td>Import from Claude not working</td><td>Make sure you paste the full Claude response. Both JSON and formatted text are supported.</td></tr>
-          <tr><td>Pipeline disappeared</td><td>Browser localStorage was cleared. Data is device-local — this is a known limitation.</td></tr>
-          <tr><td>Source counter shows wrong number</td><td>Hard refresh the page: Cmd+Shift+R (Mac) or Ctrl+Shift+R (Windows).</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- REFERENCE -->
-    <div class="guide-section" id="reference">
-      <h2><span class="section-num">8</span> Quick Reference</h2>
-      <table class="guide-table">
-        <thead><tr><th>Resource</th><th>URL</th></tr></thead>
-        <tbody>
-          <tr><td>RFP Monitor</td><td>powerofpublic.github.io/ops-hub/rfp-monitor.html</td></tr>
-          <tr><td>Operations Hub</td><td>powerofpublic.github.io/ops-hub</td></tr>
-          <tr><td>Anthropic Console</td><td>console.anthropic.com</td></tr>
-          <tr><td>API Usage & Billing</td><td>console.anthropic.com/usage</td></tr>
-          <tr><td>Netlify Proxy</td><td>pop-proxy.netlify.app</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-  </main>
+  <div class="guide-section" id="troubleshooting">
+    <h2><span class="snum">★</span> Troubleshooting</h2>
+    <table class="guide-table">
+      <thead><tr><th>Issue</th><th>Fix</th></tr></thead>
+      <tbody>
+        <tr><td>Page is blank or won't load</td><td>Hard refresh: Cmd+Shift+R (Mac) or Ctrl+Shift+R (Windows)</td></tr>
+        <tr><td>Tabs don't switch</td><td>Hard refresh the page. If it persists, re-upload the latest rfp-monitor.html to GitHub.</td></tr>
+        <tr><td>Claude returns no results</td><td>Try a different prompt or broader keywords. Run 2–3 different prompts per session.</td></tr>
+        <tr><td>Import from Claude adds nothing</td><td>Paste the full Claude response — all text, not just part of it. Both JSON and plain text are supported.</td></tr>
+        <tr><td>Portal links don't open</td><td>Check your browser isn't blocking popups. All links open in a new tab.</td></tr>
+        <tr><td>Portal checklist resets unexpectedly</td><td>The checklist resets automatically each Monday. Use Reset week to clear manually.</td></tr>
+        <tr><td>Digest not copying to clipboard</td><td>The text also appears in the box below the button — copy it from there.</td></tr>
+        <tr><td>Pipeline data disappeared</td><td>Pipeline data is stored in browser localStorage — it is device-specific. If you clear browser data it resets. Export the digest weekly as a backup record.</td></tr>
+        <tr><td>Site not updating after GitHub upload</td><td>Wait 60 seconds for GitHub Pages to rebuild, then hard refresh.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</main>
 </div>
 
 <footer>
   <span style="color:var(--pink);">●</span> Power of Public Operations Hub &nbsp;·&nbsp; <a href="index.html">← Back to Hub</a>
 </footer>
-
 <script>
-// Highlight active TOC link on scroll
-const sections = document.querySelectorAll('.guide-section, h3[id]');
-const tocLinks = document.querySelectorAll('.toc-section a, .toc-sub a');
+const allLinks = document.querySelectorAll('.toc-section>a, .toc-sub a');
 window.addEventListener('scroll', () => {
+  const sections = document.querySelectorAll('[id]');
   let current = '';
-  sections.forEach(s => {
-    if (window.scrollY >= s.offsetTop - 100) current = s.id;
-  });
-  tocLinks.forEach(a => {
-    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
-  });
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 120) current = s.id; });
+  allLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current));
 });
 </script>
 </body>
