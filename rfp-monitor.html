@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RFP & Procurement Tracker · Operations Hub</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <title>RFP Monitor — Power of Public</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     /*
       POWER OF PUBLIC — OPERATIONS HUB
@@ -62,7 +62,13 @@
     .page-title { font-family: 'Playfair Display', serif; font-size: 30px; font-weight: 900; color: var(--text); }
     .page-sub { color: var(--muted); font-size: 12px; margin-top: 4px; }
 
-
+    /* ── API KEY BANNER ── */
+    .key-banner { background: var(--pink-light); border: 1.5px solid var(--pink); border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 22px; }
+    .key-banner.gone { display: none; }
+    .key-banner label { font-size: 11.5px; font-weight: 600; color: var(--pink); text-transform: uppercase; letter-spacing: .5px; white-space: nowrap; }
+    .key-banner input { flex: 1; min-width: 200px; background: var(--surface); border: 1.5px solid var(--border2); border-radius: 8px; padding: 8px 12px; font-size: 13px; font-family: monospace; letter-spacing: .04em; color: var(--text); }
+    .key-banner input:focus { outline: none; border-color: var(--pink); box-shadow: 0 0 0 3px rgba(232,24,122,.08); }
+    .key-banner input::placeholder { font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: 0; color: var(--muted); }
     .key-saved { font-size: 12px; color: var(--green); font-weight: 600; }
 
     /* ── PIPELINE SUMMARY ── */
@@ -272,9 +278,9 @@
       .portal-grid { grid-template-columns: 1fr; }
     }
   </style>
-
 </head>
 <body>
+
 <div id="rfp-app">
 
 <header style="background:#1A1A2E;border-bottom:3px solid transparent;border-image:linear-gradient(90deg,#E8187A,#D4A017,#1A8C5B) 1;padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100;">
@@ -303,13 +309,12 @@
   <!-- PAGE HEADER -->
   <div class="page-header">
     <div>
-      <h1 class="page-title">RFP & Procurement Tracker</h1>
-      <p class="page-sub">Business development pipeline · Power of Public, LLC</p>
+      <h1 class="page-title">RFP &amp; Procurement Tracker</h1>
+      <p class="page-sub">Business development pipeline &middot; Power of Public, LLC</p>
     </div>
   </div>
 
-
-
+  <!-- PIPELINE SUMMARY -->
   <!-- PIPELINE SUMMARY -->
   <div class="pipeline-bar">
     <div class="pip pp-all active" onclick="filterStatus('all')" id="pip-all"><div class="pip-val" id="p-all">0</div><div class="pip-lbl">All Active</div></div>
@@ -328,9 +333,20 @@
     <button class="tab"     onclick="go('portals')">Manual Portals</button>
     <button class="tab"     onclick="go('winloss')">Win / Loss</button>
     <button class="tab"     onclick="go('digest')">Email Digest</button>
+    <button class="tab"     onclick="go('sources')">Sources</button>
   </div>
 
-  <!-- ══ PIPELINE ══ -->
+  
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab on"  onclick="go('pipeline')">Pipeline</button>
+    <button class="tab"     onclick="go('search')">Search</button>
+    <button class="tab"     onclick="go('portals')">Manual Portals</button>
+    <button class="tab"     onclick="go('winloss')">Win / Loss</button>
+    <button class="tab"     onclick="go('digest')">Email Digest</button>
+  </div>
+
   <div id="tab-pipeline" class="panel on">
     <div class="ctrls">
       <select id="ft" onchange="doFilter()">
@@ -357,7 +373,7 @@
         <button onclick="(function(){var w=document.getElementById('iw');w.style.display=w.style.display==='none'?'block':'none';})()" style="font-size:11px;background:none;border:1px solid #F0C8DF;border-radius:4px;padding:2px 8px;color:#B5467A;cursor:pointer;">Show / Hide</button>
       </div>
       <div id="iw" style="display:none;">
-        <p style="font-size:12px;color:#5A2040;margin-bottom:8px;line-height:1.5;">Paste the full Claude response from a search prompt. All opportunities will be extracted and added to your pipeline automatically.</p>
+        <p style="font-size:12px;color:#5A2040;margin-bottom:8px;line-height:1.5;">Paste the full Claude response from a search prompt. All opportunities will be extracted and added to your pipeline.</p>
         <textarea id="claude-import-text" placeholder="Paste Claude search results here..." style="width:100%;height:100px;font-size:12px;padding:8px;border:1px solid #F0C8DF;border-radius:6px;background:#fff;color:#333;resize:vertical;font-family:inherit;"></textarea>
         <div style="display:flex;gap:8px;margin-top:8px;align-items:center;">
           <button onclick="importFromClaude()" style="background:#E8187A;color:#fff;border:none;border-radius:6px;padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;">+ Add all to pipeline</button>
@@ -369,17 +385,19 @@
     <div id="pipe-res">
       <div class="empty-state">
         <h3>Pipeline is empty</h3>
-        <p>Use the <strong>Search</strong> tab to copy a Claude Pro prompt, paste results into <strong>Import from Claude</strong> above, or browse <strong>Manual Portals</strong> tab to browse government procurement sites.</p>
+        <p>Use the <strong>Search</strong> tab to copy a Claude Pro prompt, paste results into <strong>Import from Claude</strong> above, or browse <strong>Manual Portals</strong> and use <strong>+ Add Opportunity</strong>.</p>
       </div>
     </div>
   </div>
 
   <!-- ══ SEARCH ══ -->
+
+
   <div id="tab-search" class="panel">
 
     <div style="background:#FBF3F8;border:1.5px solid #F0C8DF;border-left:4px solid #E8187A;border-radius:10px;padding:16px 20px;margin-bottom:18px;">
       <div style="font-size:13px;font-weight:700;color:#B5467A;margin-bottom:8px;">How to search for current RFPs</div>
-      <div style="font-size:13px;color:#5A2040;line-height:1.7;">Use your <strong>Claude Pro subscription</strong> at claude.ai — free, included in your plan. Claude searches the live web and returns real current RFPs with direct links. Copy a prompt below, paste it into a new Claude chat, then paste the results into the <strong>Import from Claude</strong> box in the Pipeline tab.</div>
+      <div style="font-size:13px;color:#5A2040;line-height:1.7;">Use your <strong>Claude Pro subscription</strong> at claude.ai — free, included in your plan. Copy a prompt below, paste it into a new Claude chat, then paste the results into the <strong>Import from Claude</strong> box in the Pipeline tab.</div>
     </div>
 
     <div class="card">
@@ -413,13 +431,13 @@
 
         <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:14px 16px;">
           <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:8px;">Broad weekly sweep</div>
-          <div id="p5" style="font-size:12px;color:var(--text);background:var(--surface2);border-radius:6px;padding:10px 12px;line-height:1.65;border:1px solid var(--border);font-family:monospace;">Search the web for active RFPs and grant opportunities in health communications consulting, public health outreach, social marketing, behavior change campaigns, and community engagement posted in the last 14 days. Include federal, state, foundation, and nonprofit sources. For each result return: title, organization, type (Government/Foundation/Nonprofit), deadline, 2-sentence description, and direct link. Return at least 8 results.</div>
+          <div id="p5" style="font-size:12px;color:var(--text);background:var(--surface2);border-radius:6px;padding:10px 12px;line-height:1.65;border:1px solid var(--border);font-family:monospace;">Search the web for active RFPs and grant opportunities in health communications consulting, public health outreach, social marketing, behavior change campaigns, and community engagement posted in the last 14 days. Include federal, state, foundation, and nonprofit sources. For each result return: title, organization, type, deadline, 2-sentence description, and direct link. Return at least 8 results.</div>
           <button onclick="cp('p5',this)" style="margin-top:8px;font-size:11px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);background:none;cursor:pointer;color:var(--muted);">Copy prompt</button>
         </div>
 
       </div>
       <div style="margin-top:16px;padding:12px 14px;background:var(--surface2);border-radius:8px;font-size:12px;color:var(--muted);line-height:1.6;">
-        <strong style="color:var(--text);">After getting results:</strong> Copy the full Claude response → go to <strong>Pipeline</strong> tab → paste into <strong>Import from Claude</strong> → click <strong>+ Add all to pipeline</strong>.
+        <strong style="color:var(--text);">After getting results:</strong> Copy the full Claude response → <strong>Pipeline</strong> tab → paste into <strong>Import from Claude</strong> → click <strong>+ Add all to pipeline</strong>.
       </div>
     </div>
 
@@ -427,21 +445,18 @@
 
   <div id="tab-portals" class="panel">
 
-    <!-- INFO BOX -->
     <div style="background:#FBF3F8;border:1.5px solid #F0C8DF;border-left:4px solid #E8187A;border-radius:10px;padding:16px 20px;margin-bottom:20px;">
       <div style="font-size:13px;font-weight:700;color:#B5467A;margin-bottom:8px;">About these portals</div>
       <div style="font-size:13px;color:#5A2040;line-height:1.65;">
-        <strong>What these are:</strong> Direct links to every procurement, grant, and communications source used for RFP prospecting. Click any link to open the site in a new tab for your weekly review.<br><br>
-        <strong>How to add or remove a portal:</strong> Portals are permanently stored in the HTML file — not your browser. Ask Claude to add or remove one, then upload the updated file to GitHub.
+        <strong>What these are:</strong> Direct links to every procurement, grant, and communications source for RFP prospecting. Click any link to open the site in a new tab for your weekly review.<br><br>
+        <strong>To add or remove a portal:</strong> Ask Claude, share the name, URL, and section. Upload the updated file to GitHub.
       </div>
     </div>
 
-    <!-- GOVERNMENT & PROCUREMENT -->
     <div class="portal-section">
-      <h3>Government & procurement</h3>
+      <h3>Government &amp; procurement</h3>
       <p class="portal-note">Federal, state, and local procurement systems plus RFP aggregators.</p>
-      <div class="portal-grid">
-        <div class="portal-link">
+      <div class="portal-grid">        <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">SAM.gov (Federal)</div>
             <div class="portal-link-desc">sam.gov</div>
@@ -453,14 +468,14 @@
             <div class="portal-link-name">rfpmart.com — Health & Marketing</div>
             <div class="portal-link-desc">rfpmart.com</div>
           </div>
-          <a href="https://rfpmart.com/marketing-and-branding-rfp-government-contract.html" target="_blank" rel="noopener">Open ↗</a>
+          <a href="https://rfpmart.com/marketing-and-branding-rfp-government.php" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">HigherGov — DC OCP</div>
             <div class="portal-link-desc">highergov.com</div>
           </div>
-          <a href="https://www.highergov.com/sl/agency/contracting-and-procurement-ocp-ocp-12530/" target="_blank" rel="noopener">Open ↗</a>
+          <a href="https://www.highergov.com/sl/agency/contracting-and-procurement/" target="_blank" rel="noopener">Open ↗</a>
         </div>
         <div class="portal-link">
           <div class="portal-link-info">
@@ -495,17 +510,14 @@
             <div class="portal-link-name">rfpmart — Social Media & Outreach</div>
             <div class="portal-link-desc">rfpmart.com</div>
           </div>
-          <a href="https://rfpmart.com/social-media-internet-marketing-and-seo-rfp-government-contract.html" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-      </div>
+          <a href="https://rfpmart.com/social-media-internet-marketing-rfp-government.php" target="_blank" rel="noopener">Open ↗</a>
+        </div></div>
     </div>
 
-    <!-- FOUNDATIONS -->
     <div class="portal-section">
       <h3>Foundations</h3>
       <p class="portal-note">Health-focused foundations funding communications, outreach, and social marketing work.</p>
-      <div class="portal-grid">
-        <div class="portal-link">
+      <div class="portal-grid">        <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">CDC Foundation</div>
             <div class="portal-link-desc">cdcfoundation.org</div>
@@ -546,16 +558,13 @@
             <div class="portal-link-desc">nyhealthfoundation.org</div>
           </div>
           <a href="https://nyhealthfoundation.org/rfp/" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-      </div>
+        </div></div>
     </div>
 
-    <!-- NONPROFIT & ASSOCIATIONS -->
     <div class="portal-section">
-      <h3>Nonprofit & associations</h3>
+      <h3>Nonprofit &amp; associations</h3>
       <p class="portal-note">Public health associations and communications-specific RFP aggregators.</p>
-      <div class="portal-grid">
-        <div class="portal-link">
+      <div class="portal-grid">        <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">O'Dwyer's PR — RFPs</div>
             <div class="portal-link-desc">odwyerpr.com</div>
@@ -610,67 +619,212 @@
             <div class="portal-link-desc">rfpdb.com</div>
           </div>
           <a href="https://rfpdb.com/" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-      </div>
+        </div></div>
     </div>
 
-    <!-- ACADEMIC -->
     <div class="portal-section">
       <h3>Academic</h3>
       <p class="portal-note">Schools of public health that post consulting and research RFPs.</p>
-      <div class="portal-grid">
-        <div class="portal-link">
+      <div class="portal-grid">        <div class="portal-link">
           <div class="portal-link-info">
             <div class="portal-link-name">UNC Gillings SPH</div>
             <div class="portal-link-desc">sph.unc.edu</div>
           </div>
-          <a href="https://sph.unc.edu/research/common-public-health-funding-opportunities/" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-      </div>
+          <a href="https://sph.unc.edu/research/common-public-health-resources/rfp/" target="_blank" rel="noopener">Open ↗</a>
+        </div></div>
     </div>
 
     <hr style="border:none;border-top:1.5px solid var(--border);margin:8px 0 20px;">
     <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:16px;">Login-required portals</p>
 
-    <!-- STATE PROCUREMENT -->
     <div class="portal-section">
-      <h3>State procurement portals <span style="font-size:11px;font-weight:400;color:var(--muted);margin-left:6px;">login required</span></h3>
+      <h3>State procurement portals</h3>
       <p class="portal-note">Official state eProcurement systems. Browse publicly; login only to bid.</p>
-      <div class="portal-grid" id="pgrid-state"></div>
+      <div class="portal-grid">        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">eMMA — Maryland</div>
+            <div class="portal-link-desc">eMaryland Marketplace Advantage · all MD state agencies</div>
+          </div>
+          <a href="https://emma.maryland.gov/page.aspx/en/rfp/request_browse_public" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">eVA / VBO — Virginia</div>
+            <div class="portal-link-desc">Virginia eProcurement · statewide solicitations</div>
+          </div>
+          <a href="https://www.eva.virginia.gov/index.htm" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">DC OCP — Washington, DC</div>
+            <div class="portal-link-desc">Office of Contracting and Procurement · all DC agencies</div>
+          </div>
+          <a href="https://contracts.ocp.dc.gov/solicitations/search" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">NC eVP — North Carolina</div>
+            <div class="portal-link-desc">NC eProcurement · state solicitations</div>
+          </div>
+          <a href="https://evp.nc.gov/solicitations/" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">GPR — Georgia</div>
+            <div class="portal-link-desc">Georgia Procurement Registry · state bids</div>
+          </div>
+          <a href="https://ssl.doas.state.ga.us/gpr/" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">Delaware Bid Directory</div>
+            <div class="portal-link-desc">State of Delaware procurement opportunities</div>
+          </div>
+          <a href="https://mmp.delaware.gov/Bids/" target="_blank" rel="noopener">Open ↗</a>
+        </div></div>
     </div>
 
-    <!-- DC-ADJACENT -->
     <div class="portal-section">
-      <h3>DC-adjacent & regional <span style="font-size:11px;font-weight:400;color:var(--muted);margin-left:6px;">login required</span></h3>
+      <h3>DC-adjacent &amp; regional</h3>
       <p class="portal-note">DC, Maryland, and regional organizations with procurement or grant opportunities.</p>
-      <div class="portal-grid" id="pgrid-dc"></div>
+      <div class="portal-grid">        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">Events DC</div>
+            <div class="portal-link-desc">Events DC · RFPs and vendor opportunities</div>
+          </div>
+          <a href="https://eventsdc.com/rfp" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">Metropolitan Washington COG</div>
+            <div class="portal-link-desc">COG procurement and consulting opportunities</div>
+          </div>
+          <a href="https://www.mwcog.org/about-us/procurement/" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">WMATA — Metro</div>
+            <div class="portal-link-desc">Washington Metro · vendor and consulting RFPs</div>
+          </div>
+          <a href="https://www.wmata.com/business/contracting/solicitations.cfm" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">DC Health (DCDOH)</div>
+            <div class="portal-link-desc">DC Dept of Health · grants and procurement</div>
+          </div>
+          <a href="https://dchealth.dc.gov/service/grants-and-procurement" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">DHCF — DC Medicaid</div>
+            <div class="portal-link-desc">DC Health Care Finance · RFPs and grants</div>
+          </div>
+          <a href="https://dhcf.dc.gov/page/procurement" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">DC Office of Planning</div>
+            <div class="portal-link-desc">DC planning and community development RFPs</div>
+          </div>
+          <a href="https://planning.dc.gov/page/rfps-and-procurements" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">DC DGS Solicitations</div>
+            <div class="portal-link-desc">DC Dept of General Services · all solicitations</div>
+          </div>
+          <a href="https://dgs.dc.gov/service/solicitations" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">Prince George's Co. (MD)</div>
+            <div class="portal-link-desc">PG County procurement and RFPs</div>
+          </div>
+          <a href="https://www.princegeorgescountymd.gov/1226/Bid-Solicitations" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">Montgomery Co. (MD)</div>
+            <div class="portal-link-desc">Montgomery County solicitations</div>
+          </div>
+          <a href="https://www.montgomerycountymd.gov/purchasing/solicitations.html" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">Arlington Co. (VA)</div>
+            <div class="portal-link-desc">Arlington County procurement</div>
+          </div>
+          <a href="https://www.arlingtonva.us/Government/Departments/Management-and-Finance/Purchasing/Solicitations" target="_blank" rel="noopener">Open ↗</a>
+        </div></div>
     </div>
 
-    <!-- PR & COMMS -->
     <div class="portal-section">
-      <h3>PR & communications RFP lists</h3>
+      <h3>PR &amp; communications RFP lists</h3>
       <p class="portal-note">Curated lists of communications and marketing RFPs from industry sources.</p>
-      <div class="portal-grid" id="pgrid-pr"></div>
+      <div class="portal-grid">        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">O'Dwyer's PR — RFPs, RFIs & RFQs</div>
+            <div class="portal-link-desc">PR and communications industry RFPs</div>
+          </div>
+          <a href="https://www.odwyerpr.com/rfps/index.html" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">Everything PR — RFPs</div>
+            <div class="portal-link-desc">PR agency and communications RFPs</div>
+          </div>
+          <a href="https://everything-pr.com/rfp/" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">RFP Database (rfpdb.com)</div>
+            <div class="portal-link-desc">Searchable RFP database across all industries</div>
+          </div>
+          <a href="https://rfpdb.com/" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">rfpmart — Marketing & Branding</div>
+            <div class="portal-link-desc">Marketing, branding, and communications RFPs</div>
+          </div>
+          <a href="https://rfpmart.com/marketing-and-branding-rfp-government.php" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">rfpmart — Social Media & Outreach</div>
+            <div class="portal-link-desc">Social media and community outreach RFPs</div>
+          </div>
+          <a href="https://rfpmart.com/social-media-internet-marketing-rfp-government.php" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">HigherGov — Communications & Marketing</div>
+            <div class="portal-link-desc">Federal and state communications contracts</div>
+          </div>
+          <a href="https://www.highergov.com/sl/agency/contracting-and-procurement/" target="_blank" rel="noopener">Open ↗</a>
+        </div></div>
     </div>
 
-    <!-- MARYLAND BPW -->
     <div class="portal-section">
       <h3>Maryland Board of Public Works</h3>
       <p class="portal-note">Maryland state contracts and procurement opportunities.</p>
-      <div class="portal-grid" id="pgrid-bpw"></div>
+      <div class="portal-grid">        <div class="portal-link">
+          <div class="portal-link-info">
+            <div class="portal-link-name">BPW Procurement</div>
+            <div class="portal-link-desc">Maryland Board of Public Works · state contracts</div>
+          </div>
+          <a href="https://bpw.maryland.gov/Pages/procurement.aspx" target="_blank" rel="noopener">Open ↗</a>
+        </div></div>
     </div>
 
-    <!-- MY PORTALS -->
     <div class="portal-section">
       <h3>My portals</h3>
       <p class="portal-note">Ask Claude to add portals here permanently.</p>
       <div class="portal-grid" id="user-portal-grid"></div>
-      <p class="hint" id="user-portal-empty" style="display:none;"></p>
     </div>
 
   </div>
-
-
 
   <div id="tab-winloss" class="panel">
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;">
@@ -685,7 +839,6 @@
   </div>
 
   <!-- ══ EMAIL DIGEST ══ -->
-
 
   <div id="tab-digest" class="panel">
     <div class="card">
@@ -706,29 +859,110 @@
   <!-- ══ SOURCES ══ -->
 
 
-</main><div style="text-align:center;padding:20px 32px;background:#1A1A2E;margin-top:40px;">
+</main>
+
+
+<!-- ══ GNG MODAL ══ -->
+<div class="mbg" id="gng-modal">
+  <div class="mbox">
+    <h3>Go / No-Go Scorecard</h3>
+    <p class="msub" id="gng-opp-title"></p>
+    <div id="gng-criteria"></div>
+    <div class="gng-result" id="gng-result" style="display:none;"></div>
+    <div style="margin-top:16px;">
+      <label class="flbl">Contact at this org</label>
+      <input class="fin" type="text" id="gng-contact" placeholder="Name, title, or 'warm intro needed'" />
+      <label class="flbl">Est. contract value ($)</label>
+      <input class="fin" type="text" id="gng-value" placeholder="e.g., 50000" style="margin-bottom:0;" />
+    </div>
+    <div class="mfooter">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn primary" onclick="saveGng()">Save scorecard</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ NOTES MODAL ══ -->
+<div class="mbg" id="notes-modal">
+  <div class="mbox" style="width:480px;">
+    <h3>Notes</h3>
+    <p class="msub" id="notes-opp-title"></p>
+    <textarea class="ftarea" id="notes-text" style="min-height:140px;" placeholder="Your thinking, next steps, contacts, anything relevant…"></textarea>
+    <div class="mfooter">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn primary" onclick="saveNotes()">Save notes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADD / EDIT SOURCE MODAL ══ -->
+<div class="mbg" id="source-modal">
+  <div class="mbox" style="width:400px;">
+    <h3 id="sm-title">Add auto-search source</h3>
+    <p class="msub" id="sm-sub">Only add sources the API can access without a login or reCAPTCHA.</p>
+    <label class="flbl">Organization name</label>
+    <input class="fin" type="text" id="mn" placeholder="e.g., NACCHO" />
+    <label class="flbl">URL (RFP or opportunities page)</label>
+    <input class="fin" type="text" id="mu" placeholder="https://naccho.org/rfps" />
+    <label class="flbl">Type</label>
+    <select class="fin" id="mt" style="height:36px;">
+      <option>Government</option><option>Foundation</option>
+      <option>Nonprofit / Association</option><option>Academic</option>
+    </select>
+    <label class="flbl">Keywords (optional)</label>
+    <input class="fin" type="text" id="mk" placeholder="e.g., maternal health, communications" />
+    <div class="mfooter">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn primary" id="sm-save-btn" onclick="saveSource()">Add source</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADD PORTAL MODAL ══ -->
+<div class="mbg" id="portal-modal">
+  <div class="mbox" style="width:440px;">
+    <h3 id="pm-title">Add portal</h3>
+    <p class="msub" id="pm-sub">Add any organization, agency, or resource to the Manual Portals tab.</p>
+    <label class="flbl">Section</label>
+    <select class="fin" id="ps" style="height:36px;margin-bottom:12px;">
+      <option value="My portals">My portals (default)</option>
+      <option value="State procurement portals">State procurement portals</option>
+      <option value="DC-adjacent & regional organizations">DC-adjacent & regional organizations</option>
+      <option value="Free curated PR & communications RFP lists">Free curated PR & communications RFP lists</option>
+      <option value="Maryland Board of Public Works">Maryland Board of Public Works</option>
+    </select>
+    <label class="flbl">Name</label>
+    <input class="fin" type="text" id="pn" placeholder="e.g., CDC Procurement" />
+    <label class="flbl">Description</label>
+    <input class="fin" type="text" id="pd" placeholder="e.g., CDC vendor & contract opportunities" />
+    <label class="flbl">URL</label>
+    <input class="fin" type="url" id="pu" placeholder="https://…" />
+    <label class="flbl">Tag</label>
+    <select class="fin" id="pt" style="height:36px;" onchange="toggleCustomTag(this.value)">
+      <option value="public">Public</option>
+      <option value="free">Free / Public</option>
+      <option value="login">Login Preferred</option>
+      <option value="loginbid">Login to bid only</option>
+      <option value="custom">Custom…</option>
+    </select>
+    <div id="custom-tag-wrap" style="display:none;margin-top:-6px;margin-bottom:12px;">
+      <input class="fin" type="text" id="pt-custom" placeholder="e.g., Registration required" style="margin-bottom:0;" />
+    </div>
+    <div class="mfooter">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn primary" id="pm-save-btn" onclick="savePortal()">Add portal</button>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center;padding:20px 32px;background:#1A1A2E;margin-top:40px;">
   <a href="index.html" style="font-size:12px;color:rgba(255,255,255,0.35);text-decoration:none;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:0.02em;">← Back to Power of Public Operations Hub</a>
 </div>
 
-</body>
-</html
-/* ─── TAB NAVIGATION ─── */
-function go(n) {
-  // Activate correct tab button by matching onclick attribute
-  document.querySelectorAll('.tab').forEach(tab => {
-    const fn = tab.getAttribute('onclick') || '';
-    tab.classList.toggle('on', fn.includes("'" + n + "'"));
-  });
-  // Show correct panel
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
-  const panel = document.getElementById('tab-' + n);
-  if (panel) panel.classList.add('on');
-  if (n === 'portals') { if(typeof renderUserPortals==='function') renderUserPortals(); }
-  if (n === 'winloss') { if(typeof renderWinLoss==='function') renderWinLoss(); }
-  if (n === 'digest')  { if(typeof renderDigest==='function')  renderDigest(); }
-}
+</div><!-- /rfp-app -->
 
 <script>
+
 /* ═══════════════════════════════════════════════
    AUTO-SEARCHABLE SOURCES
    These are Google-indexed and accessible to the
@@ -807,13 +1041,16 @@ function updatePipeline(){
 
 /* ─── TABS ─── */
 function go(n){
-  document.querySelectorAll('.tab').forEach(tab=>{const fn=tab.getAttribute('onclick')||'';tab.classList.toggle('on',fn.includes("'"+n+"'"));});
+  document.querySelectorAll('.tab').forEach(tab=>{
+    const fn=tab.getAttribute('onclick')||'';
+    tab.classList.toggle('on',fn.includes("'"+n+"'"));
+  });
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
-  document.getElementById('tab-'+n).classList.add('on');
-  if(n==='sources')  renderSrc();
-  if(n==='winloss')  renderWL();
-  if(n==='pipeline') doFilter();
-  if(n==='portals')  renderUserPortals();
+  const el=document.getElementById('tab-'+n);
+  if(el)el.classList.add('on');
+  if(n==='portals'&&typeof renderUserPortals==='function')renderUserPortals();
+  if(n==='winloss'&&typeof renderWinLoss==='function')renderWinLoss();
+  if(n==='digest'&&typeof renderDigest==='function')renderDigest();
 }
 
 /* ─── PILLS ─── */
@@ -1361,64 +1598,53 @@ function removePortal(id){
 updatePipeline();
 doFilter();
 renderUserPortals();
-/* ─── COPY PROMPT ─── */
-function cp(id, btn) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  navigator.clipboard.writeText(el.textContent.trim()).then(() => {
-    btn.textContent = 'Copied ✓'; btn.style.color = 'var(--green)';
-    setTimeout(() => { btn.textContent = 'Copy prompt'; btn.style.color = ''; }, 1800);
-  }).catch(() => {
-    const ta = document.createElement('textarea');
-    ta.value = el.textContent.trim();
-    document.body.appendChild(ta); ta.select();
-    document.execCommand('copy'); document.body.removeChild(ta);
-    btn.textContent = 'Copied ✓';
-    setTimeout(() => { btn.textContent = 'Copy prompt'; }, 1800);
+
+function cp(id,btn){
+  const el=document.getElementById(id);if(!el)return;
+  navigator.clipboard.writeText(el.textContent.trim()).then(()=>{
+    btn.textContent='Copied ✓';btn.style.color='var(--green)';
+    setTimeout(()=>{btn.textContent='Copy prompt';btn.style.color='';},1800);
+  }).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=el.textContent.trim();
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');
+    document.body.removeChild(ta);btn.textContent='Copied ✓';
+    setTimeout(()=>{btn.textContent='Copy prompt';},1800);
   });
 }
-
-/* ─── IMPORT FROM CLAUDE ─── */
-function importFromClaude() {
-  const raw = document.getElementById('claude-import-text').value.trim();
-  const status = document.getElementById('import-status');
-  if (!raw) { status.textContent = 'Please paste Claude results first.'; return; }
-  const added = [];
-  try {
-    const cleaned = raw.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
-    const si = cleaned.indexOf('[');
-    if (si >= 0) {
-      const items = JSON.parse(cleaned.slice(si));
-      if (Array.isArray(items) && items.length) {
-        items.forEach(item => {
-          if (item.title || item.org) {
-            pipeline.push({ id:Date.now()+Math.random(),
+function importFromClaude(){
+  const raw=document.getElementById('claude-import-text').value.trim();
+  const status=document.getElementById('import-status');
+  if(!raw){status.textContent='Please paste Claude results first.';return;}
+  const added=[];
+  try{
+    const cl=raw.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
+    const si=cl.indexOf('[');
+    if(si>=0){
+      const items=JSON.parse(cl.slice(si));
+      if(Array.isArray(items)&&items.length){
+        items.forEach(item=>{
+          if(item.title||item.org){
+            pipeline.push({id:Date.now()+Math.random(),
               title:item.title||item.name||'Untitled',
               org:item.org||item.organization||item.funder||item.agency||'',
-              type:item.type||'Government', deadline:item.deadline||'',
-              url:item.url||item.link||'', summary:item.description||item.summary||'',
-              status:'new', gngScore:null, notes:'', value:'' });
-            added.push(item.title||item.org);
+              type:item.type||'Government',deadline:item.deadline||'',
+              url:item.url||item.link||'',summary:item.description||item.summary||'',
+              status:'new',gngScore:null,notes:'',value:''});
+            added.push(item.title);
           }
         });
-        persist(); doFilter(); updatePipeline();
-        status.textContent = '✓ Added ' + added.length + ' opportunities';
-        status.style.color = 'var(--green)';
-        document.getElementById('claude-import-text').value = '';
-        setTimeout(() => { status.textContent = ''; }, 3000);
-        return;
+        persist();doFilter();updatePipeline();
+        status.textContent='✓ Added '+added.length+' opportunities';
+        status.style.color='var(--green)';
+        document.getElementById('claude-import-text').value='';
+        setTimeout(()=>{status.textContent='';},3000);return;
       }
     }
-  } catch(e) {}
-  status.textContent = 'Could not parse. Paste the full Claude response.';
-  status.style.color = 'var(--pink)';
+  }catch(e){}
+  status.textContent='Could not parse. Paste the full Claude response.';
+  status.style.color='var(--pink)';
 }
 
 </script>
-
-<div style="text-align:center;padding:20px 32px;background:#1A1A2E;margin-top:40px;">
-  <a href="index.html" style="font-size:12px;color:rgba(255,255,255,0.35);text-decoration:none;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:0.02em;">← Back to Power of Public Operations Hub</a>
-</div>
-</div><!-- /rfp-app -->
 </body>
 </html>
