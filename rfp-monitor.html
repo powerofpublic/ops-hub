@@ -371,6 +371,10 @@
 </svg></a>
   <div style="display:flex;align-items:center;gap:10px;">
     <span id="rfp-auth-name" style="font-size:11px;color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:4px 10px;white-space:nowrap;"></span>
+    <div id="hdr-timer-wrap" style="display:flex;align-items:center;gap:8px;">
+      <button id="hdr-timer-btn" onclick="toggleHeaderTimer()" title="Click after each search to start 60-second rate limit countdown" style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.6);border-radius:6px;padding:5px 12px;font-size:11px;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;display:flex;align-items:center;gap:5px;">⏱ 60s cooldown</button>
+      <span id="hdr-timer-display" style="display:none;font-size:12px;font-weight:700;color:var(--pink);min-width:32px;text-align:center;"></span>
+    </div>
     <a href="index.html" style="background:transparent;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.5);border-radius:6px;padding:5px 10px;font-size:11px;font-family:'Plus Jakarta Sans',sans-serif;text-decoration:none;">← Hub</a>
     <button onclick="window._fbSignOut()" style="background:transparent;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.5);border-radius:6px;padding:5px 10px;font-size:11px;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;">Sign out</button>
   </div>
@@ -499,16 +503,7 @@
         <span style="font-size:12px;color:var(--muted);"><span id="src-ct">0</span> sources enabled · ~20–40 seconds per search</span>
       </div>
 
-      <!-- RATE LIMIT COUNTDOWN -->
-      <div id="rate-limit-wrap" style="display:none;margin-top:14px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-          <span style="font-size:12px;font-weight:600;color:var(--muted);" id="rate-label">Next search available in <span id="rate-count" style="color:var(--pink);font-weight:700;">1:00</span></span>
-          <span style="font-size:11px;color:var(--muted);">Rate limit resets every 60 seconds</span>
-        </div>
-        <div style="background:var(--border);border-radius:20px;height:6px;overflow:hidden;">
-          <div id="rate-bar" style="height:100%;background:linear-gradient(90deg,var(--pink),var(--amber));border-radius:20px;width:100%;transition:width 1s linear;"></div>
-        </div>
-      </div>
+
       <div id="search-eb" style="margin-top:12px;"></div>
     </div>
 
@@ -845,19 +840,18 @@
 
   <!-- ══ SOURCES ══ -->
   <div id="tab-sources" class="panel">
-    <div class="notice">
-      <strong>These are the auto-searchable sources</strong> — sites Google has indexed that the API can query without hitting a login or reCAPTCHA wall. Sources requiring login/reCAPTCHA are in the <strong>Manual Portals</strong> tab, not here.
-    </div>
 
-    <!-- PERMANENT SOURCES NOTE -->
-    <div style="background:#FBF3F8;border:1.5px solid #F0C8DF;border-left:4px solid #E8187A;border-radius:10px;padding:14px 18px;margin-bottom:18px;">
-      <div style="font-size:12px;font-weight:700;color:#B5467A;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">📌 How to add or remove sources</div>
-      <div style="font-size:13px;color:#5A2040;line-height:1.6;">Sources are permanently stored in the HTML file — not your browser. This means they work consistently across all devices and are never lost when you clear browser data or upload a new version.<br><br>
-      <strong>To add or remove a source:</strong> ask Claude to update the HTML file. Share the source name, URL, and type (Government / Foundation / Nonprofit / Academic). Upload the new file to GitHub and it's live everywhere instantly.</div>
+    <!-- SINGLE COMBINED INFO BOX -->
+    <div style="background:#FBF3F8;border:1.5px solid #F0C8DF;border-left:4px solid #E8187A;border-radius:10px;padding:16px 20px;margin-bottom:20px;">
+      <div style="font-size:13px;font-weight:700;color:#B5467A;margin-bottom:10px;">About Auto-Searchable Sources</div>
+      <div style="font-size:13px;color:#5A2040;line-height:1.65;">
+        <strong>What these are:</strong> Sites that Google has indexed and the API can query without hitting a login wall or reCAPTCHA. Sources requiring a login are in the <strong>Manual Portals</strong> tab.<br><br>
+        <strong>How to add or remove a source:</strong> Sources are permanently stored in the HTML file — not your browser. This keeps them consistent across all devices and safe from browser data clears. To add or remove one, ask Claude: share the source name, URL, and type (Government / Foundation / Nonprofit / Academic). Upload the updated file to GitHub and it's live everywhere instantly.
+      </div>
     </div>
 
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
-      <span class="hint"><span id="src-enabled-count">0</span> of <span id="src-total-count">0</span> sources enabled for search — toggle On/Off to include or exclude from searches</span>
+      <span class="hint"><span id="src-enabled-count">0</span> of <span id="src-total-count">0</span> sources enabled — toggle On/Off to include or exclude from searches</span>
     </div>
     <div class="sgrid" id="sg"></div>
   </div>
@@ -1496,15 +1490,13 @@ JSON only, no markdown.`;
 
     pending = parsed.map((r,i)=>({...r,id:Date.now()+i}));
     renderPending();
-    startRateCountdown();
   }catch(e){
     document.getElementById('search-eb').innerHTML=`<div class="ebox">${e.message}</div>`;
     // Only start countdown if we actually hit the API (rate limit or successful call)
     // Don't count down for fetch failures or key errors
     const msg = e.message || '';
     if(msg.includes('rate limit') || msg.includes('No results') || msg.includes('parse')){
-      startRateCountdown();
-    }
+      }
   }finally{
     document.getElementById('rb').disabled=false;
     document.getElementById('rb').textContent='Search all sources →';
@@ -1703,59 +1695,50 @@ function removePortal(id){
 
 
 /* ─── RATE LIMIT COUNTDOWN ─── */
-let _rateTimer = null;
-
-function startRateCountdown() {
-  if (_rateTimer) clearInterval(_rateTimer);
-
-  const wrap = document.getElementById('rate-limit-wrap');
-  const bar  = document.getElementById('rate-bar');
-  const btn  = document.getElementById('rb');
-
-  wrap.style.display = 'block';
-  bar.style.background = 'linear-gradient(90deg,var(--pink),var(--amber))';
-
-  // Reset label to initial state
-  document.getElementById('rate-label').innerHTML =
-    'Next search available in <span id="rate-count" style="color:var(--pink);font-weight:700;">1:00</span>';
-
+/* ─── MANUAL RATE LIMIT TIMER ─── */
+let _hdrTimer = null;
+function toggleHeaderTimer() {
+  if (_hdrTimer) {
+    // Already running — cancel it
+    clearInterval(_hdrTimer);
+    _hdrTimer = null;
+    resetHeaderTimer();
+    return;
+  }
   let secs = 60;
+  const btn = document.getElementById('hdr-timer-btn');
+  const disp = document.getElementById('hdr-timer-display');
+  disp.style.display = 'inline-block';
+  btn.style.borderColor = 'rgba(232,24,122,0.5)';
+  btn.style.color = 'rgba(255,255,255,0.9)';
+  btn.textContent = '✕ cancel';
 
   function tick() {
     secs--;
-    const pct = (secs / 60) * 100;
-    bar.style.width = pct + '%';
-
-    // Always look up rate-count fresh — avoids stale reference after innerHTML reset
-    const countEl = document.getElementById('rate-count');
-
     if (secs <= 0) {
-      clearInterval(_rateTimer);
-      _rateTimer = null;
-      if (countEl) countEl.textContent = '0:00';
-      bar.style.width = '0%';
-      bar.style.background = '#1A8C5B';
-      document.getElementById('rate-label').innerHTML =
-        '<span style="color:#1A8C5B;font-weight:700;">✓ Ready to search</span>';
-      setTimeout(() => {
-        wrap.style.display = 'none';
-        bar.style.background = 'linear-gradient(90deg,var(--pink),var(--amber))';
-        bar.style.width = '100%';
-        document.getElementById('rate-label').innerHTML =
-          'Next search available in <span id="rate-count" style="color:var(--pink);font-weight:700;">1:00</span>';
-      }, 4000);
+      clearInterval(_hdrTimer);
+      _hdrTimer = null;
+      disp.textContent = '✓';
+      disp.style.color = '#1A8C5B';
+      btn.textContent = '⏱ 60s cooldown';
+      btn.style.borderColor = 'rgba(26,140,91,0.5)';
+      btn.style.color = 'rgba(26,140,91,0.9)';
+      setTimeout(resetHeaderTimer, 3000);
       return;
     }
-
-    const m = Math.floor(secs / 60);
-    const s = String(secs % 60).padStart(2, '0');
-    if (countEl) countEl.textContent = `${m}:${s}`;
-    if (secs <= 15) bar.style.background = 'var(--amber)';
+    disp.textContent = secs + 's';
+    disp.style.color = secs <= 15 ? '#D4A017' : '#E8187A';
   }
-
   tick();
-  _rateTimer = setInterval(tick, 1000);
+  _hdrTimer = setInterval(tick, 1000);
 }
+function resetHeaderTimer() {
+  const btn = document.getElementById('hdr-timer-btn');
+  const disp = document.getElementById('hdr-timer-display');
+  if(btn) { btn.textContent = '⏱ 60s cooldown'; btn.style.borderColor='rgba(255,255,255,0.15)'; btn.style.color='rgba(255,255,255,0.6)'; }
+  if(disp) { disp.style.display='none'; disp.textContent=''; disp.style.color='var(--pink)'; }
+}
+
 
 /* ─── INIT ─── */
 updatePipeline();
