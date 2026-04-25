@@ -950,7 +950,7 @@ const GNG_CRITERIA = [
 ];
 
 /* ─── STATE ─── */
-let sources  = JSON.parse(localStorage.getItem('pop_src')  || 'null') || DEFAULTS;
+let sources = (JSON.parse(localStorage.getItem('pop_src') || 'null') || DEFAULTS).map(s => ({enabled: s.enabled !== false, ...s}));
 let pipeline = JSON.parse(localStorage.getItem('pop_pipe') || '[]');
 let pending  = [];
 let statusFilter = 'all';
@@ -1281,18 +1281,26 @@ function copyDigest(){
 
 /* ─── SOURCES ─── */
 function renderSrc(){
-  document.getElementById('sg').innerHTML=sources.map(s=>`
-    <div class="scard">
+  const enabled = sources.filter(s => s.enabled !== false).length;
+  document.getElementById('sg').innerHTML=`<div style="font-size:12px;color:var(--muted);margin-bottom:10px;">${enabled} of ${sources.length} sources enabled for search</div>`
+  + sources.map(s=>`
+    <div class="scard" style="opacity:${s.enabled===false?'0.45':'1'};">
       <div style="min-width:0;flex:1;">
         <div class="scard-name">${s.name}</div>
         <div class="scard-url">${s.url}</div>
         <div style="margin-top:6px;">${tpill(s.type)}</div>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
+        <button class="btn xs" onclick="toggleSrc(${s.id})" style="background:${s.enabled===false?'var(--border)':'var(--green-light)'};color:${s.enabled===false?'var(--muted)':'var(--green)'};">${s.enabled===false?'Off':'On'}</button>
         <button class="btn xs" onclick="editSrc(${s.id})" title="Edit">Edit</button>
-        <button class="btn xs danger" onclick="rmSrc(${s.id})" title="Remove">Remove</button>
+        <button class="btn xs danger" onclick="rmSrc(${s.id})" title="Remove">Del</button>
       </div>
     </div>`).join('');
+}
+function toggleSrc(id){
+  const s = sources.find(x=>x.id===id);
+  if(s) s.enabled = s.enabled === false ? true : false;
+  persist(); renderSrc();
 }
 function rmSrc(id){
   const s=sources.find(x=>x.id===id);
@@ -1387,7 +1395,7 @@ async function runSearch(){
   document.getElementById('rb').disabled=true;
   document.getElementById('rb').textContent='Searching…';
 
-  const filteredSources=typeFilter==='all'?sources:sources.filter(s=>s.type===typeFilter);
+  const filteredSources=(typeFilter==='all'?sources:sources.filter(s=>s.type===typeFilter)).filter(s=>s.enabled!==false);
   const srcList=filteredSources.map(s=>`- ${s.name} (${s.type}): ${s.url}${s.kw?' | focus: '+s.kw:''}`).join('\n');
 
   let focus='health communications, social marketing, behavior change, community outreach, maternal/child health, health equity, public health education, strategic communications consulting';
@@ -1395,28 +1403,19 @@ async function runSearch(){
   if(geo)     focus+='. Geographic focus: '+geo;
   if(exclude) focus+='. Exclude opportunities focused on: '+exclude;
 
-  const prompt=`Search for CURRENT, ACTIVE RFP opportunities in health communications and public health consulting from these sources:
+  const prompt=`Find active RFPs matching health communications consulting. Focus: ${focus}
+
+Sources:
 ${srcList}
 
-Focus areas: ${focus}
-
-For each opportunity found, return a JSON array where each item has EXACTLY these fields:
-- "title": concise RFP title
-- "org": organization name
-- "type": exactly one of: "Government", "Foundation", "Nonprofit / Association", "Academic"
-- "deadline": ISO date YYYY-MM-DD, or "Rolling", or "Unknown"
-- "summary": 2-3 sentences — what it is and why it fits Candice's background
-- "requirements": 1 sentence key qualifications
-- "url": direct URL to the RFP or opportunities page
-
-Include currently open RFPs and recently closed ones worth monitoring for re-release.
-Return ONLY a valid JSON array starting with [ and ending with ]. No markdown, no preamble, no explanation.`;
+Return JSON array only. Fields per item: "title","org","type"(Government/Foundation/Nonprofit / Association/Academic),"deadline"(YYYY-MM-DD/Rolling/Unknown),"summary"(1-2 sentences),"url".
+JSON only, no markdown.`;
 
   try{
     const resp=await fetch('https://pop-proxy.netlify.app/.netlify/functions/proxy',{
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},
-      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:2000,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:prompt}]})
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1500,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:prompt}]})
     });
     if(!resp.ok){const e=await resp.json().catch(()=>({error:{message:'HTTP '+resp.status}}));throw new Error(e.error?.message||'API error '+resp.status);}
     const data=await resp.json();
