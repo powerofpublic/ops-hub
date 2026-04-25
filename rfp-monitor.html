@@ -562,12 +562,15 @@
       <strong>These sites require a login or pass a reCAPTCHA check</strong> and cannot be searched automatically. Bookmark this tab for your weekly manual check — all links open in a new tab. Most have a public browsing mode; you only need to log in to submit a response.
     </div>
 
+    <!-- PORTAL NOTE -->
+    <div style="background:#FBF3F8;border:1.5px solid #F0C8DF;border-left:4px solid #E8187A;border-radius:10px;padding:14px 18px;margin-bottom:18px;">
+      <div style="font-size:12.5px;font-weight:700;color:#B5467A;margin-bottom:6px;">How to add or remove a portal</div>
+      <div style="font-size:13px;color:#5A2040;line-height:1.6;">Portals are permanently stored in the HTML file — not your browser. To add or remove one, ask Claude: share the portal name, URL, and which section it belongs to. Upload the updated file to GitHub and it's live everywhere instantly.</div>
+    </div>
+
     <!-- STATE PROCUREMENT PORTALS -->
     <div class="portal-section">
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:4px;">
-        <h3 style="margin-bottom:0;">State procurement portals</h3>
-        <button class="btn sm" onclick="openPortalModal('State procurement portals')">+ Add to this section</button>
-      </div>
+      <h3 style="margin-bottom:0;">State procurement portals</h3>
       <p class="portal-note">Official state eProcurement systems. Each posts all agency RFPs in one place. Browse publicly; login only required to bid.</p>
       <div class="portal-grid" id="pgrid-state">
         <div class="portal-link">
@@ -623,10 +626,7 @@
 
     <!-- DC-ADJACENT ORGS -->
     <div class="portal-section">
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:4px;">
-        <h3 style="margin-bottom:0;">DC-adjacent & regional organizations</h3>
-        <button class="btn sm" onclick="openPortalModal('DC-adjacent & regional organizations')">+ Add to this section</button>
-      </div>
+      <h3 style="margin-bottom:0;">DC-adjacent & regional organizations</h3>
       <p class="portal-note">Government-adjacent, quasi-governmental, and regional bodies in the DC metro area that issue their own RFPs outside the main procurement portals.</p>
       <div class="portal-grid" id="pgrid-dc">
         <div class="portal-link">
@@ -715,10 +715,7 @@
     <div class="divider"></div>
 
     <div class="portal-section">
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:4px;">
-        <h3 style="margin-bottom:0;">Free curated PR & communications RFP lists</h3>
-        <button class="btn sm" onclick="openPortalModal('Free curated PR & communications RFP lists')">+ Add to this section</button>
-      </div>
+      <h3 style="margin-bottom:0;">Free curated PR & communications RFP lists</h3>
       <p class="portal-note">Publicly accessible, no-login pages that curate PR, communications, marketing, and public awareness campaign solicitations from across the country. Updated frequently — worth bookmarking and checking weekly alongside your automated search.</p>
       <div class="portal-grid" id="pgrid-pr">
         <div class="portal-link">
@@ -776,10 +773,7 @@
 
     <!-- MARYLAND BOARD OF PUBLIC WORKS -->
     <div class="portal-section">
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:4px;">
-        <h3 style="margin-bottom:0;">Maryland Board of Public Works</h3>
-        <button class="btn sm" onclick="openPortalModal('Maryland Board of Public Works')">+ Add to this section</button>
-      </div>
+      <h3 style="margin-bottom:0;">Maryland Board of Public Works</h3>
       <p class="portal-note">All Maryland contracts over $200,000 must go to the BPW for approval. Agenda items list contract values and scopes — useful for seeing what MDH and other agencies are procuring even before an RFP is posted. Solicitations are posted through eMMA.</p>
       <div class="portal-grid" id="pgrid-bpw">
         <div class="portal-link">
@@ -799,9 +793,9 @@
     <div class="portal-section">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:4px;">
         <h3 style="margin-bottom:0;">My portals</h3>
-        <button class="btn primary sm" onclick="openPortalModal('My portals')">+ Add portal</button>
+
       </div>
-      <p class="portal-note">Your own additions. Use the <strong>+ Add to this section</strong> buttons above to add to an existing section, or add here to keep things separate.</p>
+      <p class="portal-note">Your own additions. To add a portal, ask Claude to update the HTML file.</p>
       <div class="portal-grid" id="user-portal-grid"></div>
       <p class="hint" id="user-portal-empty">No portals added yet. Click any <strong>+ Add</strong> button to get started.</p>
     </div>
