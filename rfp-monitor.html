@@ -454,85 +454,8 @@
 
   <div id="tab-search" class="panel">
 
-    <!-- IMPORT FROM CLAUDE -->
-    <div style="background:#FBF3F8;border:1.5px solid #F0C8DF;border-radius:10px;padding:14px 16px;margin-bottom:16px;">
-      <div style="font-size:12px;font-weight:700;color:#B5467A;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
-        <span>Import from Claude</span>
-        <button onclick="toggleImportBox()" style="font-size:11px;background:none;border:1px solid #F0C8DF;border-radius:4px;padding:2px 8px;color:#B5467A;cursor:pointer;">Show / Hide</button>
-      </div>
-      <div id="iw" style="display:none;">
-        <p style="font-size:12px;color:#5A2040;margin-bottom:8px;line-height:1.5;">Paste the full Claude response from a search prompt. All opportunities will be extracted and added to your pipeline.</p>
-        <textarea id="claude-import-text" placeholder="Paste Claude search results here..." style="width:100%;height:100px;font-size:12px;padding:8px;border:1px solid #F0C8DF;border-radius:6px;background:#fff;color:#333;resize:vertical;font-family:inherit;"></textarea>
-        <div style="display:flex;gap:8px;margin-top:8px;align-items:center;">
-          <button onclick="importFromClaude()" style="background:#E8187A;color:#fff;border:none;border-radius:6px;padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;">+ Add all to pipeline</button>
-          <span id="import-status" style="font-size:12px;color:#B5467A;"></span>
-        </div>
-      </div>
-    </div>
+    
 
-    <!-- ADD OPPORTUNITY -->
-    <div style="background:#FBF3F8;border:1.5px solid #F0C8DF;border-left:4px solid #E8187A;border-radius:10px;padding:14px 16px;margin-bottom:16px;">
-      <div style="font-size:12px;font-weight:700;color:#B5467A;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
-        <span>+ Add Opportunity</span>
-        <button onclick="toggleQuickAdd()" id="quick-add-toggle" style="font-size:11px;background:none;border:1px solid #F0C8DF;border-radius:6px;padding:3px 10px;color:#B5467A;cursor:pointer;">Show</button>
-      </div>
-      <div id="quick-add-form" style="display:none;">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
-          <div style="grid-column:1/-1;">
-            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Opportunity title *</label>
-            <input id="qa-title" type="text" placeholder="e.g. Health Communications Consulting Services" style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;" />
-          </div>
-          <div>
-            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Organization</label>
-            <input id="qa-org" type="text" placeholder="e.g. DC Department of Health" style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;" />
-          </div>
-          <div>
-            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Type</label>
-            <select id="qa-type" style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;">
-              <option>Government</option>
-              <option>Foundation</option>
-              <option>Nonprofit / Association</option>
-              <option>Academic</option>
-            </select>
-          </div>
-          <div>
-            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Deadline</label>
-            <input id="qa-deadline" type="date" style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;" />
-          </div>
-          <div>
-            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Est. Value ($)</label>
-            <input id="qa-value" type="text" placeholder="e.g. 75000" style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;" />
-          </div>
-          <div>
-            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Source URL</label>
-            <input id="qa-url" type="url" placeholder="https://..." style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;" />
-          </div>
-          <div style="grid-column:1/-1;">
-            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Notes (optional)</label>
-            <textarea id="qa-notes" placeholder="Why this is a good fit, key contacts, requirements..." style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;resize:vertical;height:60px;"></textarea>
-          </div>
-        </div>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <button onclick="quickAddToPipeline()" style="background:#E8187A;color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:13px;font-weight:700;cursor:pointer;">Add to Pipeline</button>
-          <button onclick="clearQuickAdd()" style="background:none;border:1px solid #F0C8DF;border-radius:8px;padding:8px 14px;font-size:12px;color:#B5467A;cursor:pointer;">Clear</button>
-          <span id="qa-status" style="font-size:12px;color:#B5467A;"></span>
-        </div>
-      </div>
-    </div>
-
-
-    <div id="pipe-res">
-      <div class="empty-state">
-        <h3>Pipeline is empty</h3>
-        <p>Go to the <strong>Search</strong> tab to copy a prompt for Claude Pro. Paste results into the <strong>Import from Claude</strong> box above. Or browse <strong>Manual Portals</strong> to find and add opportunities manually.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══ SEARCH ══ -->
-
-
-  <div id="tab-search" class="panel">
 
     <div style="background:#FBF3F8;border:1.5px solid #F0C8DF;border-left:4px solid #E8187A;border-radius:10px;padding:16px 20px;margin-bottom:18px;">
       <div style="font-size:13px;font-weight:700;color:#B5467A;margin-bottom:8px;">How to search for current RFPs</div>
