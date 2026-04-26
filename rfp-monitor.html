@@ -93,10 +93,10 @@
     .pip-lbl { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .7px; color: var(--muted); margin-top: 6px; }
 
     /* ── TABS ── */
-    .tabs { display: flex; gap: 2px; margin-bottom: 22px; flex-wrap: wrap; }
-    .tab { background: none; border: none; color: var(--muted); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 500; padding: 8px 15px; cursor: pointer; border-radius: 8px; transition: all .15s; white-space: nowrap; }
-    .tab:hover { color: var(--text); background: var(--surface2); }
-    .tab.on { color: var(--pink); background: var(--pink-light); font-weight: 600; }
+    .tabs { display: flex; gap: 6px; margin-bottom: 24px; flex-wrap: wrap; padding: 4px; background: var(--tan); border-radius: 14px; border: 1.5px solid var(--border); width: fit-content; max-width: 100%; }
+    .tab { background: transparent; border: none; color: var(--muted); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12.5px; font-weight: 600; padding: 7px 16px; cursor: pointer; border-radius: 10px; transition: all .18s; white-space: nowrap; letter-spacing: .01em; }
+    .tab:hover { color: var(--dark); background: rgba(255,255,255,0.7); }
+    .tab.on { color: var(--pink); background: #FFFFFF; font-weight: 700; box-shadow: 0 2px 6px rgba(232,24,122,0.12), 0 0 0 1.5px rgba(232,24,122,0.2); }
     .panel { display: none; }
     .panel.on { display: block; }
 
@@ -344,11 +344,11 @@
   <!-- TABS -->
   <div class="tabs">
     <button class="tab on"  onclick="go('pipeline')">Pipeline</button>
-    <button class="tab"     onclick="go('search')">Search</button>
+    <button class="tab"     onclick="go('federal')">Federal Search</button>
     <button class="tab"     onclick="go('portals')">Manual Portals</button>
+    <button class="tab"     onclick="go('search')">Search Prompts</button>
     <button class="tab"     onclick="go('winloss')">Win / Loss</button>
     <button class="tab"     onclick="go('digest')">Email Digest</button>
-    <button class="tab"     onclick="go('federal')">Federal Search</button>
   </div>
 
   
@@ -877,7 +877,8 @@
       <div style="font-size:13px;font-weight:700;color:#B5467A;margin-bottom:8px;">Federal Search: SAM.gov and Grants.gov</div>
       <div style="font-size:13px;color:#5A2040;line-height:1.65;">
         Search active federal contract opportunities and grants directly from the official government APIs. Results are real, current, and link directly to the opportunity. Searches cost nothing and run instantly inside the portal.<br><br>
-        <strong>NAICS codes included:</strong> 541820 (Public Relations), 541613 (Marketing Consulting), 541611 (Management Consulting), 541690 (Scientific and Technical Consulting), 923110 (Administration of Public Health Programs). Add to pipeline with one click.
+        <strong>NAICS codes included:</strong> 541820 (Public Relations), 541613 (Marketing Consulting), 541611 (Management Consulting), 541690 (Scientific and Technical Consulting), 923110 (Administration of Public Health Programs).<br><br>
+        <strong>Grants.gov requires a separate free API key</strong> from <a href="https://simpler.grants.gov/developer" target="_blank" style="color:var(--pink);">simpler.grants.gov/developer</a>. Enter it below to enable grant searches. SAM.gov works immediately with no additional setup.
       </div>
     </div>
 
@@ -886,9 +887,9 @@
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
         <input id="fed-keyword" type="text" placeholder="Keywords: health communications, public health outreach..." style="flex:1;min-width:220px;padding:9px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;" />
         <select id="fed-source" style="padding:9px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:var(--surface);">
-          <option value="both">SAM.gov and Grants.gov</option>
-          <option value="sam">SAM.gov only</option>
-          <option value="grants">Grants.gov only</option>
+          <option value="sam">SAM.gov only (ready now)</option>
+          <option value="both">SAM.gov and Grants.gov (requires Grants key)</option>
+          <option value="grants">Grants.gov only (requires Grants key)</option>
         </select>
         <select id="fed-days" style="padding:9px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:var(--surface);">
           <option value="14">Posted last 14 days</option>
@@ -896,6 +897,14 @@
           <option value="60">Posted last 60 days</option>
           <option value="90">Posted last 90 days</option>
         </select>
+      </div>
+      <div style="margin-bottom:10px;">
+        <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">Grants.gov API key (optional — enables grant searches)</label>
+        <div style="display:flex;gap:8px;">
+          <input id="grants-key-inp" type="password" placeholder="Enter your simpler.grants.gov API key..." style="flex:1;padding:7px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-family:monospace;" value="" />
+          <button onclick="saveGrantsKey()" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:12px;cursor:pointer;color:var(--dark);">Save</button>
+          <span id="grants-key-status" style="font-size:12px;color:var(--muted);align-self:center;"></span>
+        </div>
       </div>
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
         <button onclick="runFederalSearch()" id="fed-btn" style="background:var(--pink);color:#fff;border:none;border-radius:8px;padding:9px 22px;font-size:13px;font-weight:600;cursor:pointer;">Search now</button>
@@ -1097,7 +1106,7 @@ function go(n){
   if(n==='portals'&&typeof renderUserPortals==='function')renderUserPortals();
   if(n==='winloss'&&typeof renderWinLoss==='function')renderWinLoss();
   if(n==='digest'&&typeof renderDigest==='function')renderDigest();
-  if(n==='federal'){document.getElementById('fed-keyword')&&document.getElementById('fed-keyword').focus();}
+  if(n==='federal'){document.getElementById('fed-keyword')&&document.getElementById('fed-keyword').focus();loadGrantsKey();}
 }
 
 /* --- PILLS --- */
@@ -1880,6 +1889,21 @@ function saveNewSearch(){
 }
 
 
+function saveGrantsKey(){
+  const val = document.getElementById('grants-key-inp').value.trim();
+  if(!val){ alert('Please enter your Grants.gov API key.'); return; }
+  localStorage.setItem('pop_grants_key', val);
+  document.getElementById('grants-key-status').textContent = 'Saved';
+  document.getElementById('grants-key-status').style.color = 'var(--green)';
+  setTimeout(() => { document.getElementById('grants-key-status').textContent = ''; }, 2000);
+}
+function loadGrantsKey(){
+  const key = localStorage.getItem('pop_grants_key') || '';
+  const inp = document.getElementById('grants-key-inp');
+  if(inp && key) { inp.value = key; }
+}
+
+
 /* ─── FEDERAL SEARCH ─── */
 const FED_SAM_KEY = 'SAM-c4810485-c9ce-427b-8fb2-767395175db1';
 let fedResults = [];
@@ -1937,134 +1961,98 @@ async function runFederalSearch(){
   btn.textContent = 'Search now';
 }
 
-async function searchSAM(keyword, fromDate, toDate) {
+async function searchSAM(keyword, fromDate, toDate){
   const naics = '541820,541613,541611,541690,923110';
   let url = 'https://api.sam.gov/opportunities/v2/search?limit=25&api_key=' + FED_SAM_KEY;
   url += '&postedFrom=' + encodeURIComponent(fromDate);
-  url += '&postedTo=' + encodeURIComponent(toDate);
+  url += '&postedTo='   + encodeURIComponent(toDate);
   url += '&ptype=o,k,p,r,s';
-  if (keyword) url += '&title=' + encodeURIComponent(keyword);
+  if(keyword) url += '&title=' + encodeURIComponent(keyword);
 
-  const resp = await fetch(url);
-  if (!resp.ok) throw new Error('SAM.gov returned error ' + resp.status + '. Check that your API key is valid.');
-  const data = await resp.json();
-  const opps = data.opportunitiesData || [];
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
 
-  return opps.map(o => ({
-    id:       'sam-' + (o.noticeId || Math.random()),
-    title:    o.title || 'Untitled',
-    org:      o.fullParentPathName ? o.fullParentPathName.split('.').pop().trim() : (o.organizationHierarchy ? o.organizationHierarchy : 'Federal'),
-    type:     'Government',
-    deadline: o.responseDeadLine ? o.responseDeadLine.split('T')[0] : (o.archiveDate || 'Unknown'),
-    posted:   o.postedDate || '',
-    url:      o.uiLink || ('https://sam.gov/opp/' + o.noticeId + '/view'),
-    summary:  'Federal contract opportunity via SAM.gov. Type: ' + (o.type || 'Solicitation') + '. NAICS: ' + (o.naicsCode || 'N/A') + '.',
-    source:   'SAM.gov'
-  }));
+  try {
+    const resp = await fetch(url, {signal: controller.signal});
+    clearTimeout(timeout);
+    if(!resp.ok) throw new Error('SAM.gov returned error ' + resp.status + '. Check your API key.');
+    const data = await resp.json();
+    const opps = data.opportunitiesData || [];
+    return opps.map(o => ({
+      id:       'sam-' + (o.noticeId || Math.random()),
+      title:    o.title || 'Untitled',
+      org:      o.fullParentPathName ? o.fullParentPathName.split('.').pop().trim() : 'Federal',
+      type:     'Government',
+      deadline: o.responseDeadLine ? o.responseDeadLine.split('T')[0] : (o.archiveDate || 'Unknown'),
+      posted:   o.postedDate || '',
+      url:      o.uiLink || ('https://sam.gov/opp/' + o.noticeId + '/view'),
+      summary:  'Federal contract opportunity. Type: ' + (o.type||'Solicitation') + '. NAICS: ' + (o.naicsCode||'N/A') + '.',
+      source:   'SAM.gov'
+    }));
+  } catch(e) {
+    clearTimeout(timeout);
+    if(e.name === 'AbortError') throw new Error('SAM.gov search timed out after 15 seconds. The server may be slow. Please try again.');
+    throw e;
+  }
 }
 
-async function searchGrants(keyword, days) {
+async function searchGrants(keyword, days){
+  // Simpler.Grants.gov API - the modernized replacement for grants.gov
+  // Requires a free API key from simpler.grants.gov/developer
+  const GRANTS_KEY = localStorage.getItem('pop_grants_key') || '';
+  if(!GRANTS_KEY){
+    throw new Error('Grants.gov search requires a free API key from simpler.grants.gov/developer. Enter it in the Federal Search settings.');
+  }
+
   const now   = new Date();
   const from  = new Date(now - days * 86400000);
   const fromStr = from.toISOString().split('T')[0];
 
-  const body = {
-    rows: 25,
-    keyword: keyword || 'health communications',
-    oppStatuses: 'forecasted,posted',
-    postedFrom: fromStr,
-    sortBy: '-openDate',
-    fields: 'id,title,agencyName,openDate,closeDate,oppNumber,synopsis'
-  };
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10000);
 
-  const resp = await fetch('https://apply07.grants.gov/grantsws/rest/opportunities/search/', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(body)
-  });
-
-  if (!resp.ok) throw new Error('Grants.gov returned error ' + resp.status);
-  const data = await resp.json();
-  const opps = data.oppHits || [];
-
-  return opps.map(o => ({
-    id:       'grants-' + (o.id || Math.random()),
-    title:    o.title || 'Untitled',
-    org:      o.agencyName || 'Federal Agency',
-    type:     'Government',
-    deadline: o.closeDate ? o.closeDate.split('T')[0] : 'Unknown',
-    posted:   o.openDate ? o.openDate.split('T')[0] : '',
-    url:      'https://grants.gov/search-results-detail/' + o.id,
-    summary:  o.synopsis ? o.synopsis.replace(/<[^>]+>/g,'').substring(0,200) + '...' : 'Federal grant opportunity via Grants.gov.',
-    source:   'Grants.gov'
-  }));
+  try {
+    const resp = await fetch('https://api.simpler.grants.gov/v1/opportunities/search', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','X-API-Key': GRANTS_KEY},
+      signal: controller.signal,
+      body: JSON.stringify({
+        query: keyword || 'health communications',
+        filters: {
+          opportunity_status: {one_of: ['posted','forecasted']},
+          post_date: {start_date: fromStr}
+        },
+        pagination: {page_offset:1, page_size:25, sort_order:[{order_by:'post_date',sort_direction:'descending'}]}
+      })
+    });
+    clearTimeout(timeout);
+    if(!resp.ok) throw new Error('Grants.gov returned error ' + resp.status);
+    const data = await resp.json();
+    const opps = data.data || [];
+    return opps.map(o => ({
+      id:       'grants-' + (o.opportunity_id || Math.random()),
+      title:    o.opportunity_title || 'Untitled',
+      org:      o.agency_name || 'Federal Agency',
+      type:     'Government',
+      deadline: o.close_date || 'Unknown',
+      posted:   o.post_date || '',
+      url:      'https://simpler.grants.gov/opportunities/' + o.opportunity_id,
+      summary:  o.summary_description ? o.summary_description.replace(/<[^>]+>/g,'').substring(0,200) + '...' : 'Federal grant opportunity.',
+      source:   'Grants.gov'
+    }));
+  } catch(e) {
+    clearTimeout(timeout);
+    if(e.name === 'AbortError') throw new Error('Grants.gov search timed out. Try again.');
+    throw e;
+  }
 }
 
-function renderFedResults() {
-  const div = document.getElementById('fed-results');
-  div.innerHTML = fedResults.map((r, idx) => {
-    const inPipeline = pipeline.some(p => p.title.toLowerCase().trim() === r.title.toLowerCase().trim());
-    const dl = dlinfo(r.deadline);
-    const posted = r.posted ? 'Posted: ' + new Date(r.posted).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}) : '';
-    return '<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:16px 18px;">' +
-      '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">' +
-        '<div style="flex:1;min-width:0;">' +
-          '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px;">' + r.source + '</div>' +
-          '<div style="font-size:15px;font-weight:700;color:var(--dark);margin-bottom:4px;line-height:1.3;">' + r.title + '</div>' +
-          '<div style="font-size:13px;color:var(--muted);margin-bottom:8px;">' + r.org + '</div>' +
-          '<div style="font-size:12px;color:var(--muted);">' + posted + (posted && dl.l ? ' &nbsp;|&nbsp; ' : '') + 'Deadline: <span style="color:' + (dl.c==='dl-urgent'?'#CC0000':dl.c==='dl-warn'?'#9A5800':'var(--muted)') + ';font-weight:' + (dl.c==='dl-urgent'?'700':'400') + ';">' + dl.l + '</span></div>' +
-          (r.summary ? '<div style="font-size:13px;color:var(--muted);margin-top:8px;line-height:1.5;">' + r.summary + '</div>' : '') +
-        '</div>' +
-        '<div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">' +
-          '<a href="' + r.url + '" target="_blank" rel="noopener" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 12px;font-size:12px;font-weight:500;color:var(--dark);text-decoration:none;text-align:center;">View source</a>' +
-          (inPipeline
-            ? '<div style="background:#EBF7F2;border:1px solid #A8DFC0;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:500;color:#1A8C5B;text-align:center;">In pipeline</div>'
-            : '<button onclick="addFedResult(' + idx + ')" style="background:var(--pink);color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;">+ Add</button>'
-          ) +
-        '</div>' +
-      '</div>' +
-    '</div>';
-  }).join('');
-}
-
-function addFedResult(idx) {
-  const r = fedResults[idx];
-  if (!r) return;
-  const dup = pipeline.some(p => p.title.toLowerCase().trim() === r.title.toLowerCase().trim());
-  if (dup) { alert('This opportunity is already in your pipeline.'); return; }
-  pipeline.unshift({
-    id: Date.now() + Math.random(),
-    title: r.title, org: r.org, type: r.type,
-    deadline: r.deadline, url: r.url, summary: r.summary,
-    status: 'new', gngScore: null, notes: '', value: ''
-  });
-  persist(); updatePipeline(); renderFedResults();
-}
-
-function addAllFedResults() {
-  let added = 0;
-  fedResults.forEach(r => {
-    const dup = pipeline.some(p => p.title.toLowerCase().trim() === r.title.toLowerCase().trim());
-    if (!dup) {
-      pipeline.unshift({
-        id: Date.now() + Math.random(),
-        title: r.title, org: r.org, type: r.type,
-        deadline: r.deadline, url: r.url, summary: r.summary,
-        status: 'new', gngScore: null, notes: '', value: ''
-      });
-      added++;
-    }
-  });
-  persist(); updatePipeline();
-  document.getElementById('fed-status').textContent = added + ' opportunit' + (added === 1 ? 'y' : 'ies') + ' added to pipeline.';
-  document.getElementById('fed-status').style.color = 'var(--green)';
-  renderFedResults();
-  setTimeout(() => {
-    const s = document.getElementById('fed-status');
-    if (s) s.style.color = 'var(--muted)';
-  }, 3000);
-}
-
+/* ─── INIT ─── */
+updatePipeline();
+doFilter();
+renderUserPortals();
+initPortalChecks();
+renderSavedSearches();
 
 </script>
 
