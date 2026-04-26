@@ -344,7 +344,6 @@
   <!-- TABS -->
   <div class="tabs">
     <button class="tab on"  onclick="go('pipeline')">Pipeline</button>
-    <button class="tab"     onclick="go('federal')">Federal Search</button>
     <button class="tab"     onclick="go('portals')">Manual Portals</button>
     <button class="tab"     onclick="go('search')">Search Prompts</button>
     <button class="tab"     onclick="go('winloss')">Win / Loss</button>
@@ -390,6 +389,137 @@
         </div>
       </div>
     </div>
+
+    <!-- ADD OPPORTUNITY -->
+    <div style="background:#FBF3F8;border:1.5px solid #F0C8DF;border-left:4px solid #E8187A;border-radius:10px;padding:14px 16px;margin-bottom:16px;">
+      <div style="font-size:12px;font-weight:700;color:#B5467A;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
+        <span>+ Add Opportunity</span>
+        <button onclick="toggleQuickAdd()" id="quick-add-toggle" style="font-size:11px;background:none;border:1px solid #F0C8DF;border-radius:6px;padding:3px 10px;color:#B5467A;cursor:pointer;">Show</button>
+      </div>
+      <div id="quick-add-form" style="display:none;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+          <div style="grid-column:1/-1;">
+            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Opportunity title *</label>
+            <input id="qa-title" type="text" placeholder="e.g. Health Communications Consulting Services" style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;" />
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Organization</label>
+            <input id="qa-org" type="text" placeholder="e.g. DC Department of Health" style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;" />
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Type</label>
+            <select id="qa-type" style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;">
+              <option>Government</option>
+              <option>Foundation</option>
+              <option>Nonprofit / Association</option>
+              <option>Academic</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Deadline</label>
+            <input id="qa-deadline" type="date" style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;" />
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Est. Value ($)</label>
+            <input id="qa-value" type="text" placeholder="e.g. 75000" style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;" />
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Source URL</label>
+            <input id="qa-url" type="url" placeholder="https://..." style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;" />
+          </div>
+          <div style="grid-column:1/-1;">
+            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Notes (optional)</label>
+            <textarea id="qa-notes" placeholder="Why this is a good fit, key contacts, requirements..." style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;resize:vertical;height:60px;"></textarea>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button onclick="quickAddToPipeline()" style="background:#E8187A;color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:13px;font-weight:700;cursor:pointer;">Add to Pipeline</button>
+          <button onclick="clearQuickAdd()" style="background:none;border:1px solid #F0C8DF;border-radius:8px;padding:8px 14px;font-size:12px;color:#B5467A;cursor:pointer;">Clear</button>
+          <span id="qa-status" style="font-size:12px;color:#B5467A;"></span>
+        </div>
+      </div>
+    </div>
+
+
+    <div id="pipe-res">
+      <div class="empty-state">
+        <h3>Pipeline is empty</h3>
+        <p>Go to the <strong>Search</strong> tab to copy a prompt for Claude Pro. Paste results into the <strong>Import from Claude</strong> box above. Or browse <strong>Manual Portals</strong> to find and add opportunities manually.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SEARCH ══ -->
+
+
+  <div id="tab-search" class="panel">
+
+    <!-- IMPORT FROM CLAUDE -->
+    <div style="background:#FBF3F8;border:1.5px solid #F0C8DF;border-radius:10px;padding:14px 16px;margin-bottom:16px;">
+      <div style="font-size:12px;font-weight:700;color:#B5467A;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
+        <span>Import from Claude</span>
+        <button onclick="toggleImportBox()" style="font-size:11px;background:none;border:1px solid #F0C8DF;border-radius:4px;padding:2px 8px;color:#B5467A;cursor:pointer;">Show / Hide</button>
+      </div>
+      <div id="iw" style="display:none;">
+        <p style="font-size:12px;color:#5A2040;margin-bottom:8px;line-height:1.5;">Paste the full Claude response from a search prompt. All opportunities will be extracted and added to your pipeline.</p>
+        <textarea id="claude-import-text" placeholder="Paste Claude search results here..." style="width:100%;height:100px;font-size:12px;padding:8px;border:1px solid #F0C8DF;border-radius:6px;background:#fff;color:#333;resize:vertical;font-family:inherit;"></textarea>
+        <div style="display:flex;gap:8px;margin-top:8px;align-items:center;">
+          <button onclick="importFromClaude()" style="background:#E8187A;color:#fff;border:none;border-radius:6px;padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;">+ Add all to pipeline</button>
+          <span id="import-status" style="font-size:12px;color:#B5467A;"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADD OPPORTUNITY -->
+    <div style="background:#FBF3F8;border:1.5px solid #F0C8DF;border-left:4px solid #E8187A;border-radius:10px;padding:14px 16px;margin-bottom:16px;">
+      <div style="font-size:12px;font-weight:700;color:#B5467A;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
+        <span>+ Add Opportunity</span>
+        <button onclick="toggleQuickAdd()" id="quick-add-toggle" style="font-size:11px;background:none;border:1px solid #F0C8DF;border-radius:6px;padding:3px 10px;color:#B5467A;cursor:pointer;">Show</button>
+      </div>
+      <div id="quick-add-form" style="display:none;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+          <div style="grid-column:1/-1;">
+            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Opportunity title *</label>
+            <input id="qa-title" type="text" placeholder="e.g. Health Communications Consulting Services" style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;" />
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Organization</label>
+            <input id="qa-org" type="text" placeholder="e.g. DC Department of Health" style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;" />
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Type</label>
+            <select id="qa-type" style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;">
+              <option>Government</option>
+              <option>Foundation</option>
+              <option>Nonprofit / Association</option>
+              <option>Academic</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Deadline</label>
+            <input id="qa-deadline" type="date" style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;" />
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Est. Value ($)</label>
+            <input id="qa-value" type="text" placeholder="e.g. 75000" style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;" />
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Source URL</label>
+            <input id="qa-url" type="url" placeholder="https://..." style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;" />
+          </div>
+          <div style="grid-column:1/-1;">
+            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Notes (optional)</label>
+            <textarea id="qa-notes" placeholder="Why this is a good fit, key contacts, requirements..." style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;resize:vertical;height:60px;"></textarea>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button onclick="quickAddToPipeline()" style="background:#E8187A;color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:13px;font-weight:700;cursor:pointer;">Add to Pipeline</button>
+          <button onclick="clearQuickAdd()" style="background:none;border:1px solid #F0C8DF;border-radius:8px;padding:8px 14px;font-size:12px;color:#B5467A;cursor:pointer;">Clear</button>
+          <span id="qa-status" style="font-size:12px;color:#B5467A;"></span>
+        </div>
+      </div>
+    </div>
+
 
     <div id="pipe-res">
       <div class="empty-state">
@@ -463,6 +593,53 @@
   </div>
 
   <div id="tab-portals" class="panel">
+
+    <!-- QUICK ADD OPPORTUNITY -->
+    <div style="background:#FBF3F8;border:1.5px solid #F0C8DF;border-left:4px solid #E8187A;border-radius:10px;padding:16px 20px;margin-bottom:24px;">
+      <div style="font-size:13px;font-weight:700;color:#B5467A;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:13px;font-weight:700;color:#B5467A;">+ Add Opportunity</span>
+        <button onclick="toggleQuickAdd()" id="quick-add-toggle" style="font-size:11px;background:none;border:1px solid #F0C8DF;border-radius:6px;padding:3px 10px;color:#B5467A;cursor:pointer;">Hide</button>
+      </div>
+      <div id="quick-add-form" style="display:block;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+          <div style="grid-column:1/-1;">
+            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Opportunity title *</label>
+            <input id="qa-title" type="text" placeholder="e.g. Health Communications Consulting Services" style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;" />
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Organization</label>
+            <input id="qa-org" type="text" placeholder="e.g. DC Department of Health" style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;" />
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Type</label>
+            <select id="qa-type" style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;">
+              <option>Government</option>
+              <option>Foundation</option>
+              <option>Nonprofit / Association</option>
+              <option>Academic</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Deadline</label>
+            <input id="qa-deadline" type="date" style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;" />
+          </div>
+          <div style="grid-column:1/-1;">
+            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Source URL</label>
+            <input id="qa-url" type="url" placeholder="https://..." style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;" />
+          </div>
+          <div style="grid-column:1/-1;">
+            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Notes (optional)</label>
+            <textarea id="qa-notes" placeholder="Why this is a good fit, key contacts, requirements..." style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;resize:vertical;height:64px;"></textarea>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button onclick="quickAddToPipeline()" style="background:#E8187A;color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:13px;font-weight:700;cursor:pointer;">Add to Pipeline</button>
+          <button onclick="clearQuickAdd()" style="background:none;border:1px solid #F0C8DF;border-radius:8px;padding:8px 14px;font-size:12px;color:#B5467A;cursor:pointer;">Clear</button>
+          <span id="qa-status" style="font-size:12px;color:#B5467A;"></span>
+        </div>
+      </div>
+    </div>
+
 
     <div style="background:#FBF3F8;border:1.5px solid #F0C8DF;border-left:4px solid #E8187A;border-radius:10px;padding:16px 20px;margin-bottom:20px;">
       <div style="font-size:13px;font-weight:700;color:#B5467A;margin-bottom:8px;">About these portals</div>
@@ -870,53 +1047,6 @@
     </div>
 
   </div>
-  <!-- FEDERAL SEARCH TAB -->
-  <div id="tab-federal" class="panel">
-
-    <div style="background:#FBF3F8;border:1.5px solid #F0C8DF;border-left:4px solid #E8187A;border-radius:10px;padding:16px 20px;margin-bottom:20px;">
-      <div style="font-size:13px;font-weight:700;color:#B5467A;margin-bottom:8px;">Federal Search: SAM.gov and Grants.gov</div>
-      <div style="font-size:13px;color:#5A2040;line-height:1.65;">
-        Search active federal contract opportunities and grants directly from the official government APIs. Results are real, current, and link directly to the opportunity. Searches cost nothing and run instantly inside the portal.<br><br>
-        <strong>NAICS codes included:</strong> 541820 (Public Relations), 541613 (Marketing Consulting), 541611 (Management Consulting), 541690 (Scientific and Technical Consulting), 923110 (Administration of Public Health Programs).<br><br>
-        <strong>Grants.gov requires a separate free API key</strong> from <a href="https://simpler.grants.gov/developer" target="_blank" style="color:var(--pink);">simpler.grants.gov/developer</a>. Enter it below to enable grant searches. SAM.gov works immediately with no additional setup.
-      </div>
-    </div>
-
-    <div class="card" style="margin-bottom:16px;">
-      <div class="card-title">Search federal opportunities</div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
-        <input id="fed-keyword" type="text" placeholder="Keywords: health communications, public health outreach..." style="flex:1;min-width:220px;padding:9px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;" />
-        <select id="fed-source" style="padding:9px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:var(--surface);">
-          <option value="sam">SAM.gov only (ready now)</option>
-          <option value="both">SAM.gov and Grants.gov (requires Grants key)</option>
-          <option value="grants">Grants.gov only (requires Grants key)</option>
-        </select>
-        <select id="fed-days" style="padding:9px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:var(--surface);">
-          <option value="14">Posted last 14 days</option>
-          <option value="30">Posted last 30 days</option>
-          <option value="60">Posted last 60 days</option>
-          <option value="90">Posted last 90 days</option>
-        </select>
-      </div>
-      <div style="margin-bottom:10px;">
-        <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">Grants.gov API key (optional — enables grant searches)</label>
-        <div style="display:flex;gap:8px;">
-          <input id="grants-key-inp" type="password" placeholder="Enter your simpler.grants.gov API key..." style="flex:1;padding:7px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-family:monospace;" value="" />
-          <button onclick="saveGrantsKey()" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:12px;cursor:pointer;color:var(--dark);">Save</button>
-          <span id="grants-key-status" style="font-size:12px;color:var(--muted);align-self:center;"></span>
-        </div>
-      </div>
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-        <button onclick="runFederalSearch()" id="fed-btn" style="background:var(--pink);color:#fff;border:none;border-radius:8px;padding:9px 22px;font-size:13px;font-weight:600;cursor:pointer;">Search now</button>
-        <button onclick="addAllFedResults()" id="fed-add-all-btn" style="display:none;background:var(--emerald,#1A8C5B);color:#fff;border:none;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;">+ Add all to pipeline</button>
-        <span id="fed-status" style="font-size:12px;color:var(--muted);"></span>
-      </div>
-    </div>
-
-    <div id="fed-results" style="display:flex;flex-direction:column;gap:10px;"></div>
-
-  </div>
-
 </main>
 
 
@@ -1106,7 +1236,6 @@ function go(n){
   if(n==='portals'&&typeof renderUserPortals==='function')renderUserPortals();
   if(n==='winloss'&&typeof renderWinLoss==='function')renderWinLoss();
   if(n==='digest'&&typeof renderDigest==='function')renderDigest();
-  if(n==='federal'){document.getElementById('fed-keyword')&&document.getElementById('fed-keyword').focus();loadGrantsKey();}
 }
 
 /* --- PILLS --- */
@@ -1870,7 +1999,6 @@ renderUserPortals();
 initPortalChecks();
 renderSavedSearches();
 
-/* ─── UI HELPERS ─── */
 function toggleImportBox(){
   var w=document.getElementById('iw');
   if(w) w.style.display=(w.style.display==='none'?'block':'none');
@@ -1889,163 +2017,7 @@ function saveNewSearch(){
 }
 
 
-function saveGrantsKey(){
-  const val = document.getElementById('grants-key-inp').value.trim();
-  if(!val){ alert('Please enter your Grants.gov API key.'); return; }
-  localStorage.setItem('pop_grants_key', val);
-  document.getElementById('grants-key-status').textContent = 'Saved';
-  document.getElementById('grants-key-status').style.color = 'var(--green)';
-  setTimeout(() => { document.getElementById('grants-key-status').textContent = ''; }, 2000);
-}
-function loadGrantsKey(){
-  const key = localStorage.getItem('pop_grants_key') || '';
-  const inp = document.getElementById('grants-key-inp');
-  if(inp && key) { inp.value = key; }
-}
-
-
 /* ─── FEDERAL SEARCH ─── */
-const FED_SAM_KEY = 'SAM-c4810485-c9ce-427b-8fb2-767395175db1';
-let fedResults = [];
-
-async function runFederalSearch(){
-  const btn    = document.getElementById('fed-btn');
-  const status = document.getElementById('fed-status');
-  const resDiv = document.getElementById('fed-results');
-  const addAll = document.getElementById('fed-add-all-btn');
-  const kw     = document.getElementById('fed-keyword').value.trim();
-  const source = document.getElementById('fed-source').value;
-  const days   = parseInt(document.getElementById('fed-days').value);
-
-  btn.disabled = true;
-  btn.textContent = 'Searching...';
-  status.textContent = '';
-  resDiv.innerHTML = '';
-  addAll.style.display = 'none';
-  fedResults = [];
-
-  const now    = new Date();
-  const from   = new Date(now - days * 86400000);
-  const toStr  = now.toLocaleDateString('en-US', {month:'2-digit',day:'2-digit',year:'numeric'});
-  const fromStr= from.toLocaleDateString('en-US', {month:'2-digit',day:'2-digit',year:'numeric'});
-
-  try {
-    const allResults = [];
-
-    if (source === 'sam' || source === 'both') {
-      const samResults = await searchSAM(kw, fromStr, toStr);
-      allResults.push(...samResults);
-    }
-
-    if (source === 'grants' || source === 'both') {
-      const grantResults = await searchGrants(kw, days);
-      allResults.push(...grantResults);
-    }
-
-    fedResults = allResults;
-
-    if (!fedResults.length) {
-      resDiv.innerHTML = '<div class="empty-state" style="padding:24px;"><h3>No results found</h3><p>Try broader keywords, a longer date range, or both sources.</p></div>';
-      status.textContent = 'No results found.';
-    } else {
-      status.textContent = fedResults.length + ' result' + (fedResults.length === 1 ? '' : 's') + ' found';
-      addAll.style.display = 'inline-block';
-      renderFedResults();
-    }
-  } catch(e) {
-    resDiv.innerHTML = '<div class="empty-state" style="padding:24px;"><h3>Search error</h3><p>' + e.message + '</p></div>';
-    status.textContent = 'Error: ' + e.message;
-  }
-
-  btn.disabled = false;
-  btn.textContent = 'Search now';
-}
-
-async function searchSAM(keyword, fromDate, toDate){
-  const naics = '541820,541613,541611,541690,923110';
-  let url = 'https://api.sam.gov/opportunities/v2/search?limit=25&api_key=' + FED_SAM_KEY;
-  url += '&postedFrom=' + encodeURIComponent(fromDate);
-  url += '&postedTo='   + encodeURIComponent(toDate);
-  url += '&ptype=o,k,p,r,s';
-  if(keyword) url += '&title=' + encodeURIComponent(keyword);
-
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 15000);
-
-  try {
-    const resp = await fetch(url, {signal: controller.signal});
-    clearTimeout(timeout);
-    if(!resp.ok) throw new Error('SAM.gov returned error ' + resp.status + '. Check your API key.');
-    const data = await resp.json();
-    const opps = data.opportunitiesData || [];
-    return opps.map(o => ({
-      id:       'sam-' + (o.noticeId || Math.random()),
-      title:    o.title || 'Untitled',
-      org:      o.fullParentPathName ? o.fullParentPathName.split('.').pop().trim() : 'Federal',
-      type:     'Government',
-      deadline: o.responseDeadLine ? o.responseDeadLine.split('T')[0] : (o.archiveDate || 'Unknown'),
-      posted:   o.postedDate || '',
-      url:      o.uiLink || ('https://sam.gov/opp/' + o.noticeId + '/view'),
-      summary:  'Federal contract opportunity. Type: ' + (o.type||'Solicitation') + '. NAICS: ' + (o.naicsCode||'N/A') + '.',
-      source:   'SAM.gov'
-    }));
-  } catch(e) {
-    clearTimeout(timeout);
-    if(e.name === 'AbortError') throw new Error('SAM.gov search timed out after 15 seconds. The server may be slow. Please try again.');
-    throw e;
-  }
-}
-
-async function searchGrants(keyword, days){
-  // Simpler.Grants.gov API - the modernized replacement for grants.gov
-  // Requires a free API key from simpler.grants.gov/developer
-  const GRANTS_KEY = localStorage.getItem('pop_grants_key') || '';
-  if(!GRANTS_KEY){
-    throw new Error('Grants.gov search requires a free API key from simpler.grants.gov/developer. Enter it in the Federal Search settings.');
-  }
-
-  const now   = new Date();
-  const from  = new Date(now - days * 86400000);
-  const fromStr = from.toISOString().split('T')[0];
-
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 10000);
-
-  try {
-    const resp = await fetch('https://api.simpler.grants.gov/v1/opportunities/search', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json','X-API-Key': GRANTS_KEY},
-      signal: controller.signal,
-      body: JSON.stringify({
-        query: keyword || 'health communications',
-        filters: {
-          opportunity_status: {one_of: ['posted','forecasted']},
-          post_date: {start_date: fromStr}
-        },
-        pagination: {page_offset:1, page_size:25, sort_order:[{order_by:'post_date',sort_direction:'descending'}]}
-      })
-    });
-    clearTimeout(timeout);
-    if(!resp.ok) throw new Error('Grants.gov returned error ' + resp.status);
-    const data = await resp.json();
-    const opps = data.data || [];
-    return opps.map(o => ({
-      id:       'grants-' + (o.opportunity_id || Math.random()),
-      title:    o.opportunity_title || 'Untitled',
-      org:      o.agency_name || 'Federal Agency',
-      type:     'Government',
-      deadline: o.close_date || 'Unknown',
-      posted:   o.post_date || '',
-      url:      'https://simpler.grants.gov/opportunities/' + o.opportunity_id,
-      summary:  o.summary_description ? o.summary_description.replace(/<[^>]+>/g,'').substring(0,200) + '...' : 'Federal grant opportunity.',
-      source:   'Grants.gov'
-    }));
-  } catch(e) {
-    clearTimeout(timeout);
-    if(e.name === 'AbortError') throw new Error('Grants.gov search timed out. Try again.');
-    throw e;
-  }
-}
 
 /* ─── INIT ─── */
 updatePipeline();
@@ -2053,6 +2025,55 @@ doFilter();
 renderUserPortals();
 initPortalChecks();
 renderSavedSearches();
+
+/* ─── QUICK ADD FROM PORTALS TAB ─── */
+function toggleQuickAdd(){
+  var f = document.getElementById('quick-add-form');
+  var btn = document.getElementById('quick-add-toggle');
+  if(!f) return;
+  var showing = f.style.display !== 'none';
+  f.style.display = showing ? 'none' : 'block';
+  btn.textContent = showing ? 'Show' : 'Hide';
+  if(!showing) document.getElementById('qa-title').focus();
+}
+function quickAddToPipeline(){
+  var title = document.getElementById('qa-title').value.trim();
+  var status = document.getElementById('qa-status');
+  if(!title){ status.textContent = 'Title is required.'; return; }
+
+  var dup = pipeline.some(function(p){ return p.title.toLowerCase().trim() === title.toLowerCase(); });
+  if(dup){ status.textContent = 'This opportunity is already in your pipeline.'; return; }
+
+  pipeline.unshift({
+    id:       Date.now() + Math.random(),
+    title:    title,
+    org:      document.getElementById('qa-org').value.trim(),
+    type:     document.getElementById('qa-type').value,
+    deadline: document.getElementById('qa-deadline').value || 'Unknown',
+    url:      document.getElementById('qa-url').value.trim(),
+    summary:  '',
+    notes:    document.getElementById('qa-notes').value.trim(),
+    status:   'new',
+    gngScore: null,
+    value:    ''
+  });
+  persist();
+  updatePipeline();
+
+  status.textContent = '✓ Added to pipeline';
+  status.style.color = '#1A8C5B';
+  clearQuickAdd();
+  setTimeout(function(){ status.textContent = ''; }, 3000);
+}
+function clearQuickAdd(){
+  ['qa-title','qa-org','qa-deadline','qa-url','qa-notes','qa-value'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.value = '';
+  });
+  var type = document.getElementById('qa-type');
+  if(type) type.selectedIndex = 0;
+}
+
 
 </script>
 
