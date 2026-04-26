@@ -1764,83 +1764,55 @@ function exportDigest(){
     return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+(days>=0?' ('+days+'d)':'');
   };
 
-  let text='POWER OF PUBLIC — WEEKLY RFP DIGEST
-';
-  text+='Week of '+new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+'
-';
-  text+='═'.repeat(50)+'
+  const NL='\n';
+  const DIV='='.repeat(50);
+  const SEP='-'.repeat(50);
 
-';
-
-  text+='PIPELINE SUMMARY
-';
-  text+=`Active opportunities: ${active.length}
-`;
-  text+=`Total pipeline value: ${pipeline.reduce((s,o)=>s+(parseFloat(o.value)||0),0).toLocaleString('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0})}
-
-`;
+  let text='POWER OF PUBLIC -- WEEKLY RFP DIGEST'+NL;
+  text+='Week of '+new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+NL;
+  text+=DIV+NL+NL;
+  text+='PIPELINE SUMMARY'+NL;
+  text+='Active opportunities: '+active.length+NL;
+  text+='Total pipeline value: '+pipeline.reduce((s,o)=>s+(parseFloat(o.value)||0),0).toLocaleString('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0})+NL+NL;
 
   if(urgent.length){
-    text+='⚠ DEADLINES IN NEXT 14 DAYS
-';
-    urgent.forEach(o=>text+=`  • ${o.title} — ${o.org} — ${fmt(o.deadline)}
-`);
-    text+='
-';
+    text+='DEADLINES IN NEXT 14 DAYS'+NL;
+    urgent.forEach(o=>{text+='  - '+o.title+' -- '+o.org+' -- '+fmt(o.deadline)+NL;});
+    text+=NL;
   }
 
   const statuses=['new','considering','pursuing','submitted'];
   statuses.forEach(s=>{
     const group=active.filter(o=>o.status===s);
     if(!group.length)return;
-    text+=statusLabel(s).toUpperCase()+' ('+group.length+')
-';
+    text+=statusLabel(s).toUpperCase()+' ('+group.length+')'+NL;
     group.forEach(o=>{
-      text+=`  • ${o.title}`;
-      if(o.org)text+=` — ${o.org}`;
-      if(o.deadline&&o.deadline!=='Unknown')text+=` — ${fmt(o.deadline)}`;
-      if(o.value)text+=` — ${fmtVal(o.value)}`;
-      text+='
-';
-      if(o.notes)text+=`    Notes: ${o.notes.replace(/\n/g,' ')}
-`;
+      text+='  - '+o.title;
+      if(o.org)text+=' -- '+o.org;
+      if(o.deadline&&o.deadline!=='Unknown')text+=' -- '+fmt(o.deadline);
+      if(o.value)text+=' -- '+fmtVal(o.value);
+      text+=NL;
+      if(o.notes)text+='    Notes: '+o.notes.replace(/\n/g,' ')+NL;
     });
-    text+='
-';
+    text+=NL;
   });
 
   if(won.length){
-    text+='WON THIS CYCLE
-';
-    won.forEach(o=>text+=`  ✓ ${o.title} — ${o.org||''}
-`);
-    text+='
-';
+    text+='WON THIS CYCLE'+NL;
+    won.forEach(o=>{text+='  + '+o.title+' -- '+(o.org||'')+NL;});
+    text+=NL;
   }
 
-  text+='─'.repeat(50)+'
-';
-  text+='Generated '+new Date().toLocaleString()+' · Power of Public Operations Hub';
+  text+=SEP+NL;
+  text+='Generated '+new Date().toLocaleString()+' - Power of Public Operations Hub';
 
-  // Copy to clipboard and show in digest tab
+  const el=document.getElementById('digest-output');
+  const btn=document.getElementById('digest-copy-btn');
+  if(el){el.value=text;el.style.display='block';}
   navigator.clipboard.writeText(text).then(()=>{
-    const el=document.getElementById('digest-output');
-    if(el){el.value=text;el.style.display='block';}
-    const btn=document.getElementById('digest-copy-btn');
-    if(btn){btn.textContent='✓ Copied to clipboard!';setTimeout(()=>btn.textContent='Generate & Copy Digest',2000);}
+    if(btn){btn.textContent='Copied to clipboard!';setTimeout(()=>{btn.textContent='Generate & Copy Digest';},2000);}
   }).catch(()=>{
-    const el=document.getElementById('digest-output');
-    if(el){el.value=text;el.style.display='block';}
+    if(btn){btn.textContent='Text shown below -- copy manually';setTimeout(()=>{btn.textContent='Generate & Copy Digest';},3000);}
   });
 }
-
-/* ─── INIT ─── */
-updatePipeline();
-doFilter();
-renderUserPortals();
-initPortalChecks();
-renderSavedSearches();
-
-</script>
-</body>
-</html>
+>
