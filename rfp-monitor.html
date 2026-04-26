@@ -348,6 +348,7 @@
     <button class="tab"     onclick="go('portals')">Manual Portals</button>
     <button class="tab"     onclick="go('winloss')">Win / Loss</button>
     <button class="tab"     onclick="go('digest')">Email Digest</button>
+    <button class="tab"     onclick="go('federal')">Federal Search</button>
   </div>
 
   
@@ -869,6 +870,44 @@
     </div>
 
   </div>
+  <!-- FEDERAL SEARCH TAB -->
+  <div id="tab-federal" class="panel">
+
+    <div style="background:#FBF3F8;border:1.5px solid #F0C8DF;border-left:4px solid #E8187A;border-radius:10px;padding:16px 20px;margin-bottom:20px;">
+      <div style="font-size:13px;font-weight:700;color:#B5467A;margin-bottom:8px;">Federal Search: SAM.gov and Grants.gov</div>
+      <div style="font-size:13px;color:#5A2040;line-height:1.65;">
+        Search active federal contract opportunities and grants directly from the official government APIs. Results are real, current, and link directly to the opportunity. Searches cost nothing and run instantly inside the portal.<br><br>
+        <strong>NAICS codes included:</strong> 541820 (Public Relations), 541613 (Marketing Consulting), 541611 (Management Consulting), 541690 (Scientific and Technical Consulting), 923110 (Administration of Public Health Programs). Add to pipeline with one click.
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title">Search federal opportunities</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+        <input id="fed-keyword" type="text" placeholder="Keywords: health communications, public health outreach..." style="flex:1;min-width:220px;padding:9px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;" />
+        <select id="fed-source" style="padding:9px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:var(--surface);">
+          <option value="both">SAM.gov and Grants.gov</option>
+          <option value="sam">SAM.gov only</option>
+          <option value="grants">Grants.gov only</option>
+        </select>
+        <select id="fed-days" style="padding:9px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:var(--surface);">
+          <option value="14">Posted last 14 days</option>
+          <option value="30">Posted last 30 days</option>
+          <option value="60">Posted last 60 days</option>
+          <option value="90">Posted last 90 days</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <button onclick="runFederalSearch()" id="fed-btn" style="background:var(--pink);color:#fff;border:none;border-radius:8px;padding:9px 22px;font-size:13px;font-weight:600;cursor:pointer;">Search now</button>
+        <button onclick="addAllFedResults()" id="fed-add-all-btn" style="display:none;background:var(--emerald,#1A8C5B);color:#fff;border:none;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;">+ Add all to pipeline</button>
+        <span id="fed-status" style="font-size:12px;color:var(--muted);"></span>
+      </div>
+    </div>
+
+    <div id="fed-results" style="display:flex;flex-direction:column;gap:10px;"></div>
+
+  </div>
+
 </main>
 
 
@@ -1058,6 +1097,7 @@ function go(n){
   if(n==='portals'&&typeof renderUserPortals==='function')renderUserPortals();
   if(n==='winloss'&&typeof renderWinLoss==='function')renderWinLoss();
   if(n==='digest'&&typeof renderDigest==='function')renderDigest();
+  if(n==='federal'){document.getElementById('fed-keyword')&&document.getElementById('fed-keyword').focus();}
 }
 
 /* --- PILLS --- */
@@ -1837,6 +1877,192 @@ function saveNewSearch(){
   localStorage.setItem('pop_saved_searches',JSON.stringify(savedSearches));
   inp.value='';
   renderSavedSearches();
+}
+
+
+/* ─── FEDERAL SEARCH ─── */
+const FED_SAM_KEY = 'SAM-c4810485-c9ce-427b-8fb2-767395175db1';
+let fedResults = [];
+
+async function runFederalSearch(){
+  const btn    = document.getElementById('fed-btn');
+  const status = document.getElementById('fed-status');
+  const resDiv = document.getElementById('fed-results');
+  const addAll = document.getElementById('fed-add-all-btn');
+  const kw     = document.getElementById('fed-keyword').value.trim();
+  const source = document.getElementById('fed-source').value;
+  const days   = parseInt(document.getElementById('fed-days').value);
+
+  btn.disabled = true;
+  btn.textContent = 'Searching...';
+  status.textContent = '';
+  resDiv.innerHTML = '';
+  addAll.style.display = 'none';
+  fedResults = [];
+
+  const now    = new Date();
+  const from   = new Date(now - days * 86400000);
+  const toStr  = now.toLocaleDateString('en-US', {month:'2-digit',day:'2-digit',year:'numeric'});
+  const fromStr= from.toLocaleDateString('en-US', {month:'2-digit',day:'2-digit',year:'numeric'});
+
+  try {
+    const allResults = [];
+
+    if (source === 'sam' || source === 'both') {
+      const samResults = await searchSAM(kw, fromStr, toStr);
+      allResults.push(...samResults);
+    }
+
+    if (source === 'grants' || source === 'both') {
+      const grantResults = await searchGrants(kw, days);
+      allResults.push(...grantResults);
+    }
+
+    fedResults = allResults;
+
+    if (!fedResults.length) {
+      resDiv.innerHTML = '<div class="empty-state" style="padding:24px;"><h3>No results found</h3><p>Try broader keywords, a longer date range, or both sources.</p></div>';
+      status.textContent = 'No results found.';
+    } else {
+      status.textContent = fedResults.length + ' result' + (fedResults.length === 1 ? '' : 's') + ' found';
+      addAll.style.display = 'inline-block';
+      renderFedResults();
+    }
+  } catch(e) {
+    resDiv.innerHTML = '<div class="empty-state" style="padding:24px;"><h3>Search error</h3><p>' + e.message + '</p></div>';
+    status.textContent = 'Error: ' + e.message;
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Search now';
+}
+
+async function searchSAM(keyword, fromDate, toDate) {
+  const naics = '541820,541613,541611,541690,923110';
+  let url = 'https://api.sam.gov/opportunities/v2/search?limit=25&api_key=' + FED_SAM_KEY;
+  url += '&postedFrom=' + encodeURIComponent(fromDate);
+  url += '&postedTo=' + encodeURIComponent(toDate);
+  url += '&ptype=o,k,p,r,s';
+  if (keyword) url += '&title=' + encodeURIComponent(keyword);
+
+  const resp = await fetch(url);
+  if (!resp.ok) throw new Error('SAM.gov returned error ' + resp.status + '. Check that your API key is valid.');
+  const data = await resp.json();
+  const opps = data.opportunitiesData || [];
+
+  return opps.map(o => ({
+    id:       'sam-' + (o.noticeId || Math.random()),
+    title:    o.title || 'Untitled',
+    org:      o.fullParentPathName ? o.fullParentPathName.split('.').pop().trim() : (o.organizationHierarchy ? o.organizationHierarchy : 'Federal'),
+    type:     'Government',
+    deadline: o.responseDeadLine ? o.responseDeadLine.split('T')[0] : (o.archiveDate || 'Unknown'),
+    posted:   o.postedDate || '',
+    url:      o.uiLink || ('https://sam.gov/opp/' + o.noticeId + '/view'),
+    summary:  'Federal contract opportunity via SAM.gov. Type: ' + (o.type || 'Solicitation') + '. NAICS: ' + (o.naicsCode || 'N/A') + '.',
+    source:   'SAM.gov'
+  }));
+}
+
+async function searchGrants(keyword, days) {
+  const now   = new Date();
+  const from  = new Date(now - days * 86400000);
+  const fromStr = from.toISOString().split('T')[0];
+
+  const body = {
+    rows: 25,
+    keyword: keyword || 'health communications',
+    oppStatuses: 'forecasted,posted',
+    postedFrom: fromStr,
+    sortBy: '-openDate',
+    fields: 'id,title,agencyName,openDate,closeDate,oppNumber,synopsis'
+  };
+
+  const resp = await fetch('https://apply07.grants.gov/grantsws/rest/opportunities/search/', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(body)
+  });
+
+  if (!resp.ok) throw new Error('Grants.gov returned error ' + resp.status);
+  const data = await resp.json();
+  const opps = data.oppHits || [];
+
+  return opps.map(o => ({
+    id:       'grants-' + (o.id || Math.random()),
+    title:    o.title || 'Untitled',
+    org:      o.agencyName || 'Federal Agency',
+    type:     'Government',
+    deadline: o.closeDate ? o.closeDate.split('T')[0] : 'Unknown',
+    posted:   o.openDate ? o.openDate.split('T')[0] : '',
+    url:      'https://grants.gov/search-results-detail/' + o.id,
+    summary:  o.synopsis ? o.synopsis.replace(/<[^>]+>/g,'').substring(0,200) + '...' : 'Federal grant opportunity via Grants.gov.',
+    source:   'Grants.gov'
+  }));
+}
+
+function renderFedResults() {
+  const div = document.getElementById('fed-results');
+  div.innerHTML = fedResults.map((r, idx) => {
+    const inPipeline = pipeline.some(p => p.title.toLowerCase().trim() === r.title.toLowerCase().trim());
+    const dl = dlinfo(r.deadline);
+    const posted = r.posted ? 'Posted: ' + new Date(r.posted).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}) : '';
+    return '<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:16px 18px;">' +
+      '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">' +
+        '<div style="flex:1;min-width:0;">' +
+          '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px;">' + r.source + '</div>' +
+          '<div style="font-size:15px;font-weight:700;color:var(--dark);margin-bottom:4px;line-height:1.3;">' + r.title + '</div>' +
+          '<div style="font-size:13px;color:var(--muted);margin-bottom:8px;">' + r.org + '</div>' +
+          '<div style="font-size:12px;color:var(--muted);">' + posted + (posted && dl.l ? ' &nbsp;|&nbsp; ' : '') + 'Deadline: <span style="color:' + (dl.c==='dl-urgent'?'#CC0000':dl.c==='dl-warn'?'#9A5800':'var(--muted)') + ';font-weight:' + (dl.c==='dl-urgent'?'700':'400') + ';">' + dl.l + '</span></div>' +
+          (r.summary ? '<div style="font-size:13px;color:var(--muted);margin-top:8px;line-height:1.5;">' + r.summary + '</div>' : '') +
+        '</div>' +
+        '<div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">' +
+          '<a href="' + r.url + '" target="_blank" rel="noopener" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 12px;font-size:12px;font-weight:500;color:var(--dark);text-decoration:none;text-align:center;">View source</a>' +
+          (inPipeline
+            ? '<div style="background:#EBF7F2;border:1px solid #A8DFC0;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:500;color:#1A8C5B;text-align:center;">In pipeline</div>'
+            : '<button onclick="addFedResult(' + idx + ')" style="background:var(--pink);color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;">+ Add</button>'
+          ) +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function addFedResult(idx) {
+  const r = fedResults[idx];
+  if (!r) return;
+  const dup = pipeline.some(p => p.title.toLowerCase().trim() === r.title.toLowerCase().trim());
+  if (dup) { alert('This opportunity is already in your pipeline.'); return; }
+  pipeline.unshift({
+    id: Date.now() + Math.random(),
+    title: r.title, org: r.org, type: r.type,
+    deadline: r.deadline, url: r.url, summary: r.summary,
+    status: 'new', gngScore: null, notes: '', value: ''
+  });
+  persist(); updatePipeline(); renderFedResults();
+}
+
+function addAllFedResults() {
+  let added = 0;
+  fedResults.forEach(r => {
+    const dup = pipeline.some(p => p.title.toLowerCase().trim() === r.title.toLowerCase().trim());
+    if (!dup) {
+      pipeline.unshift({
+        id: Date.now() + Math.random(),
+        title: r.title, org: r.org, type: r.type,
+        deadline: r.deadline, url: r.url, summary: r.summary,
+        status: 'new', gngScore: null, notes: '', value: ''
+      });
+      added++;
+    }
+  });
+  persist(); updatePipeline();
+  document.getElementById('fed-status').textContent = added + ' opportunit' + (added === 1 ? 'y' : 'ies') + ' added to pipeline.';
+  document.getElementById('fed-status').style.color = 'var(--green)';
+  renderFedResults();
+  setTimeout(() => {
+    const s = document.getElementById('fed-status');
+    if (s) s.style.color = 'var(--muted)';
+  }, 3000);
 }
 
 
