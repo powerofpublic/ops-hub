@@ -292,6 +292,138 @@
     .dl-unknown{ background:#F5F5F5;color:#999;border-color:#DDD; }
     @keyframes pulse-urgent { 0%,100%{opacity:1} 50%{opacity:.7} }
 
+
+    /* ── GEORGIA HEADINGS ── */
+    .page-title,
+    .opp-title,
+    .card-title,
+    .portal-link-name,
+    .section-heading,
+    .fed-title { font-family: Georgia, 'Times New Roman', serif !important; font-weight: normal; }
+
+    /* ── SECTION HEADERS (directory style) ── */
+    .portal-section h3 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--navy, #1A1A2E);
+      margin-bottom: 14px;
+    }
+
+    /* ── PORTAL CARD REDESIGN ── */
+    .portal-link {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition: box-shadow 0.15s, border-color 0.15s;
+      position: relative;
+    }
+    .portal-link:hover {
+      border-color: var(--pink);
+      box-shadow: 0 3px 10px rgba(232,24,122,0.10);
+    }
+    .portal-link-name {
+      font-family: Georgia, serif;
+      font-size: 13.5px;
+      font-weight: normal;
+      color: var(--text);
+      line-height: 1.35;
+    }
+    .portal-link-desc {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11.5px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+    .portal-link a {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      color: var(--pink);
+      text-decoration: none;
+      margin-top: 2px;
+    }
+    .portal-link a:hover { text-decoration: underline; }
+    .portal-tag {
+      display: inline-block;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-top: 5px;
+      align-self: flex-start;
+    }
+    .tag-government   { background: #E8F2F8; color: #1a4f6e; }
+    .tag-foundation   { background: var(--pink-light); color: #8a1c5a; }
+    .tag-nonprofit    { background: var(--green-light); color: #1f5c33; }
+    .tag-academic     { background: var(--amber-light); color: var(--amber); }
+    .tag-regional     { background: #f3f0ff; color: #5b21b6; }
+    .tag-comms        { background: #fff3e0; color: #92400e; }
+    .tag-maternal     { background: #fde8ed; color: #8a1c35; }
+    .tag-national     { background: #E8F2F8; color: #1a4f6e; }
+    .tag-pubhealth    { background: var(--green-light); color: #1f5c33; }
+    .tag-conversion   { background: var(--amber-light); color: var(--amber); }
+
+    /* ── PORTAL GRID ── */
+    .portal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    /* ── TAB PILL STYLE ── */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      padding: 4px;
+      background: var(--surface2);
+      border-radius: 14px;
+      border: 1.5px solid var(--border);
+      width: fit-content;
+      max-width: 100%;
+    }
+    .tab {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 12.5px;
+      font-weight: 600;
+      padding: 7px 15px;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: all .18s;
+      white-space: nowrap;
+      letter-spacing: .01em;
+    }
+    .tab:hover { color: var(--text); background: rgba(255,255,255,0.7); }
+    .tab.on {
+      color: var(--pink);
+      background: var(--surface);
+      font-weight: 700;
+      box-shadow: 0 2px 6px rgba(232,24,122,0.12), 0 0 0 1.5px rgba(232,24,122,0.2);
+    }
+
+    /* ── PIPELINE CARD TITLES ── */
+    .opp-title { font-family: Georgia, serif; font-size: 15px; font-weight: normal; }
+
+    /* ── OPPORTUNITY CARD LINKS ── */
+    .opp-card a.btn { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+
 </style>
 </head>
 <body>
@@ -559,512 +691,798 @@
 
   <div id="tab-portals" class="panel">
 
-    <!-- QUICK ADD OPPORTUNITY -->
-    <div style="background:#FBF3F8;border:1.5px solid #F0C8DF;border-left:4px solid #E8187A;border-radius:10px;padding:16px 20px;margin-bottom:24px;">
-      <div style="font-size:13px;font-weight:700;color:#B5467A;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;">
-        <span style="font-size:13px;font-weight:700;color:#B5467A;">+ Add Opportunity</span>
-        <button onclick="toggleQuickAdd()" id="quick-add-toggle" style="font-size:11px;background:none;border:1px solid #F0C8DF;border-radius:6px;padding:3px 10px;color:#B5467A;cursor:pointer;">Hide</button>
-      </div>
-      <div id="quick-add-form" style="display:block;">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
-          <div style="grid-column:1/-1;">
-            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Opportunity title *</label>
-            <input id="qa-title" type="text" placeholder="e.g. Health Communications Consulting Services" style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;" />
-          </div>
-          <div>
-            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Organization</label>
-            <input id="qa-org" type="text" placeholder="e.g. DC Department of Health" style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;" />
-          </div>
-          <div>
-            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Type</label>
-            <select id="qa-type" style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;">
-              <option>Government</option>
-              <option>Foundation</option>
-              <option>Nonprofit / Association</option>
-              <option>Academic</option>
-            </select>
-          </div>
-          <div>
-            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Deadline</label>
-            <input id="qa-deadline" type="date" style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;" />
-          </div>
-          <div style="grid-column:1/-1;">
-            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Source URL</label>
-            <input id="qa-url" type="url" placeholder="https://..." style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;" />
-          </div>
-          <div style="grid-column:1/-1;">
-            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B5467A;display:block;margin-bottom:4px;">Notes (optional)</label>
-            <textarea id="qa-notes" placeholder="Why this is a good fit, key contacts, requirements..." style="width:100%;padding:8px 12px;border:1.5px solid #F0C8DF;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;resize:vertical;height:64px;"></textarea>
-          </div>
-        </div>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <button onclick="quickAddToPipeline()" style="background:#E8187A;color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:13px;font-weight:700;cursor:pointer;">Add to Pipeline</button>
-          <button onclick="clearQuickAdd()" style="background:none;border:1px solid #F0C8DF;border-radius:8px;padding:8px 14px;font-size:12px;color:#B5467A;cursor:pointer;">Clear</button>
-          <span id="qa-status" style="font-size:12px;color:#B5467A;"></span>
-        </div>
-      </div>
-    </div>
+    <p style="font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:16px;">Direct links to every procurement, grant, and communications source for RFP prospecting. Click any link to open in a new tab. To add new portals, ask Claude to update the file. Share the portal's name, URL, and section.</p>
 
-
-    <p style="font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:20px;">Direct links to every procurement, grant, and communications source for RFP prospecting. Click any link to open in a new tab. To add new portals, ask Claude to update the file. Share the portal's name, URL, and section.</p>
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+    <!-- PORTAL PROGRESS -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
       <span id="portal-progress" style="font-size:12px;color:var(--muted);font-weight:500;">0 / 0 portals reviewed this week</span>
       <button onclick="resetPortalChecks()" style="font-size:11px;background:none;border:1px solid var(--border);border-radius:6px;padding:3px 10px;cursor:pointer;color:var(--muted);">Reset week</button>
     </div>
 
     <div class="portal-section">
-      <h3>Government &amp; Procurement</h3>
-      <p class="portal-note">Federal, state, and local procurement systems plus RFP aggregators.</p>
-      <div class="portal-grid">        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">SAM.gov (Federal)</div>
-            <div class="portal-link-desc">sam.gov</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://sam.gov/search/?index=opp&sort=-modifiedDate&sfm%5Bstatus%5D%5B0%5D=Active" onchange="togglePortalCheck('https://sam.gov/search/?index=opp&sort=-modifiedDate&sfm%5Bstatus%5D%5B0%5D=Active',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://sam.gov/search/?index=opp&sort=-modifiedDate&sfm%5Bstatus%5D%5B0%5D=Active" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">rfpmart.com: Health & Marketing</div>
-            <div class="portal-link-desc">rfpmart.com</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://www.rfpmart.com/marketing-and-branding-rfp-government-contract.html" onchange="togglePortalCheck('https://www.rfpmart.com/marketing-and-branding-rfp-government-contract.html',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://www.rfpmart.com/marketing-and-branding-rfp-government-contract.html" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">HigherGov: DC OCP</div>
-            <div class="portal-link-desc">highergov.com</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://www.highergov.com/sl/contract-opportunities/digital-marketing/" onchange="togglePortalCheck('https://www.highergov.com/sl/contract-opportunities/digital-marketing/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://www.highergov.com/sl/contract-opportunities/digital-marketing/" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">Georgia Procurement Registry</div>
-            <div class="portal-link-desc">ssl.doas.state.ga.us</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://ssl.doas.state.ga.us/gpr/" onchange="togglePortalCheck('https://ssl.doas.state.ga.us/gpr/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://ssl.doas.state.ga.us/gpr/" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">NC eVP Solicitations</div>
-            <div class="portal-link-desc">evp.nc.gov</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://evp.nc.gov/solicitations/" onchange="togglePortalCheck('https://evp.nc.gov/solicitations/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://evp.nc.gov/solicitations/" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">Delaware Bid Directory</div>
-            <div class="portal-link-desc">mmp.delaware.gov</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://mmp.delaware.gov/Bids/" onchange="togglePortalCheck('https://mmp.delaware.gov/Bids/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://mmp.delaware.gov/Bids/" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">grants.gov (Federal grants)</div>
-            <div class="portal-link-desc">grants.gov</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://grants.gov/search-grants" onchange="togglePortalCheck('https://grants.gov/search-grants',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://grants.gov/search-grants" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">rfpmart: Social Media & Outreach</div>
-            <div class="portal-link-desc">rfpmart.com</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://www.rfpmart.com/social-media-internet-marketing-and-seo-rfp-government-contract.html" onchange="togglePortalCheck('https://www.rfpmart.com/social-media-internet-marketing-and-seo-rfp-government-contract.html',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://www.rfpmart.com/social-media-internet-marketing-and-seo-rfp-government-contract.html" target="_blank" rel="noopener">Open ↗</a>
-        </div></div>
-    </div>
-
-    <div class="portal-section">
-      <h3>Foundations</h3>
-      <p class="portal-note">Health-focused foundations funding communications, outreach, and social marketing work.</p>
-      <div class="portal-grid">        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">CDC Foundation</div>
-            <div class="portal-link-desc">cdcfoundation.org</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://cdcfoundation.org/request-for-proposals" onchange="togglePortalCheck('https://cdcfoundation.org/request-for-proposals',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://cdcfoundation.org/request-for-proposals" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">Philanthropy News Digest</div>
-            <div class="portal-link-desc">philanthropynewsdigest.org</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://philanthropynewsdigest.org/rfps" onchange="togglePortalCheck('https://philanthropynewsdigest.org/rfps',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://philanthropynewsdigest.org/rfps" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">Elevance Health Foundation</div>
-            <div class="portal-link-desc">elevancehealth.foundation</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://elevancehealth.foundation/for-grantseekers" onchange="togglePortalCheck('https://elevancehealth.foundation/for-grantseekers',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://elevancehealth.foundation/for-grantseekers" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">Horizon Foundation (MD)</div>
-            <div class="portal-link-desc">thehorizonfoundation.org</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://thehorizonfoundation.org/tag/rfp/" onchange="togglePortalCheck('https://thehorizonfoundation.org/tag/rfp/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://thehorizonfoundation.org/tag/rfp/" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">Grantmakers in Health</div>
-            <div class="portal-link-desc">gih.org</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://gih.org" onchange="togglePortalCheck('https://gih.org',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://gih.org" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">New York Health Foundation</div>
-            <div class="portal-link-desc">nyhealthfoundation.org</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://nyhealthfoundation.org/rfp/" onchange="togglePortalCheck('https://nyhealthfoundation.org/rfp/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://nyhealthfoundation.org/rfp/" target="_blank" rel="noopener">Open ↗</a>
-        </div></div>
-        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">Robert Wood Johnson Foundation (RWJF)</div>
-            <div class="portal-link-desc">rwjf.org, health equity funding opportunities</div>
-          </div>
-          <a href="https://www.rwjf.org/en/grants/active-funding-opportunities.html" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">de Beaumont Foundation</div>
-            <div class="portal-link-desc">Public health communications and policy</div>
-          </div>
-          <a href="https://debeaumont.org" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-    </div>
-
-    <div class="portal-section">
-      <h3>Nonprofit &amp; Associations</h3>
-      <p class="portal-note">Public health associations and communications-specific RFP aggregators.</p>
-      <div class="portal-grid">        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">O'Dwyer's PR: RFPs</div>
-            <div class="portal-link-desc">odwyerpr.com</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://www.odwyerpr.com/rfps/index.html" onchange="togglePortalCheck('https://www.odwyerpr.com/rfps/index.html',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://www.odwyerpr.com/rfps/index.html" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">NACCHO</div>
-            <div class="portal-link-desc">naccho.org</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://naccho.org" onchange="togglePortalCheck('https://naccho.org',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://naccho.org" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">Public Health Institute (PHI)</div>
-            <div class="portal-link-desc">phi.org</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://phi.org/work-with-us/rfp-vendor-opportunities/" onchange="togglePortalCheck('https://phi.org/work-with-us/rfp-vendor-opportunities/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://phi.org/work-with-us/rfp-vendor-opportunities/" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">NNPHI</div>
-            <div class="portal-link-desc">nnphi.org</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://nnphi.org" onchange="togglePortalCheck('https://nnphi.org',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://nnphi.org" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">American Public Health Association</div>
-            <div class="portal-link-desc">apha.org</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://apha.org" onchange="togglePortalCheck('https://apha.org',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://apha.org" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">Corporation for Supportive Housing</div>
-            <div class="portal-link-desc">csh.org</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://csh.org" onchange="togglePortalCheck('https://csh.org',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://csh.org" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">Everything PR: RFPs</div>
-            <div class="portal-link-desc">everything-pr.com</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://everything-pr.com/rfp/" onchange="togglePortalCheck('https://everything-pr.com/rfp/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://everything-pr.com/rfp/" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">RFP Database (rfpdb.com)</div>
-            <div class="portal-link-desc">rfpdb.com</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://rfpdb.com/" onchange="togglePortalCheck('https://rfpdb.com/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://rfpdb.com/" target="_blank" rel="noopener">Open ↗</a>
-        </div></div>
-        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">ASTHO Opportunities</div>
-            <div class="portal-link-desc">State and territorial health officials</div>
-          </div>
-          <a href="https://www.astho.org/members/opportunities/" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">Healthy Native Babies Project (HNBP)</div>
-            <div class="portal-link-desc">Native infant and maternal health</div>
-          </div>
-          <a href="https://healthynativebabies.org/" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-    </div>
-
-    <div class="portal-section">
-      <h3>Academic</h3>
-      <p class="portal-note">Schools of public health that post consulting and research RFPs.</p>
-      <div class="portal-grid">        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">UNC Gillings SPH</div>
-            <div class="portal-link-desc">sph.unc.edu</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://sph.unc.edu/research/common-public-health-resources/rfp/" onchange="togglePortalCheck('https://sph.unc.edu/research/common-public-health-resources/rfp/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://sph.unc.edu/research/common-public-health-resources/rfp/" target="_blank" rel="noopener">Open ↗</a>
-        </div></div>
-    </div>
-
-    <!-- MATERNAL AND BLACK MATERNAL HEALTH -->
-    <div class="portal-section">
-      <h3>Maternal and Black Maternal Health</h3>
-      <p class="portal-note">Organizations focused on maternal health equity, Black maternal health, and birth justice. Check for RFPs, consulting contracts, and subcontracting opportunities.</p>
+      <h3>Government & Procurement</h3>
       <div class="portal-grid">
         <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">Black Mamas Matter Alliance</div>
-            <div class="portal-link-desc">National network for Black maternal health equity</div>
-          </div>
-          <a href="https://blackmamasmatter.org/" target="_blank" rel="noopener">Open ↗</a>
+          <div class="portal-link-name">SAM.gov</div>
+          <div class="portal-link-desc">Federal opportunities database, all active solicitations</div>
+          <input type="checkbox" class="portal-check" data-url="https://sam.gov/search/?index=opp&sort=-modifiedDate&sfm%5Bstatus%5D%5B0%5D=Active" onchange="togglePortalCheck('https://sam.gov/search/?index=opp&sort=-modifiedDate&sfm%5Bstatus%5D%5B0%5D=Active',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://sam.gov/search/?index=opp&sort=-modifiedDate&sfm%5Bstatus%5D%5B0%5D=Active" target="_blank" rel="noopener">sam.gov</a>
+          <span class="portal-tag tag-government">Government</span>
         </div>
         <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">National Birth Equity Collaborative</div>
-            <div class="portal-link-desc">Birth equity, racial disparities in maternal outcomes</div>
-          </div>
-          <a href="https://birthequity.org/" target="_blank" rel="noopener">Open ↗</a>
+          <div class="portal-link-name">Grants.gov</div>
+          <div class="portal-link-desc">Federal grants database, all active opportunities</div>
+          <input type="checkbox" class="portal-check" data-url="https://grants.gov/search-grants" onchange="togglePortalCheck('https://grants.gov/search-grants',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://grants.gov/search-grants" target="_blank" rel="noopener">grants.gov</a>
+          <span class="portal-tag tag-government">Government</span>
         </div>
         <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">Healthy Native Babies Project (HNBP)</div>
-            <div class="portal-link-desc">Native infant and maternal health communications</div>
-          </div>
-          <a href="https://healthynativebabies.org/" target="_blank" rel="noopener">Open ↗</a>
+          <div class="portal-link-name">rfpmart — Health & Marketing</div>
+          <div class="portal-link-desc">Government RFPs in health and marketing categories</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.rfpmart.com/marketing-and-branding-rfp-government-contract.html" onchange="togglePortalCheck('https://www.rfpmart.com/marketing-and-branding-rfp-government-contract.html',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.rfpmart.com/marketing-and-branding-rfp-government-contract.html" target="_blank" rel="noopener">rfpmart.com</a>
+          <span class="portal-tag tag-government">Government</span>
         </div>
         <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">Perigee Fund</div>
-            <div class="portal-link-desc">Maternal mental health, prenatal to age 3</div>
-          </div>
-          <a href="https://perigeefund.org/how-we-fund/current-funding-initiatives/" target="_blank" rel="noopener">Open ↗</a>
+          <div class="portal-link-name">rfpmart — Social Media & Outreach</div>
+          <div class="portal-link-desc">Social media and outreach government RFPs</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.rfpmart.com/social-media-internet-marketing-and-seo-rfp-government-contract.html" onchange="togglePortalCheck('https://www.rfpmart.com/social-media-internet-marketing-and-seo-rfp-government-contract.html',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.rfpmart.com/social-media-internet-marketing-and-seo-rfp-government-contract.html" target="_blank" rel="noopener">rfpmart.com</a>
+          <span class="portal-tag tag-government">Government</span>
         </div>
         <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">Horizon Foundation Birth Justice RFP</div>
-            <div class="portal-link-desc">Maryland birth justice grants and consulting</div>
-          </div>
-          <a href="https://www.thehorizonfoundation.org/new-grant-opportunity-birth-justice/" target="_blank" rel="noopener">Open ↗</a>
+          <div class="portal-link-name">HigherGov — Communications</div>
+          <div class="portal-link-desc">State and local communications and marketing contracts</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.highergov.com/sl/contract-opportunities/digital-marketing/" onchange="togglePortalCheck('https://www.highergov.com/sl/contract-opportunities/digital-marketing/',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.highergov.com/sl/contract-opportunities/digital-marketing/" target="_blank" rel="noopener">highergov.com</a>
+          <span class="portal-tag tag-government">Government</span>
         </div>
         <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">NIH Office of Research on Women's Health</div>
-            <div class="portal-link-desc">Federal funding opportunities for maternal health</div>
-          </div>
-          <a href="https://orwh.od.nih.gov/mmm-portal/funding-opportunities" target="_blank" rel="noopener">Open ↗</a>
+          <div class="portal-link-name">Georgia Procurement Registry</div>
+          <div class="portal-link-desc">Georgia state bids and solicitations</div>
+          <input type="checkbox" class="portal-check" data-url="https://ssl.doas.state.ga.us/gpr/" onchange="togglePortalCheck('https://ssl.doas.state.ga.us/gpr/',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://ssl.doas.state.ga.us/gpr/" target="_blank" rel="noopener">ssl.doas.state.ga.us</a>
+          <span class="portal-tag tag-government">Government</span>
         </div>
         <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">de Beaumont Foundation</div>
-            <div class="portal-link-desc">Public health communications, policy and practice</div>
-          </div>
-          <a href="https://debeaumont.org" target="_blank" rel="noopener">Open ↗</a>
+          <div class="portal-link-name">NC eVP Solicitations</div>
+          <div class="portal-link-desc">North Carolina eProcurement state solicitations</div>
+          <input type="checkbox" class="portal-check" data-url="https://evp.nc.gov/solicitations/" onchange="togglePortalCheck('https://evp.nc.gov/solicitations/',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://evp.nc.gov/solicitations/" target="_blank" rel="noopener">evp.nc.gov</a>
+          <span class="portal-tag tag-government">Government</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Delaware Bid Directory</div>
+          <div class="portal-link-desc">State of Delaware procurement opportunities</div>
+          <input type="checkbox" class="portal-check" data-url="https://mmp.delaware.gov/Bids/" onchange="togglePortalCheck('https://mmp.delaware.gov/Bids/',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://mmp.delaware.gov/Bids/" target="_blank" rel="noopener">mmp.delaware.gov</a>
+          <span class="portal-tag tag-government">Government</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="portal-section">
+      <h3>National & Multi-State Foundations</h3>
+      <div class="portal-grid">
+        <div class="portal-link">
+          <div class="portal-link-name">Robert Wood Johnson Foundation</div>
+          <div class="portal-link-desc">Health equity and systems change, largest U.S. health funder</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.rwjf.org" onchange="togglePortalCheck('https://www.rwjf.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.rwjf.org" target="_blank" rel="noopener">rwjf.org</a>
+          <span class="portal-tag tag-national">National</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Kresge Foundation</div>
+          <div class="portal-link-desc">Community health equity, social determinants of health</div>
+          <input type="checkbox" class="portal-check" data-url="https://kresge.org/programs/health" onchange="togglePortalCheck('https://kresge.org/programs/health',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://kresge.org/programs/health" target="_blank" rel="noopener">kresge.org</a>
+          <span class="portal-tag tag-national">National</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">W.K. Kellogg Foundation</div>
+          <div class="portal-link-desc">Children, families, racial equity, community health</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.wkkf.org" onchange="togglePortalCheck('https://www.wkkf.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.wkkf.org" target="_blank" rel="noopener">wkkf.org</a>
+          <span class="portal-tag tag-national">National</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Commonwealth Fund</div>
+          <div class="portal-link-desc">Health system performance, access, and equity</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.commonwealthfund.org" onchange="togglePortalCheck('https://www.commonwealthfund.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.commonwealthfund.org" target="_blank" rel="noopener">commonwealthfund.org</a>
+          <span class="portal-tag tag-national">National</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Milbank Memorial Fund</div>
+          <div class="portal-link-desc">State health policy, population health</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.milbank.org" onchange="togglePortalCheck('https://www.milbank.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.milbank.org" target="_blank" rel="noopener">milbank.org</a>
+          <span class="portal-tag tag-national">National</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">de Beaumont Foundation</div>
+          <div class="portal-link-desc">Public health workforce, communications, policy</div>
+          <input type="checkbox" class="portal-check" data-url="https://debeaumont.org" onchange="togglePortalCheck('https://debeaumont.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://debeaumont.org" target="_blank" rel="noopener">debeaumont.org</a>
+          <span class="portal-tag tag-national">National</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Kaiser Family Foundation (KFF)</div>
+          <div class="portal-link-desc">Health policy research, data, and communications</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.kff.org" onchange="togglePortalCheck('https://www.kff.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.kff.org" target="_blank" rel="noopener">kff.org</a>
+          <span class="portal-tag tag-national">National</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Pew Charitable Trusts</div>
+          <div class="portal-link-desc">Research-based health policy and public awareness</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.pewtrusts.org/en/topics/health" onchange="togglePortalCheck('https://www.pewtrusts.org/en/topics/health',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.pewtrusts.org/en/topics/health" target="_blank" rel="noopener">pewtrusts.org</a>
+          <span class="portal-tag tag-national">National</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Elevance Health Foundation</div>
+          <div class="portal-link-desc">Maternal/infant health RFP open through July 31, 2026</div>
+          <input type="checkbox" class="portal-check" data-url="https://elevancehealth.foundation" onchange="togglePortalCheck('https://elevancehealth.foundation',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://elevancehealth.foundation" target="_blank" rel="noopener">elevancehealth.foundation</a>
+          <span class="portal-tag tag-maternal">Maternal Health</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">United Health Foundation</div>
+          <div class="portal-link-desc">Health access, workforce, community health programs</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.unitedhealthgroup.com/content/uhg/en/social-impact/united-health-foundation.html" onchange="togglePortalCheck('https://www.unitedhealthgroup.com/content/uhg/en/social-impact/united-health-foundation.html',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.unitedhealthgroup.com/content/uhg/en/social-impact/united-health-foundation.html" target="_blank" rel="noopener">unitedhealthgroup.com</a>
+          <span class="portal-tag tag-national">National</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Burroughs Wellcome Fund</div>
+          <div class="portal-link-desc">Health sciences, climate and health seed grants</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.bwfund.org" onchange="togglePortalCheck('https://www.bwfund.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.bwfund.org" target="_blank" rel="noopener">bwfund.org</a>
+          <span class="portal-tag tag-national">National</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Perigee Fund</div>
+          <div class="portal-link-desc">Prenatal to age 3 family mental health equity</div>
+          <input type="checkbox" class="portal-check" data-url="https://perigeefund.org" onchange="togglePortalCheck('https://perigeefund.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://perigeefund.org" target="_blank" rel="noopener">perigeefund.org</a>
+          <span class="portal-tag tag-maternal">Maternal Health</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Philanthropy News Digest</div>
+          <div class="portal-link-desc">Searchable foundation RFP listings, updated daily</div>
+          <input type="checkbox" class="portal-check" data-url="https://philanthropynewsdigest.org/rfps" onchange="togglePortalCheck('https://philanthropynewsdigest.org/rfps',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://philanthropynewsdigest.org/rfps" target="_blank" rel="noopener">philanthropynewsdigest.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Grantmakers in Health</div>
+          <div class="portal-link-desc">Network of 200+ health funders, searchable directory</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.gih.org" onchange="togglePortalCheck('https://www.gih.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.gih.org" target="_blank" rel="noopener">gih.org</a>
+          <span class="portal-tag tag-national">National</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="portal-section">
+      <h3>Public Health Organizations</h3>
+      <div class="portal-grid">
+        <div class="portal-link">
+          <div class="portal-link-name">CDC Foundation</div>
+          <div class="portal-link-desc">Posts contractor RFPs, maternal health and communications focus</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.cdcfoundation.org" onchange="togglePortalCheck('https://www.cdcfoundation.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.cdcfoundation.org" target="_blank" rel="noopener">cdcfoundation.org</a>
+          <span class="portal-tag tag-pubhealth">Public Health</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">NACCHO</div>
+          <div class="portal-link-desc">Local health departments, frequently posts communications RFPs</div>
+          <input type="checkbox" class="portal-check" data-url="https://naccho.org" onchange="togglePortalCheck('https://naccho.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://naccho.org" target="_blank" rel="noopener">naccho.org</a>
+          <span class="portal-tag tag-pubhealth">Public Health</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">NNPHI</div>
+          <div class="portal-link-desc">51 public health institutes, posts consultant RFPs</div>
+          <input type="checkbox" class="portal-check" data-url="https://nnphi.org" onchange="togglePortalCheck('https://nnphi.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://nnphi.org" target="_blank" rel="noopener">nnphi.org</a>
+          <span class="portal-tag tag-pubhealth">Public Health</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Public Health Institute (PHI)</div>
+          <div class="portal-link-desc">Research, program development, health equity, fiscal sponsor</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.phi.org" onchange="togglePortalCheck('https://www.phi.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.phi.org" target="_blank" rel="noopener">phi.org</a>
+          <span class="portal-tag tag-pubhealth">Public Health</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">American Public Health Association</div>
+          <div class="portal-link-desc">25,000+ member national public health association</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.apha.org" onchange="togglePortalCheck('https://www.apha.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.apha.org" target="_blank" rel="noopener">apha.org</a>
+          <span class="portal-tag tag-pubhealth">Public Health</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">ASTHO</div>
+          <div class="portal-link-desc">Represents all state and territorial health agencies, posts RFPs</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.astho.org" onchange="togglePortalCheck('https://www.astho.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.astho.org" target="_blank" rel="noopener">astho.org</a>
+          <span class="portal-tag tag-pubhealth">Public Health</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Trust for America's Health</div>
+          <div class="portal-link-desc">Public health policy, prevention infrastructure, equity</div>
+          <input type="checkbox" class="portal-check" data-url="https://tfah.org" onchange="togglePortalCheck('https://tfah.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://tfah.org" target="_blank" rel="noopener">tfah.org</a>
+          <span class="portal-tag tag-pubhealth">Public Health</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">National Academy for State Health Policy</div>
+          <div class="portal-link-desc">State health policy, Medicaid, maternal health</div>
+          <input type="checkbox" class="portal-check" data-url="https://nashp.org" onchange="togglePortalCheck('https://nashp.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://nashp.org" target="_blank" rel="noopener">nashp.org</a>
+          <span class="portal-tag tag-pubhealth">Public Health</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">National Association of Community Health Centers</div>
+          <div class="portal-link-desc">Federally Qualified Health Centers network, outreach focus</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.nachc.org" onchange="togglePortalCheck('https://www.nachc.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.nachc.org" target="_blank" rel="noopener">nachc.org</a>
+          <span class="portal-tag tag-pubhealth">Public Health</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Families USA</div>
+          <div class="portal-link-desc">Health care consumer advocacy, policy, and access</div>
+          <input type="checkbox" class="portal-check" data-url="https://familiesusa.org" onchange="togglePortalCheck('https://familiesusa.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://familiesusa.org" target="_blank" rel="noopener">familiesusa.org</a>
+          <span class="portal-tag tag-pubhealth">Public Health</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Praxis Project</div>
+          <div class="portal-link-desc">Health equity, racial justice, community organizing and policy</div>
+          <input type="checkbox" class="portal-check" data-url="https://thepraxisproject.org" onchange="togglePortalCheck('https://thepraxisproject.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://thepraxisproject.org" target="_blank" rel="noopener">thepraxisproject.org</a>
+          <span class="portal-tag tag-pubhealth">Public Health</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Corporation for Supportive Housing</div>
+          <div class="portal-link-desc">Affordable housing and health services integration</div>
+          <input type="checkbox" class="portal-check" data-url="https://csh.org" onchange="togglePortalCheck('https://csh.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://csh.org" target="_blank" rel="noopener">csh.org</a>
+          <span class="portal-tag tag-pubhealth">Public Health</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="portal-section">
+      <h3>Health Education Organizations</h3>
+      <div class="portal-grid">
+        <div class="portal-link">
+          <div class="portal-link-name">Society for Public Health Education (SOPHE)</div>
+          <div class="portal-link-desc">Premier association for health education specialists</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.sophe.org" onchange="togglePortalCheck('https://www.sophe.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.sophe.org" target="_blank" rel="noopener">sophe.org</a>
+          <span class="portal-tag tag-academic">Health Education</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Patient-Centered Outcomes Research Institute</div>
+          <div class="portal-link-desc">Research and education on patient-centered health outcomes</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.pcori.org" onchange="togglePortalCheck('https://www.pcori.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.pcori.org" target="_blank" rel="noopener">pcori.org</a>
+          <span class="portal-tag tag-academic">Health Education</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Center for Health Care Strategies</div>
+          <div class="portal-link-desc">Technical assistance, training, Medicaid, vulnerable populations</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.chcs.org" onchange="togglePortalCheck('https://www.chcs.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.chcs.org" target="_blank" rel="noopener">chcs.org</a>
+          <span class="portal-tag tag-academic">Health Education</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">National Alliance for Hispanic Health</div>
+          <div class="portal-link-desc">Health education, outreach, Spanish-language communications</div>
+          <input type="checkbox" class="portal-check" data-url="https://hispanichealth.org" onchange="togglePortalCheck('https://hispanichealth.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://hispanichealth.org" target="_blank" rel="noopener">hispanichealth.org</a>
+          <span class="portal-tag tag-academic">Health Education</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Black Women's Health Imperative</div>
+          <div class="portal-link-desc">Research, education, and advocacy for Black women's health</div>
+          <input type="checkbox" class="portal-check" data-url="https://bwhi.org" onchange="togglePortalCheck('https://bwhi.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://bwhi.org" target="_blank" rel="noopener">bwhi.org</a>
+          <span class="portal-tag tag-maternal">Maternal Health</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Health Literacy Solutions Center</div>
+          <div class="portal-link-desc">Plain-language health communications, materials, training</div>
+          <input type="checkbox" class="portal-check" data-url="https://healthliteracy.com" onchange="togglePortalCheck('https://healthliteracy.com',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://healthliteracy.com" target="_blank" rel="noopener">healthliteracy.com</a>
+          <span class="portal-tag tag-academic">Health Education</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">UNC Gillings School of Public Health</div>
+          <div class="portal-link-desc">Posts consulting and research RFPs</div>
+          <input type="checkbox" class="portal-check" data-url="https://sph.unc.edu/research/common-public-health-resources/rfp/" onchange="togglePortalCheck('https://sph.unc.edu/research/common-public-health-resources/rfp/',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://sph.unc.edu/research/common-public-health-resources/rfp/" target="_blank" rel="noopener">sph.unc.edu</a>
+          <span class="portal-tag tag-academic">Academic</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="portal-section">
+      <h3>Maternal, Perinatal & Women's Health</h3>
+      <div class="portal-grid">
+        <div class="portal-link">
+          <div class="portal-link-name">Black Mamas Matter Alliance</div>
+          <div class="portal-link-desc">Black maternal health advocacy, policy, research</div>
+          <input type="checkbox" class="portal-check" data-url="https://blackmamasmatter.org" onchange="togglePortalCheck('https://blackmamasmatter.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://blackmamasmatter.org" target="_blank" rel="noopener">blackmamasmatter.org</a>
+          <span class="portal-tag tag-maternal">Maternal Health</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Association of Maternal & Child Health Programs</div>
+          <div class="portal-link-desc">State MCH programs, Title V network, birth equity</div>
+          <input type="checkbox" class="portal-check" data-url="https://amchp.org" onchange="togglePortalCheck('https://amchp.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://amchp.org" target="_blank" rel="noopener">amchp.org</a>
+          <span class="portal-tag tag-maternal">Maternal Health</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">March of Dimes</div>
+          <div class="portal-link-desc">Maternal and infant health, preterm birth, education</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.marchofdimes.org" onchange="togglePortalCheck('https://www.marchofdimes.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.marchofdimes.org" target="_blank" rel="noopener">marchofdimes.org</a>
+          <span class="portal-tag tag-maternal">Maternal Health</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">National Birth Equity Collaborative</div>
+          <div class="portal-link-desc">Black maternal health training, technical assistance, advocacy</div>
+          <input type="checkbox" class="portal-check" data-url="https://birthequity.org" onchange="togglePortalCheck('https://birthequity.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://birthequity.org" target="_blank" rel="noopener">birthequity.org</a>
+          <span class="portal-tag tag-maternal">Maternal Health</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Policy Center for Maternal Mental Health</div>
+          <div class="portal-link-desc">Perinatal mental health advocacy and federal appropriations</div>
+          <input type="checkbox" class="portal-check" data-url="https://policycentermmh.org" onchange="togglePortalCheck('https://policycentermmh.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://policycentermmh.org" target="_blank" rel="noopener">policycentermmh.org</a>
+          <span class="portal-tag tag-maternal">Maternal Health</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">ACOG Foundation</div>
+          <div class="portal-link-desc">Ob-gyn health equity grants, 2026-27 cycle deadline June 5</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.acog.org/giving" onchange="togglePortalCheck('https://www.acog.org/giving',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.acog.org/giving" target="_blank" rel="noopener">acog.org</a>
+          <span class="portal-tag tag-maternal">Maternal Health</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">National Partnership for Women & Families</div>
+          <div class="portal-link-desc">Maternal health policy, paid leave, workplace equity</div>
+          <input type="checkbox" class="portal-check" data-url="https://nationalpartnership.org" onchange="togglePortalCheck('https://nationalpartnership.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://nationalpartnership.org" target="_blank" rel="noopener">nationalpartnership.org</a>
+          <span class="portal-tag tag-maternal">Maternal Health</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">National WIC Association</div>
+          <div class="portal-link-desc">WIC program advocacy, nutrition education, public outreach</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.nwica.org" onchange="togglePortalCheck('https://www.nwica.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.nwica.org" target="_blank" rel="noopener">nwica.org</a>
+          <span class="portal-tag tag-maternal">Maternal Health</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="portal-section">
+      <h3>PR & Communications RFP Lists</h3>
+      <div class="portal-grid">
+        <div class="portal-link">
+          <div class="portal-link-name">O'Dwyer's PR</div>
+          <div class="portal-link-desc">PR industry RFP, RFI, and RFQ listings</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.odwyerpr.com/rfps/index.html" onchange="togglePortalCheck('https://www.odwyerpr.com/rfps/index.html',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.odwyerpr.com/rfps/index.html" target="_blank" rel="noopener">odwyerpr.com</a>
+          <span class="portal-tag tag-comms">Communications</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Everything PR</div>
+          <div class="portal-link-desc">Public relations and communications RFPs</div>
+          <input type="checkbox" class="portal-check" data-url="https://everything-pr.com/rfp/" onchange="togglePortalCheck('https://everything-pr.com/rfp/',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://everything-pr.com/rfp/" target="_blank" rel="noopener">everything-pr.com</a>
+          <span class="portal-tag tag-comms">Communications</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">RFP Database (rfpdb.com)</div>
+          <div class="portal-link-desc">Multi-industry searchable RFP database</div>
+          <input type="checkbox" class="portal-check" data-url="https://rfpdb.com/" onchange="togglePortalCheck('https://rfpdb.com/',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://rfpdb.com/" target="_blank" rel="noopener">rfpdb.com</a>
+          <span class="portal-tag tag-comms">Communications</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="portal-section">
+      <h3>Community Health Foundations — Mid-Atlantic</h3>
+      <div class="portal-grid">
+        <div class="portal-link">
+          <div class="portal-link-name">New York Health Foundation</div>
+          <div class="portal-link-desc">Statewide NY, active maternal health equity RFPs</div>
+          <input type="checkbox" class="portal-check" data-url="https://nyhealthfoundation.org" onchange="togglePortalCheck('https://nyhealthfoundation.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://nyhealthfoundation.org" target="_blank" rel="noopener">nyhealthfoundation.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Horizon Foundation (MD)</div>
+          <div class="portal-link-desc">Howard County MD health improvement, active grantmaker</div>
+          <input type="checkbox" class="portal-check" data-url="https://thehorizonfoundation.org" onchange="togglePortalCheck('https://thehorizonfoundation.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://thehorizonfoundation.org" target="_blank" rel="noopener">thehorizonfoundation.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Abell Foundation</div>
+          <div class="portal-link-desc">Baltimore health, housing, and economic equity</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.abell.org" onchange="togglePortalCheck('https://www.abell.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.abell.org" target="_blank" rel="noopener">abell.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Baltimore Community Foundation</div>
+          <div class="portal-link-desc">Baltimore area health and community programs</div>
+          <input type="checkbox" class="portal-check" data-url="https://bcf.org" onchange="togglePortalCheck('https://bcf.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://bcf.org" target="_blank" rel="noopener">bcf.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Harry & Jeanette Weinberg Foundation</div>
+          <div class="portal-link-desc">Maryland health, housing, economic security</div>
+          <input type="checkbox" class="portal-check" data-url="https://hjweinbergfoundation.org" onchange="togglePortalCheck('https://hjweinbergfoundation.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://hjweinbergfoundation.org" target="_blank" rel="noopener">hjweinbergfoundation.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Community Foundation of the Eastern Shore</div>
+          <div class="portal-link-desc">Eastern Shore MD community health programs</div>
+          <input type="checkbox" class="portal-check" data-url="https://cfes.org" onchange="togglePortalCheck('https://cfes.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://cfes.org" target="_blank" rel="noopener">cfes.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">United Hospital Fund</div>
+          <div class="portal-link-desc">New York health system improvement and research</div>
+          <input type="checkbox" class="portal-check" data-url="https://uhfnyc.org" onchange="togglePortalCheck('https://uhfnyc.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://uhfnyc.org" target="_blank" rel="noopener">uhfnyc.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Independence Blue Cross Foundation</div>
+          <div class="portal-link-desc">Philadelphia region health equity and access</div>
+          <input type="checkbox" class="portal-check" data-url="https://ibxfoundation.org" onchange="togglePortalCheck('https://ibxfoundation.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://ibxfoundation.org" target="_blank" rel="noopener">ibxfoundation.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Highmark Foundation</div>
+          <div class="portal-link-desc">Pennsylvania, conversion foundation</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.highmarkfoundation.org" onchange="togglePortalCheck('https://www.highmarkfoundation.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.highmarkfoundation.org" target="_blank" rel="noopener">highmarkfoundation.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="portal-section">
+      <h3>Community Health Foundations — Southeast</h3>
+      <div class="portal-grid">
+        <div class="portal-link">
+          <div class="portal-link-name">Kate B. Reynolds Charitable Trust</div>
+          <div class="portal-link-desc">NC statewide health equity, Wake Forest Baptist conversion</div>
+          <input type="checkbox" class="portal-check" data-url="https://kbr.org" onchange="togglePortalCheck('https://kbr.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://kbr.org" target="_blank" rel="noopener">kbr.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Dogwood Health Trust</div>
+          <div class="portal-link-desc">Western NC conversion foundation, social determinants focus</div>
+          <input type="checkbox" class="portal-check" data-url="https://dogwoodhealthtrust.org" onchange="togglePortalCheck('https://dogwoodhealthtrust.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://dogwoodhealthtrust.org" target="_blank" rel="noopener">dogwoodhealthtrust.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Foundation for Health Leadership & Innovation</div>
+          <div class="portal-link-desc">NC public health capacity building and communications</div>
+          <input type="checkbox" class="portal-check" data-url="https://ncfound.org" onchange="togglePortalCheck('https://ncfound.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://ncfound.org" target="_blank" rel="noopener">ncfound.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Duke Endowment</div>
+          <div class="portal-link-desc">NC and SC health, rural hospitals, higher education</div>
+          <input type="checkbox" class="portal-check" data-url="https://dukeendowment.org" onchange="togglePortalCheck('https://dukeendowment.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://dukeendowment.org" target="_blank" rel="noopener">dukeendowment.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Baptist Healing Trust</div>
+          <div class="portal-link-desc">Nashville TN conversion foundation, health disparities</div>
+          <input type="checkbox" class="portal-check" data-url="https://baptisthealingtrust.org" onchange="togglePortalCheck('https://baptisthealingtrust.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://baptisthealingtrust.org" target="_blank" rel="noopener">baptisthealingtrust.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Foundation for a Healthy Kentucky</div>
+          <div class="portal-link-desc">KY statewide conversion foundation, health access</div>
+          <input type="checkbox" class="portal-check" data-url="https://healthyky.org" onchange="togglePortalCheck('https://healthyky.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://healthyky.org" target="_blank" rel="noopener">healthyky.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Virginia Health Care Foundation</div>
+          <div class="portal-link-desc">Statewide VA health access and safety net support</div>
+          <input type="checkbox" class="portal-check" data-url="https://vhcf.org" onchange="togglePortalCheck('https://vhcf.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://vhcf.org" target="_blank" rel="noopener">vhcf.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Health Foundation of South Florida</div>
+          <div class="portal-link-desc">South FL conversion foundation, health equity</div>
+          <input type="checkbox" class="portal-check" data-url="https://hfsf.org" onchange="togglePortalCheck('https://hfsf.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://hfsf.org" target="_blank" rel="noopener">hfsf.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="portal-section">
+      <h3>Community Health Foundations — Midwest</h3>
+      <div class="portal-grid">
+        <div class="portal-link">
+          <div class="portal-link-name">Missouri Foundation for Health</div>
+          <div class="portal-link-desc">MO statewide $1B+ conversion foundation, health equity</div>
+          <input type="checkbox" class="portal-check" data-url="https://mffh.org" onchange="togglePortalCheck('https://mffh.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://mffh.org" target="_blank" rel="noopener">mffh.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Michigan Health Endowment Fund</div>
+          <div class="portal-link-desc">MI statewide conversion foundation, largest MI health funder</div>
+          <input type="checkbox" class="portal-check" data-url="https://mihealthfund.org" onchange="togglePortalCheck('https://mihealthfund.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://mihealthfund.org" target="_blank" rel="noopener">mihealthfund.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Interact for Health</div>
+          <div class="portal-link-desc">Greater Cincinnati OH conversion foundation, health equity</div>
+          <input type="checkbox" class="portal-check" data-url="https://interactforhealth.org" onchange="togglePortalCheck('https://interactforhealth.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://interactforhealth.org" target="_blank" rel="noopener">interactforhealth.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Kansas Health Foundation</div>
+          <div class="portal-link-desc">KS statewide conversion foundation, community health</div>
+          <input type="checkbox" class="portal-check" data-url="https://kansashealth.org" onchange="togglePortalCheck('https://kansashealth.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://kansashealth.org" target="_blank" rel="noopener">kansashealth.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Health Care Foundation of Greater Kansas City</div>
+          <div class="portal-link-desc">KC metro area conversion foundation, safety net</div>
+          <input type="checkbox" class="portal-check" data-url="https://hcfgkc.org" onchange="togglePortalCheck('https://hcfgkc.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://hcfgkc.org" target="_blank" rel="noopener">hcfgkc.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">bi3 / Bethesda Inc.</div>
+          <div class="portal-link-desc">Cincinnati OH, Black maternal health spark grants</div>
+          <input type="checkbox" class="portal-check" data-url="https://bi3.org" onchange="togglePortalCheck('https://bi3.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://bi3.org" target="_blank" rel="noopener">bi3.org</a>
+          <span class="portal-tag tag-maternal">Maternal Health</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Chicago Community Trust</div>
+          <div class="portal-link-desc">Chicago area health equity and emergency health response</div>
+          <input type="checkbox" class="portal-check" data-url="https://cct.org" onchange="togglePortalCheck('https://cct.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://cct.org" target="_blank" rel="noopener">cct.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Otto Bremer Trust</div>
+          <div class="portal-link-desc">MN, WI, ND community health, equity, racial justice</div>
+          <input type="checkbox" class="portal-check" data-url="https://ottobremer.org" onchange="togglePortalCheck('https://ottobremer.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://ottobremer.org" target="_blank" rel="noopener">ottobremer.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="portal-section">
+      <h3>Community Health Foundations — West & Mountain</h3>
+      <div class="portal-grid">
+        <div class="portal-link">
+          <div class="portal-link-name">Colorado Health Foundation</div>
+          <div class="portal-link-desc">CO statewide $2.4B+ conversion foundation, equity-centered</div>
+          <input type="checkbox" class="portal-check" data-url="https://coloradohealth.org" onchange="togglePortalCheck('https://coloradohealth.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://coloradohealth.org" target="_blank" rel="noopener">coloradohealth.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">California Endowment</div>
+          <div class="portal-link-desc">CA statewide $3.7B+ conversion foundation, Building Healthy Communities</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.calendow.org" onchange="togglePortalCheck('https://www.calendow.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.calendow.org" target="_blank" rel="noopener">calendow.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">California Health Care Foundation</div>
+          <div class="portal-link-desc">CA health systems, Medi-Cal, maternal health equity</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.chcf.org" onchange="togglePortalCheck('https://www.chcf.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.chcf.org" target="_blank" rel="noopener">chcf.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Con Alma Health Foundation</div>
+          <div class="portal-link-desc">New Mexico statewide conversion foundation, health equity</div>
+          <input type="checkbox" class="portal-check" data-url="https://conalma.org" onchange="togglePortalCheck('https://conalma.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://conalma.org" target="_blank" rel="noopener">conalma.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">St. David's Foundation</div>
+          <div class="portal-link-desc">Austin TX large conversion foundation, community health</div>
+          <input type="checkbox" class="portal-check" data-url="https://stdavidsfoundation.org" onchange="togglePortalCheck('https://stdavidsfoundation.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://stdavidsfoundation.org" target="_blank" rel="noopener">stdavidsfoundation.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
+        </div>
+        <div class="portal-link">
+          <div class="portal-link-name">Cambia Health Foundation</div>
+          <div class="portal-link-desc">OR, WA, ID, UT behavioral and whole-person health</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.cambiahealthfoundation.org" onchange="togglePortalCheck('https://www.cambiahealthfoundation.org',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.cambiahealthfoundation.org" target="_blank" rel="noopener">cambiahealthfoundation.org</a>
+          <span class="portal-tag tag-foundation">Foundation</span>
         </div>
       </div>
     </div>
 
     <hr style="border:none;border-top:1.5px solid var(--border);margin:8px 0 20px;">
-    <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:16px;">Login-required portals</p>
+    <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:16px;">Login-Required Portals</p>
 
     <div class="portal-section">
       <h3>State Procurement Portals</h3>
-      <p class="portal-note">Official state eProcurement systems. Browse publicly; login only to bid.</p>
-      <div class="portal-grid">        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">eMMA: Maryland</div>
-            <div class="portal-link-desc">eMaryland Marketplace Advantage, all MD state agencies</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://emma.maryland.gov/page.aspx/en/rfp/request_browse_public" onchange="togglePortalCheck('https://emma.maryland.gov/page.aspx/en/rfp/request_browse_public',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://emma.maryland.gov/page.aspx/en/rfp/request_browse_public" target="_blank" rel="noopener">Open ↗</a>
+      <div class="portal-grid">
+        <div class="portal-link">
+          <div class="portal-link-name">eMMA — Maryland</div>
+          <div class="portal-link-desc">eMaryland Marketplace Advantage, all MD state agencies</div>
+          <input type="checkbox" class="portal-check" data-url="https://emma.maryland.gov/page.aspx/en/rfp/request_browse_public" onchange="togglePortalCheck('https://emma.maryland.gov/page.aspx/en/rfp/request_browse_public',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://emma.maryland.gov/page.aspx/en/rfp/request_browse_public" target="_blank" rel="noopener">emma.maryland.gov</a>
+          <span class="portal-tag tag-government">Government</span>
         </div>
         <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">eVA / VBO: Virginia</div>
-            <div class="portal-link-desc">Virginia eProcurement, statewide solicitations</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://www.eva.virginia.gov/index.htm" onchange="togglePortalCheck('https://www.eva.virginia.gov/index.htm',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://www.eva.virginia.gov/index.htm" target="_blank" rel="noopener">Open ↗</a>
+          <div class="portal-link-name">eVA — Virginia</div>
+          <div class="portal-link-desc">Virginia eProcurement, statewide solicitations</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.eva.virginia.gov/index.htm" onchange="togglePortalCheck('https://www.eva.virginia.gov/index.htm',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.eva.virginia.gov/index.htm" target="_blank" rel="noopener">eva.virginia.gov</a>
+          <span class="portal-tag tag-government">Government</span>
         </div>
         <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">DC OCP: Washington, DC</div>
-            <div class="portal-link-desc">Office of Contracting and Procurement, all DC agencies</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://contracts.ocp.dc.gov/solicitations/search" onchange="togglePortalCheck('https://contracts.ocp.dc.gov/solicitations/search',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://contracts.ocp.dc.gov/solicitations/search" target="_blank" rel="noopener">Open ↗</a>
+          <div class="portal-link-name">DC OCP</div>
+          <div class="portal-link-desc">Office of Contracting and Procurement, all DC agencies</div>
+          <input type="checkbox" class="portal-check" data-url="https://contracts.ocp.dc.gov/solicitations/search" onchange="togglePortalCheck('https://contracts.ocp.dc.gov/solicitations/search',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://contracts.ocp.dc.gov/solicitations/search" target="_blank" rel="noopener">contracts.ocp.dc.gov</a>
+          <span class="portal-tag tag-government">Government</span>
         </div>
         <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">NC eVP: North Carolina</div>
-            <div class="portal-link-desc">NC eProcurement, state solicitations</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://evp.nc.gov/solicitations/" onchange="togglePortalCheck('https://evp.nc.gov/solicitations/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://evp.nc.gov/solicitations/" target="_blank" rel="noopener">Open ↗</a>
+          <div class="portal-link-name">NC eVP — North Carolina</div>
+          <div class="portal-link-desc">NC eProcurement state solicitations</div>
+          <input type="checkbox" class="portal-check" data-url="https://evp.nc.gov/solicitations/" onchange="togglePortalCheck('https://evp.nc.gov/solicitations/',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://evp.nc.gov/solicitations/" target="_blank" rel="noopener">evp.nc.gov</a>
+          <span class="portal-tag tag-government">Government</span>
         </div>
         <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">GPR: Georgia</div>
-            <div class="portal-link-desc">Georgia Procurement Registry, state bids</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://ssl.doas.state.ga.us/gpr/" onchange="togglePortalCheck('https://ssl.doas.state.ga.us/gpr/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://ssl.doas.state.ga.us/gpr/" target="_blank" rel="noopener">Open ↗</a>
+          <div class="portal-link-name">GPR — Georgia</div>
+          <div class="portal-link-desc">Georgia Procurement Registry state bids</div>
+          <input type="checkbox" class="portal-check" data-url="https://ssl.doas.state.ga.us/gpr/" onchange="togglePortalCheck('https://ssl.doas.state.ga.us/gpr/',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://ssl.doas.state.ga.us/gpr/" target="_blank" rel="noopener">ssl.doas.state.ga.us</a>
+          <span class="portal-tag tag-government">Government</span>
         </div>
         <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">Delaware Bid Directory</div>
-            <div class="portal-link-desc">State of Delaware procurement opportunities</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://mmp.delaware.gov/Bids/" onchange="togglePortalCheck('https://mmp.delaware.gov/Bids/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://mmp.delaware.gov/Bids/" target="_blank" rel="noopener">Open ↗</a>
-        </div></div>
+          <div class="portal-link-name">Delaware Bid Directory</div>
+          <div class="portal-link-desc">State of Delaware procurement opportunities</div>
+          <input type="checkbox" class="portal-check" data-url="https://mmp.delaware.gov/Bids/" onchange="togglePortalCheck('https://mmp.delaware.gov/Bids/',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://mmp.delaware.gov/Bids/" target="_blank" rel="noopener">mmp.delaware.gov</a>
+          <span class="portal-tag tag-government">Government</span>
+        </div>
+      </div>
     </div>
 
     <div class="portal-section">
-      <h3>DC-Adjacent &amp; Regional</h3>
-      <p class="portal-note">DC, Maryland, and regional organizations with procurement or grant opportunities.</p>
-      <div class="portal-grid">        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">Events DC</div>
-            <div class="portal-link-desc">Events DC, RFPs and vendor opportunities</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://eventsdc.com/rfp" onchange="togglePortalCheck('https://eventsdc.com/rfp',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://eventsdc.com/rfp" target="_blank" rel="noopener">Open ↗</a>
+      <h3>DC-Adjacent & Regional</h3>
+      <div class="portal-grid">
+        <div class="portal-link">
+          <div class="portal-link-name">Events DC</div>
+          <div class="portal-link-desc">Events DC RFPs and vendor opportunities</div>
+          <input type="checkbox" class="portal-check" data-url="https://eventsdc.com/rfp" onchange="togglePortalCheck('https://eventsdc.com/rfp',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://eventsdc.com/rfp" target="_blank" rel="noopener">eventsdc.com</a>
+          <span class="portal-tag tag-regional">Regional</span>
         </div>
         <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">Metropolitan Washington COG</div>
-            <div class="portal-link-desc">Metropolitan Washington COG, procurement and consulting opportunities</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://www.mwcog.org/about-us/procurement/" onchange="togglePortalCheck('https://www.mwcog.org/about-us/procurement/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://www.mwcog.org/about-us/procurement/" target="_blank" rel="noopener">Open ↗</a>
+          <div class="portal-link-name">Metropolitan Washington COG</div>
+          <div class="portal-link-desc">COG procurement and consulting opportunities</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.mwcog.org/about-us/procurement/" onchange="togglePortalCheck('https://www.mwcog.org/about-us/procurement/',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.mwcog.org/about-us/procurement/" target="_blank" rel="noopener">mwcog.org</a>
+          <span class="portal-tag tag-regional">Regional</span>
         </div>
         <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">WMATA: Metro</div>
-            <div class="portal-link-desc">WMATA, vendor and consulting RFPs</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://www.wmata.com/business/contracting/solicitations.cfm" onchange="togglePortalCheck('https://www.wmata.com/business/contracting/solicitations.cfm',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://www.wmata.com/business/contracting/solicitations.cfm" target="_blank" rel="noopener">Open ↗</a>
+          <div class="portal-link-name">WMATA — Metro</div>
+          <div class="portal-link-desc">Washington Metro vendor and consulting RFPs</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.wmata.com/business/contracting/solicitations.cfm" onchange="togglePortalCheck('https://www.wmata.com/business/contracting/solicitations.cfm',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.wmata.com/business/contracting/solicitations.cfm" target="_blank" rel="noopener">wmata.com</a>
+          <span class="portal-tag tag-regional">Regional</span>
         </div>
         <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">DC Health (DCDOH)</div>
-            <div class="portal-link-desc">DC Department of Health, grants and procurement</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://dchealth.dc.gov/service/grants-and-procurement" onchange="togglePortalCheck('https://dchealth.dc.gov/service/grants-and-procurement',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://dchealth.dc.gov/service/grants-and-procurement" target="_blank" rel="noopener">Open ↗</a>
+          <div class="portal-link-name">DC Health (DCDOH)</div>
+          <div class="portal-link-desc">DC Department of Health grants and procurement</div>
+          <input type="checkbox" class="portal-check" data-url="https://dchealth.dc.gov/service/grants-and-procurement" onchange="togglePortalCheck('https://dchealth.dc.gov/service/grants-and-procurement',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://dchealth.dc.gov/service/grants-and-procurement" target="_blank" rel="noopener">dchealth.dc.gov</a>
+          <span class="portal-tag tag-regional">Regional</span>
         </div>
         <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">DHCF: DC Medicaid</div>
-            <div class="portal-link-desc">DC Health Care Finance, RFPs and grants</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://dhcf.dc.gov/page/procurement" onchange="togglePortalCheck('https://dhcf.dc.gov/page/procurement',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://dhcf.dc.gov/page/procurement" target="_blank" rel="noopener">Open ↗</a>
+          <div class="portal-link-name">DHCF — DC Medicaid</div>
+          <div class="portal-link-desc">DC Health Care Finance RFPs and grants</div>
+          <input type="checkbox" class="portal-check" data-url="https://dhcf.dc.gov/page/procurement" onchange="togglePortalCheck('https://dhcf.dc.gov/page/procurement',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://dhcf.dc.gov/page/procurement" target="_blank" rel="noopener">dhcf.dc.gov</a>
+          <span class="portal-tag tag-regional">Regional</span>
         </div>
         <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">DC Office of Planning</div>
-            <div class="portal-link-desc">DC Office of Planning, community development RFPs</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://planning.dc.gov/page/rfps-and-procurements" onchange="togglePortalCheck('https://planning.dc.gov/page/rfps-and-procurements',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://planning.dc.gov/page/rfps-and-procurements" target="_blank" rel="noopener">Open ↗</a>
+          <div class="portal-link-name">DC Office of Planning</div>
+          <div class="portal-link-desc">DC planning and community development RFPs</div>
+          <input type="checkbox" class="portal-check" data-url="https://planning.dc.gov/page/rfps-and-procurements" onchange="togglePortalCheck('https://planning.dc.gov/page/rfps-and-procurements',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://planning.dc.gov/page/rfps-and-procurements" target="_blank" rel="noopener">planning.dc.gov</a>
+          <span class="portal-tag tag-regional">Regional</span>
         </div>
         <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">DC DGS Solicitations</div>
-            <div class="portal-link-desc">DC Department of General Services, all solicitations</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://dgs.dc.gov/service/solicitations" onchange="togglePortalCheck('https://dgs.dc.gov/service/solicitations',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://dgs.dc.gov/service/solicitations" target="_blank" rel="noopener">Open ↗</a>
+          <div class="portal-link-name">DC DGS Solicitations</div>
+          <div class="portal-link-desc">DC Department of General Services all solicitations</div>
+          <input type="checkbox" class="portal-check" data-url="https://dgs.dc.gov/service/solicitations" onchange="togglePortalCheck('https://dgs.dc.gov/service/solicitations',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://dgs.dc.gov/service/solicitations" target="_blank" rel="noopener">dgs.dc.gov</a>
+          <span class="portal-tag tag-regional">Regional</span>
         </div>
         <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">Prince George's Co. (MD)</div>
-            <div class="portal-link-desc">Prince George's County procurement and RFPs</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://www.princegeorgescountymd.gov/1226/Bid-Solicitations" onchange="togglePortalCheck('https://www.princegeorgescountymd.gov/1226/Bid-Solicitations',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://www.princegeorgescountymd.gov/1226/Bid-Solicitations" target="_blank" rel="noopener">Open ↗</a>
+          <div class="portal-link-name">Prince George's Co. (MD)</div>
+          <div class="portal-link-desc">Prince George's County procurement and RFPs</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.princegeorgescountymd.gov/1226/Bid-Solicitations" onchange="togglePortalCheck('https://www.princegeorgescountymd.gov/1226/Bid-Solicitations',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.princegeorgescountymd.gov/1226/Bid-Solicitations" target="_blank" rel="noopener">princegeorgescountymd.gov</a>
+          <span class="portal-tag tag-regional">Regional</span>
         </div>
         <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">Montgomery Co. (MD)</div>
-            <div class="portal-link-desc">Montgomery County, MD solicitations</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://www.montgomerycountymd.gov/purchasing/solicitations.html" onchange="togglePortalCheck('https://www.montgomerycountymd.gov/purchasing/solicitations.html',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://www.montgomerycountymd.gov/purchasing/solicitations.html" target="_blank" rel="noopener">Open ↗</a>
+          <div class="portal-link-name">Montgomery Co. (MD)</div>
+          <div class="portal-link-desc">Montgomery County solicitations</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.montgomerycountymd.gov/purchasing/solicitations.html" onchange="togglePortalCheck('https://www.montgomerycountymd.gov/purchasing/solicitations.html',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.montgomerycountymd.gov/purchasing/solicitations.html" target="_blank" rel="noopener">montgomerycountymd.gov</a>
+          <span class="portal-tag tag-regional">Regional</span>
         </div>
         <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">Arlington Co. (VA)</div>
-            <div class="portal-link-desc">Arlington County, VA procurement</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://www.arlingtonva.us/Government/Departments/Management-and-Finance/Purchasing/Solicitations" onchange="togglePortalCheck('https://www.arlingtonva.us/Government/Departments/Management-and-Finance/Purchasing/Solicitations',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://www.arlingtonva.us/Government/Departments/Management-and-Finance/Purchasing/Solicitations" target="_blank" rel="noopener">Open ↗</a>
-        </div></div>
-    </div>
-
-    <div class="portal-section">
-      <h3>PR &amp; Communications RFP Lists</h3>
-      <p class="portal-note">Curated lists of communications and marketing RFPs from industry sources.</p>
-      <div class="portal-grid">        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">O'Dwyer's PR: RFPs, RFIs & RFQs</div>
-            <div class="portal-link-desc">O'Dwyer's PR industry RFP listings</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://www.odwyerpr.com/rfps/index.html" onchange="togglePortalCheck('https://www.odwyerpr.com/rfps/index.html',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://www.odwyerpr.com/rfps/index.html" target="_blank" rel="noopener">Open ↗</a>
+          <div class="portal-link-name">Arlington Co. (VA)</div>
+          <div class="portal-link-desc">Arlington County procurement</div>
+          <input type="checkbox" class="portal-check" data-url="https://www.arlingtonva.us/Government/Departments/Management-and-Finance/Purchasing/Solicitations" onchange="togglePortalCheck('https://www.arlingtonva.us/Government/Departments/Management-and-Finance/Purchasing/Solicitations',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://www.arlingtonva.us/Government/Departments/Management-and-Finance/Purchasing/Solicitations" target="_blank" rel="noopener">arlingtonva.us</a>
+          <span class="portal-tag tag-regional">Regional</span>
         </div>
-        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">Everything PR: RFPs</div>
-            <div class="portal-link-desc">Public relations and communications RFPs</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://everything-pr.com/rfp/" onchange="togglePortalCheck('https://everything-pr.com/rfp/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://everything-pr.com/rfp/" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">RFP Database (rfpdb.com)</div>
-            <div class="portal-link-desc">Multi-industry RFP database, searchable by category</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://rfpdb.com/" onchange="togglePortalCheck('https://rfpdb.com/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://rfpdb.com/" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">rfpmart: Marketing & Branding</div>
-            <div class="portal-link-desc">Marketing, branding, and communications RFPs</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://www.rfpmart.com/marketing-and-branding-rfp-government-contract.html" onchange="togglePortalCheck('https://www.rfpmart.com/marketing-and-branding-rfp-government-contract.html',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://www.rfpmart.com/marketing-and-branding-rfp-government-contract.html" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">rfpmart: Social Media & Outreach</div>
-            <div class="portal-link-desc">Social media and community outreach RFPs</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://www.rfpmart.com/social-media-internet-marketing-and-seo-rfp-government-contract.html" onchange="togglePortalCheck('https://www.rfpmart.com/social-media-internet-marketing-and-seo-rfp-government-contract.html',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://www.rfpmart.com/social-media-internet-marketing-and-seo-rfp-government-contract.html" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">HigherGov: Communications & Marketing</div>
-            <div class="portal-link-desc">Federal and state communications contracts</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://www.highergov.com/sl/contract-opportunities/digital-marketing/" onchange="togglePortalCheck('https://www.highergov.com/sl/contract-opportunities/digital-marketing/',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://www.highergov.com/sl/contract-opportunities/digital-marketing/" target="_blank" rel="noopener">Open ↗</a>
-        </div></div>
+      </div>
     </div>
 
     <div class="portal-section">
       <h3>Maryland Board of Public Works</h3>
-      <p class="portal-note">Maryland state contracts and procurement opportunities.</p>
-      <div class="portal-grid">        <div class="portal-link">
-          <div class="portal-link-info">
-            <div class="portal-link-name">BPW Procurement</div>
-            <div class="portal-link-desc">Maryland Board of Public Works, state contracts</div>
-          </div>
-          <input type="checkbox" class="portal-check" data-url="https://bpw.maryland.gov/Pages/procurement.aspx" onchange="togglePortalCheck('https://bpw.maryland.gov/Pages/procurement.aspx',this)" title="Mark reviewed this week" style="width:15px;height:15px;cursor:pointer;accent-color:#1A8C5B;flex-shrink:0;"> <a href="https://bpw.maryland.gov/Pages/procurement.aspx" target="_blank" rel="noopener">Open ↗</a>
-        </div></div>
+      <div class="portal-grid">
+        <div class="portal-link">
+          <div class="portal-link-name">BPW Procurement</div>
+          <div class="portal-link-desc">Maryland Board of Public Works state contracts</div>
+          <input type="checkbox" class="portal-check" data-url="https://bpw.maryland.gov/Pages/procurement.aspx" onchange="togglePortalCheck('https://bpw.maryland.gov/Pages/procurement.aspx',this)" title="Mark reviewed this week" style="width:14px;height:14px;cursor:pointer;accent-color:var(--green);flex-shrink:0;margin-top:2px;">
+          <a href="https://bpw.maryland.gov/Pages/procurement.aspx" target="_blank" rel="noopener">bpw.maryland.gov</a>
+          <span class="portal-tag tag-government">Government</span>
+        </div>
+      </div>
     </div>
 
     <div class="portal-section">
       <h3>My Portals</h3>
-      <p class="portal-note">Ask Claude to add portals here permanently.</p>
+      <p class="portal-note" style="font-size:12px;color:var(--muted);margin-bottom:10px;">Ask Claude to add portals here permanently.</p>
       <div class="portal-grid" id="user-portal-grid"></div>
       <p id="user-portal-empty" class="hint" style="display:none;font-size:13px;color:var(--muted);padding:8px 0;">No custom portals added yet.</p>
     </div>
@@ -1247,6 +1665,7 @@ const GNG_CRITERIA = [
 /* --- STATE --- */
 let sources  = JSON.parse(localStorage.getItem('pop_src')  || 'null') || DEFAULTS;
 let pipeline = JSON.parse(localStorage.getItem('pop_pipe') || '[]');
+let savedSearches=JSON.parse(localStorage.getItem('pop_saved_searches')||'[]');
 let pending  = [];
 let statusFilter = 'all';
 let activeModal  = null;
@@ -1873,7 +2292,6 @@ function resetPortalChecks(){
 }
 
 /* --- SAVED SEARCHES --- */
-let savedSearches=JSON.parse(localStorage.getItem('pop_saved_searches')||'[]');
 function saveCurrentSearch(){
   const kw=document.getElementById('fk')?document.getElementById('fk').value.trim():'';
   if(!kw){alert('Type a keyword in the search box first.');return;}
