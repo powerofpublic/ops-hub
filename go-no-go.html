@@ -538,6 +538,10 @@
     </div>
 
     <div class="card">
+      <div class="fg" style="margin-bottom:0.85rem;">
+        <label class="fl" for="oppTitle">Opportunity Title</label>
+        <input type="text" id="oppTitle" placeholder="e.g. Health Communications Consulting Services" oninput="tick()">
+      </div>
       <div class="fg">
         <label class="fl" for="orgName">Organization / Agency Name</label>
         <input type="text" id="orgName" placeholder="e.g. Department of Health and Human Services" oninput="tick()">
@@ -946,6 +950,35 @@
 </div><!-- /page-wrap -->
 
 <script>
+
+// Pre-fill from pipeline URL params
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var title    = params.get('title');
+  var org      = params.get('org');
+  var deadline = params.get('deadline');
+  if(title){
+    var el = document.getElementById('oppTitle');
+    if(el){ el.value = title; }
+  }
+  if(org){
+    var el = document.getElementById('orgName');
+    if(el){ el.value = org; }
+  }
+  if(deadline){
+    var el = document.getElementById('subDeadlineDate');
+    if(el){ el.value = deadline; }
+  }
+  // If any params were passed, show a subtle indicator
+  if(title || org){
+    var banner = document.createElement('div');
+    banner.style.cssText = 'background:#F0F9F4;border:1px solid #A8DFC0;border-radius:8px;padding:10px 16px;margin-bottom:16px;font-size:13px;color:#1A3D2B;display:flex;align-items:center;gap:8px;';
+    banner.innerHTML = '<span style="font-size:16px;">📋</span><span>Pre-filled from your pipeline. Review and complete the remaining fields below.</span>';
+    var firstCard = document.querySelector('.card');
+    if(firstCard) firstCard.parentNode.insertBefore(banner, firstCard);
+  }
+})();
+
 // Date
 document.getElementById('todayDate').textContent =
   new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});

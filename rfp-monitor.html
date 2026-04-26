@@ -1340,7 +1340,7 @@ function renderPipeline(list){
         ${o.notes?`<div class="opp-notes-disp">${o.notes.replace(/\n/g,'<br>')}</div>`:''}
         <div class="opp-foot">
           ${o.url?`<a href="${o.url}" target="_blank" rel="noopener" class="btn sm">View source ↗</a>`:''}
-          ${o.status==='considering'?`<a href="go-no-go.html" class="btn sm" style="background:#EDE8FF;color:#7C3AED;border-color:#C4B5FD;">📋 Go/No-Go form →</a>`:''}
+          ${o.status==='considering'?`<a href="go-no-go.html?title=${encodeURIComponent(o.title)}&org=${encodeURIComponent(o.org||'')}${o.deadline&&o.deadline!=='Unknown'?'&deadline='+encodeURIComponent(o.deadline):''}" class="btn sm" style="background:#EDE8FF;color:#7C3AED;border-color:#C4B5FD;">📋 Go/No-Go form →</a>`:''}
           <button class="btn sm ${gc?gc+' gng-score':''}" onclick="openGng(${o.id})">${gl}</button>
           <button class="btn sm" onclick="openNotes(${o.id})">📝 ${o.notes?'Edit notes':'Add notes'}</button>
           <button class="btn sm danger" onclick="deleteOpp(${o.id})" style="margin-left:auto;">Remove</button>
