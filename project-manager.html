@@ -225,36 +225,54 @@ td { padding:12px 14px; vertical-align:middle; font-size:13px; }
 .kanban-card-meta  { font-size:11px; color:var(--muted); display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:6px; }
 .kanban-card-project { font-size:10.5px; font-weight:600; color:var(--pink); margin-bottom:4px; }
 
-/* ── GANTT 4-COLUMN LAYOUT ── */
-    .gantt-table-wrap { display:block; overflow-x:auto; overflow-y:auto; max-height:600px; scroll-behavior:smooth; }
-    .gantt-table-wrap::-webkit-scrollbar { height:6px;width:6px; }
-    .gantt-table-wrap::-webkit-scrollbar-thumb { background:var(--border);border-radius:3px; }
-    .gantt-head-row { display:flex; min-height:44px; background:var(--surface2); border-bottom:2px solid var(--border); position:sticky; top:0; z-index:5; }
-    .gantt-th { padding:0 12px; display:flex; align-items:center; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--muted); border-right:1px solid var(--border); flex-shrink:0; }
-    .gantt-row { display:flex; min-height:44px; border-bottom:1px solid var(--border); align-items:stretch; }
-    .gantt-row:hover { background:var(--surface2); }
-    .gantt-task-label { width:200px; min-width:200px; flex:0 0 200px; padding:8px 12px; cursor:pointer; display:flex; flex-direction:column; justify-content:center; border-right:1px solid var(--border); background:inherit; position:sticky; left:0; z-index:3; }
-    .gantt-col-assign { width:120px; min-width:120px; flex:0 0 120px; padding:8px 10px; display:flex; align-items:center; font-size:11.5px; color:var(--muted); border-right:1px solid var(--border); background:inherit; position:sticky; left:200px; z-index:3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .gantt-col-start { width:90px; min-width:90px; flex:0 0 90px; padding:8px 8px; display:flex; align-items:center; font-size:11px; color:var(--muted); border-right:1px solid var(--border); background:inherit; position:sticky; left:320px; z-index:3; white-space:nowrap; }
-    .gantt-col-end { width:90px; min-width:90px; flex:0 0 90px; padding:8px 8px; display:flex; align-items:center; font-size:11px; color:var(--muted); border-right:2px solid var(--border); background:inherit; position:sticky; left:410px; z-index:3; white-space:nowrap; }
+/* ── GANTT TIMELINE ── */
+    #gantt-wrap { border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--surface); }
+    .gantt-table-wrap { display:block; overflow-x:auto; overflow-y:auto; max-height:580px; scroll-behavior:smooth; }
+    .gantt-table-wrap::-webkit-scrollbar { height:6px; width:6px; }
+    .gantt-table-wrap::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+
+    /* Header row */
+    .gantt-head-row { display:flex; min-height:44px; background:var(--surface2); border-bottom:2px solid var(--border); position:sticky; top:0; z-index:10; }
+    .gantt-th { display:flex; align-items:center; padding:0 12px; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--muted); border-right:1px solid var(--border); flex-shrink:0; background:var(--surface2); }
+
+    /* Data rows */
+    .gantt-row { display:flex; min-height:46px; border-bottom:1px solid var(--border); align-items:stretch; cursor:pointer; }
+    .gantt-row:hover { background:var(--tan); }
+    .gantt-group-row { background:var(--surface2) !important; cursor:default; min-height:38px; }
+    .gantt-group-row:hover { background:var(--surface2) !important; }
+
+    /* Fixed sticky cells */
+    .gantt-cell { display:flex; flex-direction:column; justify-content:center; padding:8px 12px; border-right:1px solid var(--border); flex-shrink:0; font-size:12px; color:var(--muted); background:inherit; }
+    .gantt-cell-task   { width:200px; min-width:200px; position:sticky; left:0;    z-index:5; background:var(--surface); color:var(--text); }
+    .gantt-cell-assign { width:120px; min-width:120px; position:sticky; left:200px; z-index:5; background:var(--surface); font-size:11.5px; }
+    .gantt-cell-start  { width:90px;  min-width:90px;  position:sticky; left:320px; z-index:5; background:var(--surface); font-size:11px; white-space:nowrap; }
+    .gantt-cell-end    { width:90px;  min-width:90px;  position:sticky; left:410px; z-index:5; background:var(--surface); font-size:11px; white-space:nowrap; border-right:2px solid var(--border); }
+    .gantt-group-row .gantt-cell { background:var(--surface2); }
+
     .gantt-task-name { font-size:12.5px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .gantt-task-sub { font-size:10.5px; color:var(--muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .gantt-task-label:hover .gantt-task-name { color:var(--pink); }
-    .gantt-bar-area { position:relative; flex:1; min-height:44px; }
-    
+    .gantt-row:hover .gantt-task-name { color:var(--pink); }
+
+    /* Bar area */
+    .gantt-bar-area { position:relative; flex:1; min-height:46px; }
+    .gantt-dates-header { display:flex; align-items:flex-end; padding-bottom:6px; }
+    .gantt-date-cell { font-size:10px; color:var(--muted); text-align:center; border-right:1px solid var(--border); box-sizing:border-box; white-space:nowrap; padding-top:4px; }
+    .gantt-date-cell.today-col { background:#fff8e1; color:var(--amber); font-weight:700; }
+    .gantt-date-cell.gantt-week-start { border-left:1px solid var(--border); }
+    .gantt-today-line { position:absolute; top:0; bottom:0; width:2px; background:var(--amber); opacity:0.7; z-index:3; pointer-events:none; }
+    .gantt-bar { position:absolute; top:9px; height:28px; border-radius:6px; display:flex; align-items:center; padding:0 8px; font-size:10.5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; z-index:1; box-shadow:0 1px 3px rgba(0,0,0,0.12); transition:opacity .15s; }
+    .gantt-bar:hover { opacity:0.8; }
+    .gantt-empty { text-align:center; padding:48px 24px; color:var(--muted); }
+    .gantt-today-btn { background:var(--amber); color:#fff; border:none; border-radius:6px; padding:5px 12px; font-size:11px; font-weight:700; cursor:pointer; }
+
     /* ── KANBAN DRAG & DROP ── */
-    .kanban-card { cursor: grab; position: relative; transition: box-shadow 0.15s, opacity 0.15s, transform 0.12s; }
-    .kanban-card:active { cursor: grabbing; }
-    .kanban-card.dragging { opacity: 0.4; transform: scale(0.97); box-shadow: 0 8px 24px rgba(0,0,0,0.18); }
-    .kanban-col { transition: background 0.15s, border-color 0.15s; }
-    .kanban-col.drag-over { background: var(--pink-light); border-color: var(--pink); border-style: dashed; }
-    .kanban-col.drag-over .kanban-empty-col { color: var(--pink); border-color: var(--pink); }
-    .kanban-empty-col { font-size:12px; color:var(--muted); text-align:center; padding:20px 0;
-      border:1.5px dashed var(--border); border-radius:8px; transition: all 0.15s; }
-    .kanban-drag-handle { position:absolute; top:8px; right:8px; font-size:14px; color:var(--muted);
-      opacity:0; transition:opacity 0.12s; cursor:grab; line-height:1; }
+    .kanban-card { cursor:grab; position:relative; transition:box-shadow 0.15s, opacity 0.15s, transform 0.12s; }
+    .kanban-card:active { cursor:grabbing; }
+    .kanban-card.dragging { opacity:0.4; transform:scale(0.97); box-shadow:0 8px 24px rgba(0,0,0,0.18); }
+    .kanban-col { transition:background 0.15s, border-color 0.15s; }
+    .kanban-col.drag-over { background:var(--pink-light); border-color:var(--pink); border-style:dashed; }
+    .kanban-empty-col { font-size:12px; color:var(--muted); text-align:center; padding:20px 0; border:1.5px dashed var(--border); border-radius:8px; transition:all 0.15s; }
+    .kanban-drag-handle { position:absolute; top:8px; right:8px; font-size:14px; color:var(--muted); opacity:0; transition:opacity 0.12s; cursor:grab; line-height:1; }
     .kanban-card:hover .kanban-drag-handle { opacity:0.6; }
-    .kanban-card:hover .kanban-drag-handle:hover { opacity:1; color:var(--pink); }
 
     </style>
 </head>
@@ -652,7 +670,6 @@ function renderKanban() {
                    ondragend="kanbanDragEnd(event)"
                    onclick="openTaskModal('${t.fbKey}')">
         <div class="kanban-drag-handle" title="Drag to move">⠿</div>
-        ${pn ? `<div class="kanban-card-project" style="color:${pc}">${pn}</div>` : ''}
         <div class="kanban-card-title">${t.title||'Untitled'}</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px;">
           <span class="pbadge ${priorityClass(t.priority||'medium')}">${priorityLabel(t.priority||'medium')}</span>
@@ -796,145 +813,114 @@ function scrollGanttToToday() {
 
 function renderGantt() {
   const tasks = filteredTasks().filter(t => t.dueDate);
-  const wrap = document.getElementById('gantt-wrap');
+  const wrap  = document.getElementById('gantt-wrap');
   if (!tasks.length) {
-    wrap.innerHTML = `<div class="gantt-empty"><div style="font-size:40px;margin-bottom:12px">📊</div><div>No tasks with due dates to display on the timeline.</div></div>`;
+    wrap.innerHTML = '<div class="gantt-empty"><div style="font-size:40px;margin-bottom:12px">📊</div><div>No tasks with due dates to display on the timeline.</div></div>';
     return;
   }
 
   const todayStr = today();
   const allDates = tasks.flatMap(t => [t.startDate, t.dueDate].filter(Boolean));
-  const minDate = new Date(Math.min(
-    new Date(todayStr) - 14 * 86400000,
-    new Date(allDates.reduce((a,b) => a < b ? a : b))
+  const minDate  = new Date(Math.min(
+    new Date(todayStr).getTime() - 14 * 86400000,
+    new Date(allDates.reduce((a,b) => a < b ? a : b)).getTime()
   ));
   minDate.setDate(minDate.getDate() - 7);
   const maxDate = new Date(allDates.reduce((a,b) => a > b ? a : b));
   maxDate.setDate(maxDate.getDate() + 21);
 
   const days = [];
-  const d = new Date(minDate);
-  while (d <= maxDate) { days.push(d.toISOString().split('T')[0]); d.setDate(d.getDate()+1); }
+  const cur  = new Date(minDate);
+  while (cur <= maxDate) { days.push(cur.toISOString().split('T')[0]); cur.setDate(cur.getDate() + 1); }
 
-  const cellW   = 36;
-  const totalW  = days.length * cellW;
+  const cellW    = 36;
+  const totalW   = days.length * cellW;
   const todayIdx = days.indexOf(todayStr);
-  const FIXED_W  = 500;
 
-  const dateHeaders = days.map((ds, i) => {
-    const dt = new Date(ds + 'T12:00:00');
-    const isToday  = ds === todayStr;
-    const isMonday = dt.getDay() === 1;
-    const isFirst  = dt.getDate() === 1;
-    const showLabel = isFirst || i === 0 || isMonday;
-    const label = showLabel ? dt.toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '';
-    return `<div class="gantt-date-cell${isToday ? ' today-col' : ''}${isMonday ? ' gantt-week-start' : ''}" style="min-width:${cellW}px;flex:0 0 ${cellW}px;">${label}</div>`;
+  // Date header cells
+  const dateHeaderHTML = days.map((ds, i) => {
+    const dt      = new Date(ds + 'T12:00:00');
+    const isToday = ds === todayStr;
+    const isMon   = dt.getDay() === 1;
+    const label   = (dt.getDate() === 1 || i === 0 || isMon)
+                    ? dt.toLocaleDateString('en-US', {month:'short', day:'numeric'}) : '';
+    return '<div class="gantt-date-cell' + (isToday ? ' today-col' : '') + (isMon ? ' gantt-week-start' : '') +
+           '" style="min-width:' + cellW + 'px;flex:0 0 ' + cellW + 'px;">' + label + '</div>';
   }).join('');
 
-  // Group by project
-  const projectGroups = {};
-  tasks.forEach(t => {
-    const pn = projectName(t.projectId) || 'No Project';
-    if (!projectGroups[pn]) projectGroups[pn] = [];
-    projectGroups[pn].push(t);
-  });
-
-  const todayLine = todayIdx >= 0
-    ? `<div class="gantt-today-line" style="left:${todayIdx * cellW}px"></div>`
+  const todayLineHTML = todayIdx >= 0
+    ? '<div class="gantt-today-line" style="left:' + (todayIdx * cellW) + 'px;"></div>'
     : '';
 
-  // Column header row (sticky)
-  const colHeaders = `
-    <div class="gantt-col-header" style="width:200px;min-width:200px;">Task</div>
-    <div class="gantt-col-header" style="width:120px;min-width:120px;">Assigned To</div>
-    <div class="gantt-col-header" style="width:90px;min-width:90px;">Start</div>
-    <div class="gantt-col-header" style="width:90px;min-width:90px;">End</div>`;
+  // Group by project
+  const groups = {};
+  tasks.forEach(t => {
+    const pn = projectName(t.projectId) || 'No Project';
+    if (!groups[pn]) groups[pn] = { color: projectColor(t.projectId), tasks: [] };
+    groups[pn].tasks.push(t);
+  });
 
-  const rows = Object.entries(projectGroups).sort((a,b) => a[0].localeCompare(b[0])).map(([projName, projTasks]) => {
-    const pc = projectColor(projTasks[0]?.projectId);
-    const headerRow = `<div class="gantt-row" style="background:var(--cream);">
-      <div class="gantt-fixed-cols-UNUSED" style="background:var(--cream);min-width:${FIXED_W}px;width:${FIXED_W}px;">
-        <div class="gantt-col gantt-col-task" style="width:200px;min-width:200px;">
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:${pc||'var(--navy)'};">● ${projName}</div>
-          <div style="font-size:10px;color:var(--muted)">${projTasks.length} task${projTasks.length!==1?'s':''}</div>
-        </div>
-        <div class="gantt-col" style="width:120px;min-width:120px;"></div>
-        <div class="gantt-col" style="width:90px;min-width:90px;"></div>
-        <div class="gantt-col" style="width:90px;min-width:90px;"></div>
-      </div>
-      <div class="gantt-bar-area" style="width:${totalW}px;min-width:${totalW}px;background:var(--cream);">${todayLine}</div>
-    </div>`;
+  let rowsHTML = '';
+  Object.keys(groups).sort().forEach(pn => {
+    const g = groups[pn];
+    // Project group header row
+    rowsHTML += '<div class="gantt-row gantt-group-row">' +
+      '<div class="gantt-cell gantt-cell-task" style="color:' + (g.color||'var(--navy)') + ';font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;">' +
+        '● ' + pn +
+        '<div style="font-size:10px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0;">' + g.tasks.length + ' task' + (g.tasks.length !== 1 ? 's' : '') + '</div>' +
+      '</div>' +
+      '<div class="gantt-cell gantt-cell-assign"></div>' +
+      '<div class="gantt-cell gantt-cell-start"></div>' +
+      '<div class="gantt-cell gantt-cell-end"></div>' +
+      '<div class="gantt-bar-area" style="width:' + totalW + 'px;min-width:' + totalW + 'px;background:var(--surface2);">' + todayLineHTML + '</div>' +
+    '</div>';
 
-    const taskRows = projTasks.map(t => {
+    // Task rows
+    g.tasks.forEach(t => {
       const start = t.startDate || t.dueDate;
       const end   = t.dueDate;
-      const si = days.indexOf(start);
-      const ei = days.indexOf(end);
+      const si    = days.indexOf(start);
+      const ei    = days.indexOf(end);
       const left  = Math.max(0, si) * cellW;
-      const width = Math.max(cellW, (ei - Math.max(0,si) + 1) * cellW);
-      const sc = statusClass(t.status);
-      return `<div class="gantt-row">
-        <div class="gantt-fixed-cols-UNUSED" style="min-width:${FIXED_W}px;width:${FIXED_W}px;" onclick="openTaskModal('${t.fbKey}')">
-            <div class="gantt-task-name">${t.title||'Untitled'}</div>
-          </div>
-          <div class="gantt-col-assign">${t.assigned||'—'}</div>
-          <div class="gantt-col-start">${t.startDate?fmtDateShort(t.startDate):'—'}</div>
-          <div class="gantt-col-end">${fmtDateShort(t.dueDate)}
-        </div>
-        <div class="gantt-bar-area" style="width:${totalW}px;min-width:${totalW}px;">
-          ${todayLine}
-          ${si >= 0 ? `<div class="gantt-bar ${sc}" style="left:${left}px;width:${width}px;" onclick="openTaskModal('${t.fbKey}')" title="${t.title||''} · ${fmtDate(start)} – ${fmtDate(end)}">${t.title||''}</div>` : ''}
-        </div>
-      </div>`;
-    }).join('');
+      const width = Math.max(cellW, (ei - Math.max(0, si) + 1) * cellW);
+      const sc    = statusClass(t.status);
+      const barHTML = si >= 0
+        ? '<div class="gantt-bar ' + sc + '" style="left:' + left + 'px;width:' + width + 'px;" onclick="openTaskModal(\'' + t.fbKey + '\')" title="' + (t.title||'') + ' · ' + fmtDate(start) + ' – ' + fmtDate(end) + '">' + (t.title||'') + '</div>'
+        : '';
 
-    return headerRow + taskRows;
-  }).join('');
+      rowsHTML += '<div class="gantt-row" onclick="openTaskModal(\'' + t.fbKey + '\')">' +
+        '<div class="gantt-cell gantt-cell-task">' +
+          '<div class="gantt-task-name">' + (t.title||'Untitled') + '</div>' +
+        '</div>' +
+        '<div class="gantt-cell gantt-cell-assign">' + (t.assigned||'—') + '</div>' +
+        '<div class="gantt-cell gantt-cell-start">' + (t.startDate ? fmtDateShort(t.startDate) : '—') + '</div>' +
+        '<div class="gantt-cell gantt-cell-end">' + fmtDateShort(t.dueDate) + '</div>' +
+        '<div class="gantt-bar-area" style="width:' + totalW + 'px;min-width:' + totalW + 'px;">' +
+          todayLineHTML + barHTML +
+        '</div>' +
+      '</div>';
+    });
+  });
 
-  wrap.innerHTML = `
-    <div class="gantt-scroll-outer">
-      <div class="gantt-fixed-panel" style="width:${FIXED_W}px;min-width:${FIXED_W}px;">
-        <div class="gantt-fixed-header" style="width:${FIXED_W}px;">
-          ${colHeaders}
-        </div>
-      </div>
-      <div class="gantt-scroll-pane" id="gantt-scroll-pane">
-        <div class="gantt-dates-row" style="width:${totalW}px;">
-          ${dateHeaders}
-        </div>
-        <div style="position:relative;width:${totalW}px;">
-          <!-- bar areas only -->
-        </div>
-      </div>
-    </div>
-    <!-- FULL ROWS (fixed + scroll together) -->
-    <div class="gantt-body-outer">
-      <div class="gantt-fixed-col-body" id="gantt-fixed-body" style="width:${FIXED_W}px;min-width:${FIXED_W}px;"></div>
-      <div class="gantt-bars-scroll" id="gantt-bars-scroll">
-        ${rows.split('</div><div class="gantt-row">').join('')}
-      </div>
-    </div>`;
+  wrap.innerHTML =
+    '<div class="gantt-table-wrap">' +
+      '<div class="gantt-head-row">' +
+        '<div class="gantt-th gantt-cell-task">Task</div>' +
+        '<div class="gantt-th gantt-cell-assign">Assigned To</div>' +
+        '<div class="gantt-th gantt-cell-start">Start</div>' +
+        '<div class="gantt-th gantt-cell-end">End</div>' +
+        '<div class="gantt-dates-header" style="width:' + totalW + 'px;min-width:' + totalW + 'px;display:flex;">' + dateHeaderHTML + '</div>' +
+      '</div>' +
+      rowsHTML +
+    '</div>';
 
-  // Simpler approach: single unified layout where fixed cols and bars scroll together
-  // Reset to the working unified approach
-  wrap.innerHTML = `
-    <div class="gantt-table-wrap">
-      <div class="gantt-head-row">
-        <div class="gantt-th" style="width:200px;min-width:200px;position:sticky;left:0;z-index:6;background:var(--surface2);">Task</div>
-        <div class="gantt-th" style="width:120px;min-width:120px;position:sticky;left:200px;z-index:6;background:var(--surface2);">Assigned To</div>
-        <div class="gantt-th" style="width:90px;min-width:90px;position:sticky;left:320px;z-index:6;background:var(--surface2);">Start</div>
-        <div class="gantt-th" style="width:90px;min-width:90px;position:sticky;left:410px;z-index:6;background:var(--surface2);border-right:2px solid var(--border);">End</div>
-        <div class="gantt-dates-header" style="width:${totalW}px;min-width:${totalW}px;display:flex;">${dateHeaders}</div>
-      </div>
-      ${rows}
-    </div>`;
-
-  requestAnimationFrame(() => {
-    const pane = wrap.querySelector('.gantt-table-wrap');
+  // Scroll to center today
+  requestAnimationFrame(function() {
+    var pane = wrap.querySelector('.gantt-table-wrap');
     if (pane && todayIdx >= 0) {
-      const paneW = pane.clientWidth || 900;
-      const scrollTo = Math.max(0, (500 + todayIdx * cellW) - (paneW / 2) + (cellW * 2));
-      pane.scrollLeft = scrollTo;
+      var paneW  = pane.clientWidth || 900;
+      var fixedW = 500; // 200+120+90+90
+      pane.scrollLeft = Math.max(0, fixedW + todayIdx * cellW - paneW / 2 + cellW * 2);
     }
   });
 }
