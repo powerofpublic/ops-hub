@@ -10,7 +10,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+  import { getDatabase, ref, set, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
   const firebaseConfig = {
@@ -32,6 +32,7 @@
   window._fbSet    = (path, val) => set(ref(db, path), val);
   window._fbPush   = (path, val) => push(ref(db, path), val);
   window._fbRemove = (path) => remove(ref(db, path));
+  window._fbUpdate = (path, val) => update(ref(db, path), val);
   window._fbListen = (path, cb) => onValue(ref(db, path), snap => cb(snap.val()));
   window._fbSignIn  = () => signInWithPopup(auth, provider).catch(() => alert('Sign-in failed.'));
   window._fbSignOut = () => signOut(auth);
@@ -114,6 +115,8 @@
   --border:  #D5CCBC;
   --muted:   #6B6560;
   --charcoal:#2D2D2D;
+  --surface2: #faf9f7;
+  --pink-light: #fce8f2;
 
   /* Status colors */
   --todo:       #6366F1;
@@ -225,6 +228,44 @@ td { padding:12px 14px; vertical-align:middle; font-size:13px; }
 .kanban-card-meta  { font-size:11px; color:var(--muted); display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:6px; }
 .kanban-card-project { font-size:10.5px; font-weight:600; color:var(--pink); margin-bottom:4px; }
 
+
+/* ── MODAL OVERLAY ──────────────────────── */
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:500; display:none; align-items:center; justify-content:center; padding:20px; }
+.modal-overlay.open { display:flex; }
+.modal { background:var(--surface); border-radius:16px; padding:28px 32px; max-width:580px; width:100%; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.25); }
+.modal-title { font-family:Georgia, serif; font-size:20px; font-weight:700; color:var(--navy); margin-bottom:22px; }
+.modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:24px; padding-top:20px; border-top:1px solid var(--border); }
+
+/* ── FORM ELEMENTS ──────────────────────── */
+.form-group { margin-bottom:16px; }
+.form-label { display:block; font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); margin-bottom:6px; }
+.form-input { width:100%; padding:9px 13px; border:1.5px solid var(--border); border-radius:8px; font-size:13.5px; font-family:Arial, sans-serif; color:var(--charcoal); background:var(--surface); transition:border-color 0.15s; }
+.form-input:focus { outline:none; border-color:var(--pink); }
+select.form-input { cursor:pointer; }
+textarea.form-input { resize:vertical; min-height:80px; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.form-row-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+
+/* ── TOAST ──────────────────────────────── */
+.toast { position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--navy); color:#fff; padding:11px 22px; border-radius:10px; font-size:13px; font-weight:500; opacity:0; transition:all 0.3s; z-index:9999; pointer-events:none; white-space:nowrap; }
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+.toast.ok { background:var(--emerald); }
+
+/* ── PROJECTS MODAL ─────────────────────── */
+.projects-list { margin-top:12px; display:flex; flex-direction:column; gap:8px; }
+.project-row { display:flex; align-items:center; gap:10px; padding:10px 14px; background:var(--tan); border-radius:8px; border:1px solid var(--border); }
+.project-color-swatch { width:14px; height:14px; border-radius:50%; flex-shrink:0; }
+.project-row-name { font-size:13px; font-weight:600; color:var(--charcoal); flex:1; }
+.project-row-meta { font-size:11px; color:var(--muted); }
+.projects-from-tt { margin-top:20px; padding-top:16px; border-top:1px solid var(--border); }
+.projects-from-tt-label { font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:12px; }
+.tt-project-row { padding:8px 14px; font-size:12.5px; color:var(--charcoal); border-radius:6px; cursor:pointer; transition:background 0.12s; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.tt-project-row:hover { background:var(--tan); }
+.tt-badge { font-size:10px; font-weight:700; padding:2px 7px; border-radius:8px; background:var(--tan); color:var(--muted); }
+.tt-source { font-size:10px; color:var(--muted); }
+
+/* ── MISSING SURFACE2 VAR (used in gantt) ── */
+
 /* ── GANTT TIMELINE ── */
     #gantt-wrap { border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--surface); }
     .gantt-table-wrap { display:block; overflow-x:auto; overflow-y:auto; max-height:580px; scroll-behavior:smooth; }
@@ -239,11 +280,12 @@ td { padding:12px 14px; vertical-align:middle; font-size:13px; }
     .gantt-row { display:flex; min-height:46px; border-bottom:1px solid var(--border); align-items:stretch; cursor:pointer; }
     .gantt-row:hover { background:var(--tan); }
     .gantt-group-row { background:var(--surface2) !important; cursor:default; min-height:38px; }
+    .gantt-group-row .gantt-cell { background:var(--surface2) !important; }
     .gantt-group-row:hover { background:var(--surface2) !important; }
 
     /* Fixed sticky cells */
     .gantt-cell { display:flex; flex-direction:column; justify-content:center; padding:8px 12px; border-right:1px solid var(--border); flex-shrink:0; font-size:12px; color:var(--muted); background:inherit; }
-    .gantt-cell-task   { width:200px; min-width:200px; position:sticky; left:0;    z-index:5; background:var(--surface); color:var(--text); }
+    .gantt-cell-task   { width:200px; min-width:200px; position:sticky; left:0;    z-index:5; background:var(--surface); color:var(--charcoal); }
     .gantt-cell-assign { width:120px; min-width:120px; position:sticky; left:200px; z-index:5; background:var(--surface); font-size:11.5px; }
     .gantt-cell-start  { width:90px;  min-width:90px;  position:sticky; left:320px; z-index:5; background:var(--surface); font-size:11px; white-space:nowrap; }
     .gantt-cell-end    { width:90px;  min-width:90px;  position:sticky; left:410px; z-index:5; background:var(--surface); font-size:11px; white-space:nowrap; border-right:2px solid var(--border); }
@@ -274,7 +316,24 @@ td { padding:12px 14px; vertical-align:middle; font-size:13px; }
     .kanban-drag-handle { position:absolute; top:8px; right:8px; font-size:14px; color:var(--muted); opacity:0; transition:opacity 0.12s; cursor:grab; line-height:1; }
     .kanban-card:hover .kanban-drag-handle { opacity:0.6; }
 
-    </style>
+    
+    /* ── SUBTASKS & LINKS & DEPS ── */
+    .subtask-row { display:flex; align-items:center; gap:8px; padding:5px 0; border-bottom:1px solid var(--border); }
+    .subtask-row:last-child { border-bottom:none; }
+    .subtask-title { font-size:13px; color:var(--charcoal); flex:1; cursor:default; }
+    .subtask-title.done { text-decoration:line-through; color:var(--muted); }
+    .subtask-del { background:none; border:none; color:var(--muted); cursor:pointer; font-size:16px; padding:0 4px; line-height:1; flex-shrink:0; }
+    .subtask-del:hover { color:var(--pink); }
+    .link-row { display:flex; align-items:center; gap:8px; padding:4px 0; }
+    .link-anchor { font-size:13px; color:var(--blue,#2563eb); text-decoration:none; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .link-anchor:hover { text-decoration:underline; }
+    .dep-row { display:flex; align-items:center; gap:8px; padding:5px 0; font-size:13px; border-bottom:1px solid var(--border); }
+    .dep-row:last-child { border-bottom:none; }
+    .dep-done { color:var(--emerald); }
+    .dep-blocking { color:var(--pink); }
+    .dep-badge { font-size:10px; font-weight:700; background:#fce8f2; color:var(--pink); padding:1px 7px; border-radius:8px; }
+
+</style>
 </head>
 <body>
 
@@ -337,6 +396,7 @@ td { padding:12px 14px; vertical-align:middle; font-size:13px; }
       <button class="view-tab" onclick="switchView('cal')"    id="tab-cal">📅 <span>Calendar</span></button>
     </div>
     <div class="header-right">
+      <div id="deadline-badge" title="Tasks overdue or due soon" onclick="switchView('list')" style="display:none;background:var(--pink);color:#fff;font-size:10px;font-weight:700;min-width:20px;height:20px;border-radius:10px;padding:0 5px;align-items:center;justify-content:center;cursor:pointer;margin-right:4px;">0</div>
       <div class="user-pill" id="auth-name"></div>
       <a href="index.html" class="hdr-btn">← Hub</a>
       <button class="hdr-btn" onclick="window._fbSignOut()">Sign out</button>
@@ -408,7 +468,7 @@ td { padding:12px 14px; vertical-align:middle; font-size:13px; }
       <table>
         <thead><tr>
           <th>Task</th><th>Project</th><th>Status</th>
-          <th>Priority</th><th>Assigned To</th><th>Start Date</th><th>Due Date</th><th>Notes</th><th></th>
+          <th>Priority</th><th>Assigned To</th><th>Start Date</th><th>Due Date</th><th>Notes</th><th>Logged</th><th></th>
         </tr></thead>
         <tbody id="list-body"></tbody>
       </table>
@@ -496,6 +556,50 @@ td { padding:12px 14px; vertical-align:middle; font-size:13px; }
     <div class="form-group">
       <label class="form-label">Notes / Description</label>
       <textarea class="form-input" id="f-notes" placeholder="Additional context, links, or instructions…"></textarea>
+    </div>
+
+
+    <!-- SUBTASKS -->
+    <div class="form-group" id="subtask-section">
+      <label class="form-label">Subtasks</label>
+      <div id="subtask-progress" style="display:none;margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:3px;">
+          <span>Progress</span><span class="subtask-pct">0/0</span>
+        </div>
+        <div style="height:4px;background:var(--border);border-radius:2px;">
+          <div class="subtask-fill" style="height:4px;background:var(--emerald);border-radius:2px;width:0%;transition:width 0.3s;"></div>
+        </div>
+      </div>
+      <div id="subtask-list" style="margin-bottom:8px;"></div>
+      <div style="display:flex;gap:6px;" id="subtask-add-row">
+        <input type="text" class="form-input" id="subtask-inp" placeholder="Add a subtask..." style="flex:1;font-size:13px;padding:7px 10px;"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();addSubtask(document.getElementById('task-edit-key').value);}">
+        <button class="btn btn-sm" onclick="addSubtask(document.getElementById('task-edit-key').value)">+ Add</button>
+      </div>
+    </div>
+
+    <!-- LINKS -->
+    <div class="form-group" id="links-section">
+      <label class="form-label">Links & References</label>
+      <div id="link-list" style="margin-bottom:8px;"></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;" id="link-add-row">
+        <input type="text" class="form-input" id="link-label-inp" placeholder="Label (optional)" style="width:130px;font-size:13px;padding:7px 10px;">
+        <input type="text" class="form-input" id="link-url-inp" placeholder="https://..." style="flex:1;min-width:180px;font-size:13px;padding:7px 10px;"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();addLink(document.getElementById('task-edit-key').value);}">
+        <button class="btn btn-sm" onclick="addLink(document.getElementById('task-edit-key').value)">+ Add</button>
+      </div>
+    </div>
+
+    <!-- DEPENDENCIES -->
+    <div class="form-group" id="deps-section">
+      <label class="form-label">Dependencies <span style="font-size:10px;color:var(--muted);font-weight:400;text-transform:none;">(this task is blocked by...)</span></label>
+      <div id="dep-list" style="margin-bottom:8px;"></div>
+      <div style="display:flex;gap:6px;" id="dep-add-row">
+        <select class="form-input" id="dep-select" style="flex:1;font-size:13px;padding:7px 10px;">
+          <option value="">Add dependency...</option>
+        </select>
+        <button class="btn btn-sm" onclick="addDependency(document.getElementById('task-edit-key').value)">+ Add</button>
+      </div>
     </div>
 
     <div class="modal-actions">
@@ -678,6 +782,13 @@ function renderKanban() {
         <div class="kanban-card-meta">
           ${t.assigned ? `<span>👤 ${t.assigned}</span>` : ''}
           ${dueTxt ? `<span>${dueTxt}</span>` : ''}
+          ${(()=>{
+            const subs = t.subtasks ? Object.values(t.subtasks) : [];
+            if (!subs.length) return '';
+            const done = subs.filter(x=>x.done).length;
+            const pct  = Math.round(done/subs.length*100);
+            return '<span style="font-size:10px;background:var(--surface2);padding:2px 7px;border-radius:8px;">✓ '+done+'/'+subs.length+'</span>';
+          })()}
         </div>
       </div>`;
     }).join('') : `<div class="kanban-empty-col" data-status="${s.key}">Drop here</div>`;
@@ -792,6 +903,7 @@ function renderList() {
       <td style="font-size:12px;color:var(--muted);white-space:nowrap;">${t.startDate?fmtDate(t.startDate):'<span style="color:var(--muted)">—</span>'}</td>
       <td class="td-due ${dueClass}">${fmtDate(t.dueDate)}${daysPill}</td>
       <td style="font-size:12px;color:var(--muted);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.notes||'—'}</td>
+      <td style="font-size:12px;color:var(--muted);white-space:nowrap;">${(()=>{const h=getLoggedHours(t.projectId);return h?'<span style="font-size:11px;background:var(--surface2);padding:2px 7px;border-radius:8px;color:var(--emerald);font-weight:600;">⏱ '+fmtHours(h)+'</span>':'<span style="color:var(--border);">—</span>'})()}</td>
       <td><button class="btn btn-sm" onclick="event.stopPropagation();openTaskModal('${t.fbKey}')">Edit</button></td>
     </tr>`;
   }).join('');
@@ -800,14 +912,14 @@ function renderList() {
 // ── GANTT ──────────────────────────────────────────────────────
 
 function scrollGanttToToday() {
-  var pane = document.getElementById('gantt-scroll-pane');
+  var wrap = document.getElementById('gantt-wrap');
+  if (!wrap) return;
+  var pane = wrap.querySelector('.gantt-table-wrap');
   if (!pane) return;
-  var paneWidth = pane.clientWidth || 800;
-  // Find the amber today line and scroll to center it
   var line = pane.querySelector('.gantt-today-line');
   if (line) {
-    var left = parseInt(line.style.left) || 0;
-    pane.scrollLeft = Math.max(0, left - paneWidth / 2 + 18);
+    var lineLeft = parseInt(line.style.left) || 0;
+    pane.scrollLeft = Math.max(0, lineLeft - pane.clientWidth / 2 + 18);
   }
 }
 
@@ -914,13 +1026,14 @@ function renderGantt() {
       rowsHTML +
     '</div>';
 
-  // Scroll to center today
+  // Scroll to center today in the visible pane
   requestAnimationFrame(function() {
     var pane = wrap.querySelector('.gantt-table-wrap');
     if (pane && todayIdx >= 0) {
-      var paneW  = pane.clientWidth || 900;
-      var fixedW = 500; // 200+120+90+90
-      pane.scrollLeft = Math.max(0, fixedW + todayIdx * cellW - paneW / 2 + cellW * 2);
+      var fixedW  = 500;
+      var paneW   = pane.clientWidth || 900;
+      var scrollTo = Math.max(0, fixedW + todayIdx * cellW - (paneW - fixedW) / 2);
+      pane.scrollLeft = scrollTo;
     }
   });
 }
@@ -1053,6 +1166,58 @@ function openTaskModal(fbKey) {
   document.getElementById('f-start').value     = t?.startDate|| '';
   document.getElementById('f-tag').value       = t?.tag      || '';
   document.getElementById('f-notes').value     = t?.notes    || '';
+  // Live listeners for subtasks, links, dependencies
+  if (fbKey) {
+    if (window._subUnsub) window._subUnsub();
+    if (window._linkUnsub) window._linkUnsub();
+    window._subUnsub  = null;
+    window._linkUnsub = null;
+
+    // subtasks
+    const subRef  = 'pm_tasks/' + fbKey + '/subtasks';
+    window._subUnsub = window._fbListenOnce ? null : null; // use onValue
+    window._fbListen(subRef, function(data) {
+      renderSubtasks(fbKey, data);
+    });
+
+    // links
+    window._fbListen('pm_tasks/' + fbKey + '/links', function(data) {
+      renderLinks(fbKey, data);
+    });
+
+    // dependencies
+    const taskNow = (window._tasks||[]).find(x => x.fbKey === fbKey);
+    renderDependencies(fbKey, taskNow || {});
+    populateDependencySelect(fbKey);
+  } else {
+    // new task - clear sections
+    renderSubtasks(null, null);
+    renderLinks(null, null);
+    const dw = document.getElementById('dep-list');
+    if (dw) dw.innerHTML = '<div style="font-size:12px;color:var(--muted);">Save the task first to add dependencies.</div>';
+  }
+
+  // Show extra sections only when editing existing task
+  const extraSections = ['subtask-section','links-section','deps-section'];
+  extraSections.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = fbKey ? 'block' : 'none';
+  });
+  var subAddRow  = document.getElementById('subtask-add-row');
+  var linkAddRow = document.getElementById('link-add-row');
+  var depAddRow  = document.getElementById('dep-add-row');
+  // Always show add rows when editing
+  if (subAddRow)  subAddRow.style.display  = fbKey ? 'flex' : 'none';
+  if (linkAddRow) linkAddRow.style.display = fbKey ? 'flex' : 'none';
+  if (depAddRow)  depAddRow.style.display  = fbKey ? 'flex' : 'none';
+  if (!fbKey) {
+    // New task - show a note
+    ['subtask-list','link-list','dep-list'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.innerHTML = '<div style="font-size:12px;color:var(--muted);padding:4px 0;font-style:italic;">Save the task first to add these.</div>';
+    });
+  }
+
   document.getElementById('modal-task').classList.add('open');
   setTimeout(() => document.getElementById('f-title').focus(), 50);
 }
@@ -1078,9 +1243,15 @@ function saveTask() {
     updatedAt:  new Date().toISOString(),
   };
   if (_editKey) {
-    window._fbSet(`pm_tasks/${_editKey}`, record)
+    // Use update (not set) to preserve subtasks/links/blockedBy child data
+    window._fbUpdate('pm_tasks/' + _editKey, record)
       .then(() => { closeTaskModal(); showToast('Task updated ✓', true); })
-      .catch(() => showToast('Save failed'));
+      .catch(() => {
+        // Fallback to set if update not available
+        window._fbSet('pm_tasks/' + _editKey, record)
+          .then(() => { closeTaskModal(); showToast('Task updated ✓', true); })
+          .catch(() => showToast('Save failed'));
+      });
   } else {
     record.createdAt = new Date().toISOString();
     window._fbPush('pm_tasks', record)
@@ -1201,6 +1372,256 @@ function populateProjectSelects() {
 document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', e => {
   if (e.target === o) { closeTaskModal(); closeProjectsModal(); }
 }));
+
+// ── SUBTASKS ────────────────────────────────────────────────────
+// Stored at pm_tasks/{taskKey}/subtasks/{subKey}: {title, done, createdAt}
+
+function renderSubtasks(fbKey, subtasks) {
+  const wrap = document.getElementById('subtask-list');
+  if (!wrap) return;
+  const items = subtasks ? Object.entries(subtasks) : [];
+  if (!items.length) {
+    wrap.innerHTML = '<div style="font-size:12px;color:var(--muted);padding:4px 0;">No subtasks yet.</div>';
+    return;
+  }
+  wrap.innerHTML = items.map(([k, v]) =>
+    '<div class="subtask-row" id="sub-' + k + '">' +
+      '<input type="checkbox"' + (v.done ? ' checked' : '') +
+        ' onchange="toggleSubtask(\'' + fbKey + '\',\'' + k + '\',this.checked)"' +
+        ' style="width:15px;height:15px;cursor:pointer;accent-color:var(--emerald);flex-shrink:0;">' +
+      '<span class="subtask-title' + (v.done ? ' done' : '') + '">' + (v.title||'') + '</span>' +
+      '<button onclick="deleteSubtask(\'' + fbKey + '\',\'' + k + '\')" class="subtask-del">×</button>' +
+    '</div>'
+  ).join('');
+  updateSubtaskProgress(fbKey, subtasks);
+}
+
+function updateSubtaskProgress(fbKey, subtasks) {
+  const bar = document.getElementById('subtask-progress');
+  if (!bar) return;
+  const items = subtasks ? Object.values(subtasks) : [];
+  if (!items.length) { bar.style.display='none'; return; }
+  const done = items.filter(x=>x.done).length;
+  const pct  = Math.round(done/items.length*100);
+  bar.style.display = 'block';
+  bar.querySelector('.subtask-pct').textContent = done + '/' + items.length + ' (' + pct + '%)';
+  bar.querySelector('.subtask-fill').style.width = pct + '%';
+}
+
+function addSubtask(fbKey) {
+  const inp = document.getElementById('subtask-inp');
+  if (!inp) return;
+  const title = inp.value.trim();
+  if (!title) return;
+  window._fbPush('pm_tasks/' + fbKey + '/subtasks', {
+    title, done: false, createdAt: new Date().toISOString()
+  }).then(() => { inp.value = ''; inp.focus(); })
+    .catch(() => showToast('Could not add subtask'));
+}
+
+function toggleSubtask(fbKey, subKey, done) {
+  window._fbSet('pm_tasks/' + fbKey + '/subtasks/' + subKey + '/done', done)
+    .catch(() => showToast('Could not update subtask'));
+}
+
+function deleteSubtask(fbKey, subKey) {
+  window._fbRemove('pm_tasks/' + fbKey + '/subtasks/' + subKey)
+    .catch(() => showToast('Could not delete subtask'));
+}
+
+// ── LINKS / ATTACHMENTS ─────────────────────────────────────────
+// Stored at pm_tasks/{taskKey}/links/{linkKey}: {label, url, createdAt}
+
+function renderLinks(fbKey, links) {
+  const wrap = document.getElementById('link-list');
+  if (!wrap) return;
+  const items = links ? Object.entries(links) : [];
+  wrap.innerHTML = items.length
+    ? items.map(([k, v]) =>
+        '<div class="link-row">' +
+          '<a href="' + v.url + '" target="_blank" rel="noopener" class="link-anchor">' +
+            '🔗 ' + (v.label || v.url) +
+          '</a>' +
+          '<button onclick="deleteLink(\'' + fbKey + '\',\'' + k + '\')" class="subtask-del">×</button>' +
+        '</div>'
+      ).join('')
+    : '<div style="font-size:12px;color:var(--muted);padding:4px 0;">No links added.</div>';
+}
+
+function addLink(fbKey) {
+  const urlInp   = document.getElementById('link-url-inp');
+  const labelInp = document.getElementById('link-label-inp');
+  if (!urlInp) return;
+  let url = urlInp.value.trim();
+  if (!url) return;
+  if (!url.match(/^https?:\/\//)) url = 'https://' + url;
+  const label = labelInp ? labelInp.value.trim() : '';
+  window._fbPush('pm_tasks/' + fbKey + '/links', {
+    url, label, createdAt: new Date().toISOString()
+  }).then(() => { urlInp.value = ''; if (labelInp) labelInp.value = ''; })
+    .catch(() => showToast('Could not add link'));
+}
+
+function deleteLink(fbKey, linkKey) {
+  window._fbRemove('pm_tasks/' + fbKey + '/links/' + linkKey)
+    .catch(() => showToast('Could not delete link'));
+}
+
+// ── TASK DEPENDENCIES ───────────────────────────────────────────
+// Stored on task record: blockedBy: [fbKey, ...] (array of task keys this task depends on)
+
+function renderDependencies(fbKey, task) {
+  const wrap = document.getElementById('dep-list');
+  if (!wrap) return;
+  const blocked = task.blockedBy || [];
+  if (!blocked.length) {
+    wrap.innerHTML = '<div style="font-size:12px;color:var(--muted);padding:4px 0;">No dependencies.</div>';
+    return;
+  }
+  wrap.innerHTML = blocked.map(depKey => {
+    const dep = (window._tasks||[]).find(x => x.fbKey === depKey);
+    const done = dep && dep.status === 'complete';
+    return '<div class="dep-row' + (done ? ' dep-done' : ' dep-blocking') + '">' +
+      (done ? '✓' : '⛔') + ' ' +
+      '<span>' + (dep ? dep.title : 'Unknown task') + '</span>' +
+      (done ? '' : ' <span class="dep-badge">Blocking</span>') +
+      '<button onclick="removeDependency(\'' + fbKey + '\',\'' + depKey + '\')" class="subtask-del">×</button>' +
+    '</div>';
+  }).join('');
+}
+
+function addDependency(fbKey) {
+  const sel = document.getElementById('dep-select');
+  if (!sel || !sel.value) return;
+  const depKey = sel.value;
+  const task = (window._tasks||[]).find(x => x.fbKey === fbKey);
+  if (!task) return;
+  const existing = task.blockedBy || [];
+  if (existing.includes(depKey)) return;
+  const updated = [...existing, depKey];
+  window._fbSet('pm_tasks/' + fbKey + '/blockedBy', updated)
+    .then(() => sel.value = '')
+    .catch(() => showToast('Could not add dependency'));
+}
+
+function removeDependency(fbKey, depKey) {
+  const task = (window._tasks||[]).find(x => x.fbKey === fbKey);
+  if (!task) return;
+  const updated = (task.blockedBy || []).filter(k => k !== depKey);
+  window._fbSet('pm_tasks/' + fbKey + '/blockedBy', updated.length ? updated : null)
+    .catch(() => showToast('Could not remove dependency'));
+}
+
+function populateDependencySelect(fbKey) {
+  const sel = document.getElementById('dep-select');
+  if (!sel) return;
+  const other = (window._tasks||[]).filter(x => x.fbKey !== fbKey);
+  sel.innerHTML = '<option value="">Add dependency...</option>' +
+    other.map(x => '<option value="' + x.fbKey + '">' + (x.title||'Untitled') + '</option>').join('');
+}
+
+// ── TIME TRACKER INTEGRATION ────────────────────────────────────
+// Pull logged hours from tt2/entries matched by projectId
+
+window._ttHours = {}; // projectId -> total hours
+
+function loadTTHours() {
+  if (!window._fbListen) return;
+  window._fbListen('tt2/entries', function(data) {
+    const hours = {};
+    if (data) {
+      const entries = Array.isArray(data)
+        ? data.filter(Boolean)
+        : Object.values(data).filter(Boolean);
+      entries.forEach(function(e) {
+        if (!e.projectId && !e.project) return;
+        const pid = e.projectId || e.project;
+        const h   = parseFloat(e.hours) || 0;
+        hours[pid] = (hours[pid] || 0) + h;
+      });
+    }
+    window._ttHours = hours;
+    // Refresh view if list is showing
+    if (document.getElementById('view-list') &&
+        document.getElementById('view-list').classList.contains('active')) {
+      renderList();
+    }
+  });
+}
+
+function getLoggedHours(projectId) {
+  if (!projectId || !window._ttHours) return 0;
+  // Match by exact ID or by project code
+  if (window._ttHours[projectId]) return window._ttHours[projectId];
+  // Try matching through projects list
+  const proj = (window._projects||[]).find(x => x.fbKey === projectId);
+  if (proj && proj.code && window._ttHours[proj.code]) return window._ttHours[proj.code];
+  return 0;
+}
+
+function fmtHours(h) {
+  if (!h) return '0h';
+  if (h < 1) return Math.round(h * 60) + 'm';
+  return h.toFixed(1).replace(/\.0$/, '') + 'h';
+}
+
+// ── DEADLINE NOTIFICATIONS ──────────────────────────────────────
+
+function checkDeadlineNotifications() {
+  if (!('Notification' in window)) return;
+  const tasks = (window._tasks||[]).filter(function(t) {
+    return t.dueDate && t.status !== 'complete';
+  });
+  const todayStr = today();
+  const urgent   = tasks.filter(function(t) {
+    const days = Math.ceil((new Date(t.dueDate) - new Date(todayStr)) / 86400000);
+    return days >= 0 && days <= 2;
+  });
+  const overdue  = tasks.filter(function(t) {
+    return t.dueDate < todayStr;
+  });
+
+  // Update hub badge count
+  updateDeadlineBadge(urgent.length + overdue.length);
+
+  // Browser notification (only if permission granted and not shown today)
+  const lastNotif = localStorage.getItem('pm_last_notif_date');
+  if (lastNotif === todayStr) return;
+  if (!urgent.length && !overdue.length) return;
+
+  function sendNotif() {
+    localStorage.setItem('pm_last_notif_date', todayStr);
+    const msg = [];
+    if (overdue.length) msg.push(overdue.length + ' overdue task' + (overdue.length>1?'s':''));
+    if (urgent.length) msg.push(urgent.length + ' due within 2 days');
+    new Notification('Power of Public — Project Manager', {
+      body: msg.join(' · '),
+      icon: 'favicon.ico'
+    });
+  }
+
+  if (Notification.permission === 'granted') {
+    sendNotif();
+  } else if (Notification.permission !== 'denied') {
+    Notification.requestPermission().then(function(p) {
+      if (p === 'granted') sendNotif();
+    });
+  }
+}
+
+function updateDeadlineBadge(count) {
+  // Show/hide a badge in the header
+  var badge = document.getElementById('deadline-badge');
+  if (!badge) return;
+  if (count > 0) {
+    badge.textContent = count;
+    badge.style.display = 'flex';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+
 </script>
 
 </body>
