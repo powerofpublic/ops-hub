@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+<meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RFP Monitor: Power of Public</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -1611,6 +1612,64 @@
 </div>
 
 
+<!-- ══ EDIT OPPORTUNITY MODAL ══ -->
+<div id="edit-opp-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1000;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border-radius:16px;padding:28px 32px;max-width:540px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <h3 style="font-family:Georgia,serif;font-size:20px;color:#1A1A2E;margin:0;">Edit Opportunity</h3>
+      <button onclick="closeEditOpp()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#8a847c;line-height:1;">&#215;</button>
+    </div>
+    <input type="hidden" id="edit-opp-id">
+    <div style="display:grid;grid-template-columns:1fr;gap:14px;">
+      <div>
+        <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#8a847c;display:block;margin-bottom:4px;">Opportunity Title *</label>
+        <input id="edit-title" type="text" style="width:100%;padding:9px 12px;border:1.5px solid #e8e4de;border-radius:8px;font-size:13px;font-family:Arial,sans-serif;">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#8a847c;display:block;margin-bottom:4px;">Organization</label>
+          <input id="edit-org" type="text" style="width:100%;padding:9px 12px;border:1.5px solid #e8e4de;border-radius:8px;font-size:13px;font-family:Arial,sans-serif;">
+        </div>
+        <div>
+          <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#8a847c;display:block;margin-bottom:4px;">Type</label>
+          <select id="edit-type" style="width:100%;padding:9px 12px;border:1.5px solid #e8e4de;border-radius:8px;font-size:13px;font-family:Arial,sans-serif;background:#fff;">
+            <option value="Government">Government</option>
+            <option value="Foundation">Foundation</option>
+            <option value="Nonprofit / Association">Nonprofit / Association</option>
+            <option value="Academic">Academic</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#8a847c;display:block;margin-bottom:4px;">Deadline</label>
+          <input id="edit-deadline" type="date" style="width:100%;padding:9px 12px;border:1.5px solid #e8e4de;border-radius:8px;font-size:13px;font-family:Arial,sans-serif;">
+        </div>
+        <div>
+          <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#8a847c;display:block;margin-bottom:4px;">Est. Value ($)</label>
+          <input id="edit-value" type="text" placeholder="e.g. 75000" style="width:100%;padding:9px 12px;border:1.5px solid #e8e4de;border-radius:8px;font-size:13px;font-family:Arial,sans-serif;">
+        </div>
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#8a847c;display:block;margin-bottom:4px;">Source URL</label>
+        <input id="edit-url" type="url" placeholder="https://..." style="width:100%;padding:9px 12px;border:1.5px solid #e8e4de;border-radius:8px;font-size:13px;font-family:Arial,sans-serif;">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#8a847c;display:block;margin-bottom:4px;">Description / Scope</label>
+        <textarea id="edit-summary" rows="3" style="width:100%;padding:9px 12px;border:1.5px solid #e8e4de;border-radius:8px;font-size:13px;font-family:Arial,sans-serif;resize:vertical;"></textarea>
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#8a847c;display:block;margin-bottom:4px;">Notes</label>
+        <textarea id="edit-notes" rows="3" style="width:100%;padding:9px 12px;border:1.5px solid #e8e4de;border-radius:8px;font-size:13px;font-family:Arial,sans-serif;resize:vertical;"></textarea>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:20px;">
+      <button onclick="saveEditOpp()" style="flex:1;background:#E8187A;color:#fff;border:none;border-radius:8px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">Save Changes</button>
+      <button onclick="closeEditOpp()" style="background:none;border:1.5px solid #e8e4de;border-radius:8px;padding:11px 18px;font-size:13px;cursor:pointer;color:#8a847c;font-family:Arial,sans-serif;">Cancel</button>
+    </div>
+  </div>
+</div>
+
 </div><!-- /rfp-app -->
 
 <script>
@@ -1811,6 +1870,7 @@ function renderPipeline(list){
           ${o.status==='considering'?`<a href="go-no-go.html?title=${encodeURIComponent(o.title)}&org=${encodeURIComponent(o.org||'')}${o.deadline&&o.deadline!=='Unknown'?'&deadline='+encodeURIComponent(o.deadline):''}" class="btn sm" style="background:#EDE8FF;color:#7C3AED;border-color:#C4B5FD;">📋 Go/No-Go form →</a>`:''}
           <button class="btn sm ${gc?gc+' gng-score':''}" onclick="openGng(${o.id})">${gl}</button>
           <button class="btn sm" onclick="openNotes(${o.id})">📝 ${o.notes?'Edit notes':'Add notes'}</button>
+          <button class="btn sm" onclick="openEditOpp(${o.id})" style="background:#EEF2FF;color:#3730A3;border-color:#C7D2FE;">✏ Edit</button>
           <button class="btn sm danger" onclick="deleteOpp(${o.id})" style="margin-left:auto;">Remove</button>
         </div>
       </div>`;
@@ -2522,6 +2582,49 @@ function saveNewSearch(){
 /* ─── FEDERAL SEARCH ─── */
 
 /* ─── INIT ─── */
+
+/* ─── PIPELINE EDIT ─── */
+function openEditOpp(id){
+  var o = pipeline.find(function(p){ return p.id === id; });
+  if(!o) return;
+
+  document.getElementById('edit-opp-id').value   = id;
+  document.getElementById('edit-title').value     = o.title    || '';
+  document.getElementById('edit-org').value       = o.org      || '';
+  document.getElementById('edit-type').value      = o.type     || 'Government';
+  document.getElementById('edit-deadline').value  = o.deadline && o.deadline !== 'Unknown' ? o.deadline : '';
+  document.getElementById('edit-value').value     = o.value    || '';
+  document.getElementById('edit-url').value       = o.url      || '';
+  document.getElementById('edit-summary').value   = o.summary  || '';
+  document.getElementById('edit-notes').value     = o.notes    || '';
+
+  var modal = document.getElementById('edit-opp-modal');
+  modal.style.display = 'flex';
+}
+function closeEditOpp(){
+  document.getElementById('edit-opp-modal').style.display = 'none';
+}
+function saveEditOpp(){
+  var id    = parseFloat(document.getElementById('edit-opp-id').value);
+  var idx   = pipeline.findIndex(function(p){ return p.id === id; });
+  if(idx === -1) return;
+
+  var title = document.getElementById('edit-title').value.trim();
+  if(!title){ alert('Title is required.'); return; }
+
+  pipeline[idx].title    = title;
+  pipeline[idx].org      = document.getElementById('edit-org').value.trim();
+  pipeline[idx].type     = document.getElementById('edit-type').value;
+  pipeline[idx].deadline = document.getElementById('edit-deadline').value || 'Unknown';
+  pipeline[idx].value    = document.getElementById('edit-value').value.trim();
+  pipeline[idx].url      = document.getElementById('edit-url').value.trim();
+  pipeline[idx].summary  = document.getElementById('edit-summary').value.trim();
+  pipeline[idx].notes    = document.getElementById('edit-notes').value.trim();
+
+  persist(); doFilter(); updatePipeline();
+  closeEditOpp();
+}
+
 updatePipeline();
 doFilter();
 renderUserPortals();
@@ -2581,6 +2684,64 @@ function clearQuickAdd(){
 
 <div style="text-align:center;padding:20px 32px;background:#1A1A2E;margin-top:40px;">
   <a href="index.html" style="font-size:12px;color:rgba(255,255,255,0.35);text-decoration:none;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:0.02em;">← Back to Power of Public Operations Hub</a>
+</div>
+
+<!-- ══ EDIT OPPORTUNITY MODAL ══ -->
+<div id="edit-opp-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1000;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border-radius:16px;padding:28px 32px;max-width:540px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <h3 style="font-family:Georgia,serif;font-size:20px;color:#1A1A2E;margin:0;">Edit Opportunity</h3>
+      <button onclick="closeEditOpp()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#8a847c;line-height:1;">&#215;</button>
+    </div>
+    <input type="hidden" id="edit-opp-id">
+    <div style="display:grid;grid-template-columns:1fr;gap:14px;">
+      <div>
+        <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#8a847c;display:block;margin-bottom:4px;">Opportunity Title *</label>
+        <input id="edit-title" type="text" style="width:100%;padding:9px 12px;border:1.5px solid #e8e4de;border-radius:8px;font-size:13px;font-family:Arial,sans-serif;">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#8a847c;display:block;margin-bottom:4px;">Organization</label>
+          <input id="edit-org" type="text" style="width:100%;padding:9px 12px;border:1.5px solid #e8e4de;border-radius:8px;font-size:13px;font-family:Arial,sans-serif;">
+        </div>
+        <div>
+          <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#8a847c;display:block;margin-bottom:4px;">Type</label>
+          <select id="edit-type" style="width:100%;padding:9px 12px;border:1.5px solid #e8e4de;border-radius:8px;font-size:13px;font-family:Arial,sans-serif;background:#fff;">
+            <option value="Government">Government</option>
+            <option value="Foundation">Foundation</option>
+            <option value="Nonprofit / Association">Nonprofit / Association</option>
+            <option value="Academic">Academic</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#8a847c;display:block;margin-bottom:4px;">Deadline</label>
+          <input id="edit-deadline" type="date" style="width:100%;padding:9px 12px;border:1.5px solid #e8e4de;border-radius:8px;font-size:13px;font-family:Arial,sans-serif;">
+        </div>
+        <div>
+          <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#8a847c;display:block;margin-bottom:4px;">Est. Value ($)</label>
+          <input id="edit-value" type="text" placeholder="e.g. 75000" style="width:100%;padding:9px 12px;border:1.5px solid #e8e4de;border-radius:8px;font-size:13px;font-family:Arial,sans-serif;">
+        </div>
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#8a847c;display:block;margin-bottom:4px;">Source URL</label>
+        <input id="edit-url" type="url" placeholder="https://..." style="width:100%;padding:9px 12px;border:1.5px solid #e8e4de;border-radius:8px;font-size:13px;font-family:Arial,sans-serif;">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#8a847c;display:block;margin-bottom:4px;">Description / Scope</label>
+        <textarea id="edit-summary" rows="3" style="width:100%;padding:9px 12px;border:1.5px solid #e8e4de;border-radius:8px;font-size:13px;font-family:Arial,sans-serif;resize:vertical;"></textarea>
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#8a847c;display:block;margin-bottom:4px;">Notes</label>
+        <textarea id="edit-notes" rows="3" style="width:100%;padding:9px 12px;border:1.5px solid #e8e4de;border-radius:8px;font-size:13px;font-family:Arial,sans-serif;resize:vertical;"></textarea>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:20px;">
+      <button onclick="saveEditOpp()" style="flex:1;background:#E8187A;color:#fff;border:none;border-radius:8px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">Save Changes</button>
+      <button onclick="closeEditOpp()" style="background:none;border:1.5px solid #e8e4de;border-radius:8px;padding:11px 18px;font-size:13px;cursor:pointer;color:#8a847c;font-family:Arial,sans-serif;">Cancel</button>
+    </div>
+  </div>
 </div>
 
 </div><!-- /rfp-app -->
