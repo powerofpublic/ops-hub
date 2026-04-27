@@ -1666,6 +1666,7 @@ const GNG_CRITERIA = [
 let sources  = JSON.parse(localStorage.getItem('pop_src')  || 'null') || DEFAULTS;
 let pipeline = JSON.parse(localStorage.getItem('pop_pipe') || '[]');
 let savedSearches=JSON.parse(localStorage.getItem('pop_saved_searches')||'[]');
+let userPortals = JSON.parse(localStorage.getItem('pop_portals') || '[]');
 let pending  = [];
 let statusFilter = 'all';
 let activeModal  = null;
@@ -2204,43 +2205,143 @@ function cp(id,btn){
   });
 }
 function importFromClaude(){
-  const raw=document.getElementById('claude-import-text').value.trim();
-  const status=document.getElementById('import-status');
-  if(!raw){status.textContent='Please paste Claude results first.';return;}
-  const added=[];
-  try{
-    const cl=raw.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
-    const si=cl.indexOf('[');
-    if(si>=0){
-      const items=JSON.parse(cl.slice(si));
-      if(Array.isArray(items)&&items.length){
-        items.forEach(item=>{
-          if(item.title||item.org){
-            // Duplicate check
-          const isDup = pipeline.some(p => p.title.toLowerCase().trim() === (item.title||item.name||'').toLowerCase().trim());
-          if(isDup){ console.log('Duplicate skipped:', item.title); return; }
-          pipeline.push({id:Date.now()+Math.random(),
-              title:item.title||item.name||'Untitled',
-              org:item.org||item.organization||item.funder||item.agency||'',
-              type:item.type||'Government',deadline:item.deadline||'',
-              url:item.url||item.link||'',summary:item.description||item.summary||'',
-              status:'new',gngScore:null,notes:'',value:''});
-            added.push(item.title);
+  var raw = document.getElementById('claude-import-text').value.trim();
+  var status = document.getElementById('import-status');
+  if(!raw){ status.textContent = 'Please paste Claude results first.'; return; }
+
+  var added = [];
+
+  // Strategy 1: JSON array (Claude sometimes returns structured JSON)
+  try {
+    var cleaned = raw.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
+    // Find the first [ in the text
+    var si = cleaned.indexOf('[');
+    if(si >= 0){
+      var items = JSON.parse(cleaned.slice(si));
+      if(Array.isArray(items) && items.length){
+        items.forEach(function(item){
+          if(item.title || item.org || item.organization || item.name){
+            var dup = pipeline.some(function(p){ return p.title.toLowerCase().trim() === (item.title||item.name||'').toLowerCase().trim(); });
+            if(!dup){
+              pipeline.unshift({
+                id: Date.now()+Math.random(),
+                title: item.title || item.name || 'Untitled',
+                org:   item.org || item.organization || item.agency || item.funder || '',
+                type:  item.type || 'Government',
+                deadline: item.deadline || item.close_date || '',
+                url:   item.url || item.link || item.source || '',
+                summary: item.description || item.summary || item.note || '',
+                status: 'new', gngScore: null, notes: '', value: ''
+              });
+              added.push(item.title || item.name);
+            }
           }
         });
-        persist();doFilter();updatePipeline();
-        status.textContent='Added Added '+added.length+' opportunities';
-        status.style.color='var(--green)';
-        document.getElementById('claude-import-text').value='';
-        setTimeout(()=>{status.textContent='';},3000);return;
+        if(added.length){
+          persist(); doFilter(); updatePipeline();
+          status.textContent = added.length + ' opportunit' + (added.length===1?'y':'ies') + ' added to pipeline.';
+          status.style.color = 'var(--green)';
+          document.getElementById('claude-import-text').value = '';
+          setTimeout(function(){ status.textContent = ''; }, 3000);
+          return;
+        }
       }
     }
-  }catch(e){}
-  status.textContent='Could not parse. Paste the full Claude response.';
-  status.style.color='var(--pink)';
+  } catch(e){}
+
+  // Strategy 2: Numbered or bulleted list from Claude plain text
+  // Handles formats like:
+  // 1. **Title** — Organization | Deadline: date | Link: url
+  // - Title (Organization) - deadline - url
+  // **Title** | Agency | Deadline | URL
+  var lines = raw.split('\n');
+  var current = {};
+
+  function saveCurrent(){
+    if(current.title && current.title.length > 3){
+      var dup = pipeline.some(function(p){ return p.title.toLowerCase().trim() === current.title.toLowerCase().trim(); });
+      if(!dup){
+        pipeline.unshift({
+          id: Date.now()+Math.random(),
+          title: current.title, org: current.org||'',
+          type: current.type||'Government',
+          deadline: current.deadline||'', url: current.url||'',
+          summary: current.summary||'',
+          status: 'new', gngScore: null, notes: '', value: ''
+        });
+        added.push(current.title);
+      }
+    }
+    current = {};
+  }
+
+  lines.forEach(function(line){
+    var tr = line.trim();
+    if(!tr){ saveCurrent(); return; }
+
+    // Remove markdown bold/italic
+    var clean = tr.replace(/\*\*/g,'').replace(/\*/g,'').replace(/__/g,'').trim();
+
+    // Detect title: numbered item, bullet, or standalone bold title
+    var titleMatch = clean.match(/^\d+\.\s+(.+)/) ||
+                     clean.match(/^[-*•]\s+(.+)/) ||
+                     (clean.length < 120 && !clean.match(/^(org|agency|type|deadline|url|link|source|description|summary|note)/i) && !clean.match(/https?:\/\//) ? [null, clean] : null);
+
+    if(titleMatch && titleMatch[1] && !current.title){
+      var titleText = titleMatch[1].trim();
+      // Strip trailing org in parens or after pipe
+      titleText = titleText.split('|')[0].split('(')[0].trim();
+      if(titleText.length > 3) { saveCurrent(); current.title = titleText; return; }
+    }
+
+    // Extract URL
+    var urlMatch = clean.match(/https?:\/\/[^\s]+/);
+    if(urlMatch && current.title){ current.url = urlMatch[0].replace(/[),\]]*$/, ''); }
+
+    // Extract deadline
+    var dlMatch = clean.match(/deadline[:\s]+([^|\n]+)/i) ||
+                  clean.match(/due[:\s]+([^|\n]+)/i) ||
+                  clean.match(/closes?[:\s]+([^|\n]+)/i) ||
+                  clean.match(/(\d{4}-\d{2}-\d{2})/) ||
+                  clean.match(/((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[^,\n|]{3,15}\d{4})/i);
+    if(dlMatch && current.title){ current.deadline = dlMatch[1].trim(); }
+
+    // Extract org
+    var orgMatch = clean.match(/(?:org|agency|organization|funder|department)[:\s]+([^|\n]+)/i);
+    if(orgMatch && current.title){ current.org = orgMatch[1].trim(); }
+
+    // Extract description
+    var descMatch = clean.match(/(?:description|summary|scope)[:\s]+(.+)/i);
+    if(descMatch && current.title){ current.summary = descMatch[1].trim(); }
+
+    // Pipe-delimited single line: Title | Org | Deadline | URL
+    if(clean.includes('|') && !current.title){
+      var parts = clean.split('|').map(function(p){ return p.trim(); });
+      if(parts.length >= 2 && parts[0].length > 3){
+        saveCurrent();
+        current.title = parts[0].replace(/^\d+\.\s*/, '');
+        if(parts[1] && !parts[1].match(/https?:\/\//)) current.org = parts[1];
+        parts.forEach(function(p){
+          if(p.match(/https?:\/\//)) current.url = p.replace(/[),\]]*$/, '');
+          if(p.match(/\d{4}-\d{2}-\d{2}/) || p.match(/(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)/i)) current.deadline = p;
+        });
+      }
+    }
+  });
+  saveCurrent();
+
+  if(added.length){
+    persist(); doFilter(); updatePipeline();
+    status.textContent = added.length + ' opportunit' + (added.length===1?'y':'ies') + ' added to pipeline.';
+    status.style.color = 'var(--green)';
+    document.getElementById('claude-import-text').value = '';
+    setTimeout(function(){ status.textContent = ''; }, 3000);
+  } else {
+    status.textContent = 'No opportunities found. Make sure you paste the full Claude response.';
+    status.style.color = 'var(--pink)';
+  }
 }
 
-/* --- PORTAL CHECKLIST --- */
 function getPortalWeekKey(){
   const now=new Date();
   const jan1=new Date(now.getFullYear(),0,1);
