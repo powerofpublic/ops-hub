@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Power of Public — Operations Hub</title>
@@ -287,7 +288,49 @@ footer span { color:var(--pink); }
   <div class="hero-inner">
     <div class="hero-eyebrow">Power of Public, LLC · Operations Hub</div>
     <h1 class="hero-title">Good to see you, <em>Candice.</em></h1>
-    <p class="hero-sub">Your private workspace for business operations — time tracking, business development, and more.</p>
+    <p class="hero-sub" id="hero-affirmation">Welcome to your private workspace for business operations.</p>
+  <script>
+  (function(){
+    var msgs=[
+    "Welcome to your private workspace for business operations. What are we mapping out today?",
+    "Welcome to your private workspace for business operations. What dreams are we making come true today?",
+    "You can do this. We can do this.",
+    "Close your eyes and dream BIG like Faith Evans.",
+    "The most common way people give up their power is by thinking they don't have any. — Alice Walker",
+    "I had to make my own living and my own opportunity. But I made it. Don't sit down and wait for opportunities to come. — Madam C.J. Walker",
+    "Define success on your own terms, achieve it by your own rules, and build a life you're proud to live. — Anne Sweeney... and Candice.",
+    "Excellence is not a destination but a continuous journey that never ends. — Brian Tracy",
+    "I am deliberate and afraid of nothing. — Audre Lorde",
+    "I am no longer accepting the things I cannot change. I am changing the things I cannot accept. — Angela Davis",
+    "When you undervalue what you do, the world will undervalue who you are. — Oprah Winfrey",
+    "The thing always happens that you really believe in; and the belief in a thing makes it happen. — Frank Lloyd Wright",
+    "Don't be afraid. Be focused. Be determined. Be hopeful. Be empowered. — Michelle Obama",
+    "Power's not given to you. You have to take it. — Beyoncé",
+    "Every day is a new opportunity to reach that goal. — Michael Jordan",
+    "Chase the vision, not the money. The money will end up following you. — Tony Hsieh",
+    "You've got to learn to leave the table when love's no longer being served. Carry that energy into every room, every meeting, every contract. — Nina Simone",
+    "Took my time and then I realized it's time to go get mine. It's all about the Benjamins. — Puff Daddy (The Notorious B.I.G., 1997)",
+    "Started from the bottom, now the whole team here. — Drake",
+    "I came in the game, I never ran from the fame. I'm the same when I came. — Jay-Z",
+    "Don't stop, get it, get it. — Timbaland feat. Missy Elliott",
+    "Get up, get out and get something. — OutKast, 1994",
+    "Stay focused. Go after your dreams and keep moving toward your goals. — LL Cool J",
+    "It's bigger than hip hop. — Dead Prez",
+    "The future belongs to those who believe in the beauty of their dreams. — Eleanor Roosevelt",
+    "Service is the rent we pay for the privilege of living on this earth. — Shirley Chisholm",
+    "We are each other's harvest; we are each other's business; we are each other's magnitude and bond. — Gwendolyn Brooks",
+    "If you don't like something, change it. If you can't change it, change your attitude. — Maya Angelou",
+    "You are your best thing. — Toni Morrison",
+    "The most courageous act is still to think for yourself. Aloud. — Coco Chanel",
+    "Success is liking yourself, liking what you do, and liking how you do it. — Maya Angelou"
+    ];
+    var stored = sessionStorage.getItem('pop_affirmation_idx');
+    var idx = stored !== null ? (parseInt(stored) + 1) % msgs.length : Math.floor(Math.random() * msgs.length);
+    sessionStorage.setItem('pop_affirmation_idx', idx);
+    var el = document.getElementById('hero-affirmation');
+    if(el) el.textContent = msgs[idx];
+  })();
+  </script>
   </div>
 </div>
 
@@ -296,8 +339,7 @@ footer span { color:var(--pink); }
   <div class="section-label">Operations Tools</div>
   <div class="tools-grid">
 
-    <!-- Time Tracker -->
-    <a class="tool-card pink" href="tracker.html">
+  <a class="tool-card pink" href="tracker.html">
       <div class="tool-icon">⏱</div>
       <span class="tool-tag live">Live</span>
       <div class="tool-name">Time Entry and Reporting</div>
@@ -305,8 +347,15 @@ footer span { color:var(--pink); }
       <div class="tool-action">Open tracker →</div>
     </a>
 
-    <!-- Go/No-Go Form -->
-    <a class="tool-card amber" href="go-no-go.html">
+  <a class="tool-card blue" href="rfp-monitor.html">
+      <div class="tool-icon">📡</div>
+      <span class="tool-tag live">Live</span>
+      <div class="tool-name">RFP Monitor</div>
+      <div class="tool-desc">Track your full RFP pipeline from discovery through award. Search opportunities, manage your Go/No-Go scorecard, monitor deadlines, and generate weekly digests.</div>
+      <div class="tool-action">Open monitor →</div>
+    </a>
+
+  <a class="tool-card amber" href="go-no-go.html">
       <div class="tool-icon">📋</div>
       <span class="tool-tag live">Live</span>
       <div class="tool-name">RFP Go / No-Go</div>
@@ -314,9 +363,7 @@ footer span { color:var(--pink); }
       <div class="tool-action">Open form →</div>
     </a>
 
-
-    <!-- Proposal Tracker -->
-    <a class="tool-card emerald" href="proposal-tracker.html">
+  <a class="tool-card emerald" href="proposal-tracker.html">
       <div class="tool-icon">📁</div>
       <span class="tool-tag live">Live</span>
       <div class="tool-name">Proposal Tracker</div>
@@ -324,8 +371,7 @@ footer span { color:var(--pink); }
       <div class="tool-action">Open tracker →</div>
     </a>
 
-    <!-- Project Manager -->
-    <a class="tool-card navy" href="project-manager.html">
+  <a class="tool-card navy" href="project-manager.html">
       <div class="tool-icon">🗂</div>
       <span class="tool-tag live">Live</span>
       <div class="tool-name">Project Manager</div>
@@ -333,14 +379,25 @@ footer span { color:var(--pink); }
       <div class="tool-action">Open manager →</div>
     </a>
 
-    <!-- RFP Monitor -->
-    <a class="tool-card blue" href="rfp-monitor.html">
-      <div class="tool-icon">📡</div>
+</div>
       <span class="tool-tag live">Live</span>
-      <div class="tool-name">RFP Monitor</div>
-      <div class="tool-desc">Track your full RFP pipeline from discovery through award. Search opportunities, manage your Go/No-Go scorecard, monitor deadlines, and generate weekly digests.</div>
-      <div class="tool-action">Open monitor →</div>
+      <div class="tool-name">Time Entry and Reporting</div>
+      <div class="tool-desc">Track billable hours, log expenses, generate invoices, and run reports across all your projects. Synced across all devices via Firebase.</div>
+      <div class="tool-action">Open tracker →</div>
     </a>
+
+    <!-- Go/No-Go Form -->
+    
+
+
+    <!-- Proposal Tracker -->
+    
+
+    <!-- Project Manager -->
+    
+
+    <!-- RFP Monitor -->
+    
 
   </div>
 
