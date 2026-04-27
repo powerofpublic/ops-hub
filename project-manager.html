@@ -225,106 +225,38 @@ td { padding:12px 14px; vertical-align:middle; font-size:13px; }
 .kanban-card-meta  { font-size:11px; color:var(--muted); display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:6px; }
 .kanban-card-project { font-size:10.5px; font-weight:600; color:var(--pink); margin-bottom:4px; }
 
-/* ── GANTT ──────────────────────────────── */
-.gantt-wrap { background:var(--surface); border:1.5px solid var(--border); border-radius:14px; overflow:auto; box-shadow:0 2px 12px rgba(0,0,0,0.06); }
-.gantt-header-row { display:flex; background:var(--cream); border-bottom:1.5px solid var(--border); position:sticky; top:0; z-index:10; }
-.gantt-label-col { width:260px; flex-shrink:0; padding:10px 14px; font-size:10.5px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); border-right:1.5px solid var(--border); }
-.gantt-dates-header { display:flex; flex:1; overflow:hidden; }
-.gantt-date-cell { min-width:36px; flex:1; text-align:center; font-size:9px; font-weight:700; color:var(--muted); padding:10px 2px; border-right:1px solid var(--border); letter-spacing:0.04em; text-transform:uppercase; }
-.gantt-date-cell.today-col { background:#FEF7E8; color:var(--amber); }
-.gantt-row { display:flex; border-bottom:1px solid var(--border); align-items:center; min-height:44px; }
-.gantt-row:last-child { border-bottom:none; }
-.gantt-row:hover { background:#fdf8fc; }
-.gantt-task-label { width:260px; flex-shrink:0; padding:8px 14px; border-right:1.5px solid var(--border); cursor:pointer; }
-.gantt-task-name { font-size:12.5px; font-weight:600; color:var(--navy); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.gantt-task-sub  { font-size:10.5px; color:var(--muted); margin-top:1px; }
-.gantt-bar-area  { flex:1; position:relative; height:44px; display:flex; align-items:center; }
-.gantt-bar { position:absolute; height:20px; border-radius:4px; min-width:4px; display:flex; align-items:center; padding:0 6px; font-size:10px; font-weight:600; color:#fff; white-space:nowrap; overflow:hidden; cursor:pointer; transition:opacity 0.15s; }
-.gantt-bar:hover { opacity:0.85; }
-.gantt-bar.s-todo       { background:var(--todo); }
-.gantt-bar.s-inprogress { background:var(--inprogress); }
-.gantt-bar.s-inreview   { background:var(--amber); }
-.gantt-bar.s-complete   { background:var(--complete); }
-.gantt-bar.s-blocked    { background:var(--blocked); }
-.gantt-today-line { position:absolute; top:0; bottom:0; width:2px; background:var(--amber); opacity:0.6; z-index:5; pointer-events:none; }
-.gantt-empty { padding:60px 24px; text-align:center; color:var(--muted); font-size:13px; }
+/* ── GANTT 4-COLUMN LAYOUT ── */
+    .gantt-table-wrap { display:block; overflow-x:auto; overflow-y:auto; max-height:600px; scroll-behavior:smooth; }
+    .gantt-table-wrap::-webkit-scrollbar { height:6px;width:6px; }
+    .gantt-table-wrap::-webkit-scrollbar-thumb { background:var(--border);border-radius:3px; }
+    .gantt-head-row { display:flex; min-height:44px; background:var(--surface2); border-bottom:2px solid var(--border); position:sticky; top:0; z-index:5; }
+    .gantt-th { padding:0 12px; display:flex; align-items:center; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--muted); border-right:1px solid var(--border); flex-shrink:0; }
+    .gantt-row { display:flex; min-height:44px; border-bottom:1px solid var(--border); align-items:stretch; }
+    .gantt-row:hover { background:var(--surface2); }
+    .gantt-task-label { width:200px; min-width:200px; flex:0 0 200px; padding:8px 12px; cursor:pointer; display:flex; flex-direction:column; justify-content:center; border-right:1px solid var(--border); background:inherit; position:sticky; left:0; z-index:3; }
+    .gantt-col-assign { width:120px; min-width:120px; flex:0 0 120px; padding:8px 10px; display:flex; align-items:center; font-size:11.5px; color:var(--muted); border-right:1px solid var(--border); background:inherit; position:sticky; left:200px; z-index:3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .gantt-col-start { width:90px; min-width:90px; flex:0 0 90px; padding:8px 8px; display:flex; align-items:center; font-size:11px; color:var(--muted); border-right:1px solid var(--border); background:inherit; position:sticky; left:320px; z-index:3; white-space:nowrap; }
+    .gantt-col-end { width:90px; min-width:90px; flex:0 0 90px; padding:8px 8px; display:flex; align-items:center; font-size:11px; color:var(--muted); border-right:2px solid var(--border); background:inherit; position:sticky; left:410px; z-index:3; white-space:nowrap; }
+    .gantt-task-name { font-size:12.5px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .gantt-task-sub { font-size:10.5px; color:var(--muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .gantt-task-label:hover .gantt-task-name { color:var(--pink); }
+    .gantt-bar-area { position:relative; flex:1; min-height:44px; }
+    
+    /* ── KANBAN DRAG & DROP ── */
+    .kanban-card { cursor: grab; position: relative; transition: box-shadow 0.15s, opacity 0.15s, transform 0.12s; }
+    .kanban-card:active { cursor: grabbing; }
+    .kanban-card.dragging { opacity: 0.4; transform: scale(0.97); box-shadow: 0 8px 24px rgba(0,0,0,0.18); }
+    .kanban-col { transition: background 0.15s, border-color 0.15s; }
+    .kanban-col.drag-over { background: var(--pink-light); border-color: var(--pink); border-style: dashed; }
+    .kanban-col.drag-over .kanban-empty-col { color: var(--pink); border-color: var(--pink); }
+    .kanban-empty-col { font-size:12px; color:var(--muted); text-align:center; padding:20px 0;
+      border:1.5px dashed var(--border); border-radius:8px; transition: all 0.15s; }
+    .kanban-drag-handle { position:absolute; top:8px; right:8px; font-size:14px; color:var(--muted);
+      opacity:0; transition:opacity 0.12s; cursor:grab; line-height:1; }
+    .kanban-card:hover .kanban-drag-handle { opacity:0.6; }
+    .kanban-card:hover .kanban-drag-handle:hover { opacity:1; color:var(--pink); }
 
-/* ── CALENDAR ───────────────────────────── */
-.cal-nav { display:flex; align-items:center; gap:12px; margin-bottom:16px; background:var(--surface); border:1.5px solid var(--border); border-radius:12px; padding:14px 20px; }
-.cal-month-label { font-family:Georgia, 'Times New Roman', serif; font-size:20px; font-weight:900; flex:1; color:var(--navy); }
-.cal-grid-header { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:4px; }
-.cal-day-hdr { text-align:center; font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; padding:6px 0; }
-.cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
-.cal-cell { background:var(--surface); border:1.5px solid var(--border); border-radius:10px; padding:8px; min-height:110px; transition:all 0.12s; }
-.cal-cell.other-month { background:var(--tan); opacity:0.5; }
-.cal-cell.today-cell  { border-color:var(--pink); border-width:2px; }
-.cal-cell-num { font-size:12px; font-weight:700; color:var(--muted); margin-bottom:4px; }
-.cal-cell.today-cell .cal-cell-num { color:var(--pink); }
-.cal-task-chip { font-size:10px; font-weight:600; padding:2px 6px; border-radius:4px; margin-bottom:2px; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block; }
-.cal-task-chip:hover { opacity:0.8; }
-.chip-todo       { background:#EEF2FF; color:var(--todo); }
-.chip-inprogress { background:#EFF6FF; color:var(--inprogress); }
-.chip-inreview   { background:#FEF7E8; color:#9A7312; }
-.chip-complete   { background:#EBF7F2; color:var(--complete); }
-.chip-blocked    { background:#FEECF0; color:var(--blocked); }
-
-/* ── MODAL ──────────────────────────────── */
-.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:200; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
-.modal-overlay.open { display:flex; }
-.modal { background:var(--surface); border:1.5px solid var(--border); border-radius:18px; padding:32px; width:580px; max-height:90vh; overflow-y:auto; box-shadow:0 8px 40px rgba(0,0,0,0.15); }
-.modal-title { font-family:Georgia, 'Times New Roman', serif; font-size:22px; font-weight:900; margin-bottom:24px; color:var(--navy); }
-.form-group { margin-bottom:14px; }
-.form-label { display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:6px; }
-.form-input { width:100%; background:#faf9f7; border:1.5px solid var(--border); color:var(--charcoal); font-family:Arial, sans-serif; font-size:13px; padding:9px 12px; border-radius:8px; outline:none; transition:border-color 0.15s; }
-.form-input:focus { border-color:var(--navy); box-shadow:0 0 0 3px rgba(26,26,46,0.06); }
-textarea.form-input { resize:vertical; min-height:80px; }
-.form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-.form-row-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
-.modal-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:24px; padding-top:20px; border-top:1px solid var(--border); }
-
-/* PROJECT MANAGE MODAL */
-.proj-item { display:flex; align-items:center; gap:10px; padding:8px 12px; background:var(--tan); border:1.5px solid var(--border); border-radius:8px; margin-bottom:6px; }
-.proj-item-dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
-.proj-item-name { flex:1; font-size:13px; font-weight:500; }
-.proj-item-del { background:none; border:none; cursor:pointer; color:var(--muted); font-size:14px; padding:2px 6px; border-radius:4px; }
-.proj-item-del:hover { background:#FEECF0; color:var(--pink); }
-
-/* EMPTY STATE */
-.empty-state { text-align:center; padding:60px 20px; color:var(--muted); }
-.empty-state .icon { font-size:44px; margin-bottom:12px; }
-.empty-state h3 { font-family:Georgia, 'Times New Roman', serif; font-size:20px; color:var(--navy); margin-bottom:8px; }
-.empty-state p { font-size:13px; line-height:1.6; max-width:340px; margin:0 auto 20px; }
-
-/* TOAST */
-.toast { position:fixed; bottom:24px; right:24px; background:var(--navy); color:#fff; padding:12px 20px; border-radius:10px; font-size:13px; font-weight:500; z-index:999; transform:translateY(80px); opacity:0; transition:all 0.3s cubic-bezier(.4,0,.2,1); box-shadow:0 4px 16px rgba(26,26,46,0.3); }
-.toast.show { transform:translateY(0); opacity:1; }
-.toast.green { background:var(--emerald); }
-
-@media (max-width:900px) {
-  .kanban-board { grid-template-columns:1fr 1fr; }
-  .view-tabs .view-tab span { display:none; }
-  .header-inner { padding:0 16px; }
-  .toolbar { padding:16px 16px 12px; }
-  .view-wrap { padding:0 16px 60px; }
-  .form-row, .form-row-3 { grid-template-columns:1fr; }
-  .modal { width:95%; padding:24px; }
-}
-@media (max-width:600px) {
-  .kanban-board { grid-template-columns:1fr; }
-  .cal-grid, .cal-grid-header { grid-template-columns:repeat(7,1fr); }
-  .cal-cell { min-height:70px; padding:4px; }
-}
-
-    /* ── TYPOGRAPHY: Georgia headings, Arial body (consistent with hub) ── */
-    h1, h2, h3, .page-title, .card-title, .section-title,
-    .login-logo-main, .toc-title, .guide-hero h1 {
-      font-family: Georgia, 'Times New Roman', serif;
-    }
-    body, p, label, input, select, textarea, button, td, th, li, a {
-      font-family: Arial, sans-serif;
-    }
-
-</style>
+    </style>
 </head>
 <body>
 
@@ -457,8 +389,8 @@ textarea.form-input { resize:vertical; min-height:80px; }
     <div class="list-wrap">
       <table>
         <thead><tr>
-          <th>Task</th><th>Project / Client</th><th>Status</th>
-          <th>Priority</th><th>Assigned To</th><th>Due Date</th><th>Notes</th><th></th>
+          <th>Task</th><th>Project</th><th>Status</th>
+          <th>Priority</th><th>Assigned To</th><th>Start Date</th><th>Due Date</th><th>Notes</th><th></th>
         </tr></thead>
         <tbody id="list-body"></tbody>
       </table>
@@ -467,7 +399,10 @@ textarea.form-input { resize:vertical; min-height:80px; }
 
   <!-- GANTT -->
   <div class="view" id="view-gantt">
-    <div class="gantt-wrap" id="gantt-wrap"></div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:8px;">
+      <button class="gantt-today-btn" onclick="scrollGanttToToday()">📅 Jump to Today</button>
+    </div>
+    <div class="gantt-wrap" id="gantt-wrap" style="height:500px;overflow:hidden;"></div>
   </div>
 
   <!-- CALENDAR -->
@@ -621,10 +556,7 @@ function projectColor(id) {
 function projectMeta(id) {
   const p = (window._projects||[]).find(x => x.fbKey === id);
   if (!p) return '';
-  const parts = [];
-  if (p.code)   parts.push(p.code);
-  if (p.client) parts.push(p.client);
-  return parts.join(' · ');
+  return p.code || '';
 }
 
 function filteredTasks() {
@@ -699,21 +631,28 @@ function renderKanban() {
   ];
   const tasks = filteredTasks();
   const board = document.getElementById('kanban-board');
+
   board.innerHTML = statuses.map(s => {
     const col = tasks.filter(t => t.status === s.key);
     const cards = col.length ? col.map(t => {
       const days = daysUntil(t.dueDate);
       let dueTxt = '';
       if (days !== null) {
-        if (days < 0)      dueTxt = `<span style="color:var(--pink);font-weight:700">⚠ ${Math.abs(days)}d overdue</span>`;
+        if (days < 0)       dueTxt = `<span style="color:var(--pink);font-weight:700">⚠ ${Math.abs(days)}d overdue</span>`;
         else if (days <= 7) dueTxt = `<span style="color:var(--amber);font-weight:700">⏰ ${days}d left</span>`;
-        else               dueTxt = `📅 ${fmtDateShort(t.dueDate)}`;
+        else                dueTxt = `📅 ${fmtDateShort(t.dueDate)}`;
       }
       const pn = projectName(t.projectId);
       const pc = projectColor(t.projectId);
-      const pm = projectMeta(t.projectId);
-      return `<div class="kanban-card ${statusClass(t.status)}" onclick="openTaskModal('${t.fbKey}')">
-        ${pn ? `<div class="kanban-card-project" style="color:${pc}">${pn}${pm ? `<span style="color:var(--muted);font-weight:400;font-size:10px;margin-left:4px">${pm}</span>` : ''}</div>` : ''}
+      return `<div class="kanban-card ${statusClass(t.status)}"
+                   draggable="true"
+                   data-fbkey="${t.fbKey}"
+                   data-status="${t.status}"
+                   ondragstart="kanbanDragStart(event)"
+                   ondragend="kanbanDragEnd(event)"
+                   onclick="openTaskModal('${t.fbKey}')">
+        <div class="kanban-drag-handle" title="Drag to move">⠿</div>
+        ${pn ? `<div class="kanban-card-project" style="color:${pc}">${pn}</div>` : ''}
         <div class="kanban-card-title">${t.title||'Untitled'}</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px;">
           <span class="pbadge ${priorityClass(t.priority||'medium')}">${priorityLabel(t.priority||'medium')}</span>
@@ -724,10 +663,15 @@ function renderKanban() {
           ${dueTxt ? `<span>${dueTxt}</span>` : ''}
         </div>
       </div>`;
-    }).join('') : `<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;border:1.5px dashed var(--border);border-radius:8px;">No tasks</div>`;
+    }).join('') : `<div class="kanban-empty-col" data-status="${s.key}">Drop here</div>`;
 
     const colColors = {todo:'var(--todo)',inprogress:'var(--inprogress)',inreview:'var(--amber)',complete:'var(--complete)',blocked:'var(--blocked)'};
-    return `<div class="kanban-col">
+    return `<div class="kanban-col"
+                 data-status="${s.key}"
+                 ondragover="kanbanDragOver(event)"
+                 ondragenter="kanbanDragEnter(event)"
+                 ondragleave="kanbanDragLeave(event)"
+                 ondrop="kanbanDrop(event)">
       <div class="kanban-col-header">
         <span class="kanban-col-title" style="color:${colColors[s.key]}">${s.label}</span>
         <span class="kanban-col-count">${col.length}</span>
@@ -737,12 +681,79 @@ function renderKanban() {
   }).join('');
 }
 
-// ── LIST ───────────────────────────────────────────────────────
+/* ─── KANBAN DRAG & DROP ─── */
+let _dragFbKey  = null;
+let _dragStatus = null;
+
+function kanbanDragStart(e) {
+  const card = e.currentTarget;
+  _dragFbKey  = card.dataset.fbkey;
+  _dragStatus = card.dataset.status;
+  card.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', _dragFbKey);
+}
+
+function kanbanDragEnd(e) {
+  e.currentTarget.classList.remove('dragging');
+  // Clear all drop-target highlights
+  document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('drag-over'));
+}
+
+function kanbanDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+}
+
+function kanbanDragEnter(e) {
+  e.preventDefault();
+  const col = e.currentTarget.closest('.kanban-col');
+  if (col) col.classList.add('drag-over');
+}
+
+function kanbanDragLeave(e) {
+  const col = e.currentTarget.closest('.kanban-col');
+  // Only remove if leaving the column itself (not a child element)
+  if (col && !col.contains(e.relatedTarget)) {
+    col.classList.remove('drag-over');
+  }
+}
+
+function kanbanDrop(e) {
+  e.preventDefault();
+  const col = e.currentTarget.closest('.kanban-col');
+  if (!col) return;
+  col.classList.remove('drag-over');
+
+  const newStatus = col.dataset.status;
+  if (!_dragFbKey || newStatus === _dragStatus) return;
+
+  // Optimistic UI: re-render immediately
+  const task = (window._tasks||[]).find(t => t.fbKey === _dragFbKey);
+  if (task) {
+    task.status = newStatus;
+    renderKanban();
+    showToast('Moving to ' + statusLabel(newStatus) + '...', false);
+  }
+
+  // Persist to Firebase
+  window._fbSet('pm_tasks/' + _dragFbKey + '/status', newStatus)
+    .then(() => showToast(statusLabel(newStatus) + ' ✓', true))
+    .catch(() => {
+      showToast('Move failed — try again', false);
+      if (task) { task.status = _dragStatus; renderKanban(); }
+    });
+
+  _dragFbKey  = null;
+  _dragStatus = null;
+}
+
+
 function renderList() {
   const tasks = filteredTasks();
   const tbody = document.getElementById('list-body');
   if (!tasks.length) {
-    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="icon">📋</div><h3>No tasks yet</h3><p>Add your first task using the + Add Task button above.</p></div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state"><div class="icon">📋</div><h3>No tasks yet</h3><p>Add your first task using the + Add Task button above.</p></div></td></tr>`;
     return;
   }
   tbody.innerHTML = tasks.map(t => {
@@ -755,13 +766,13 @@ function renderList() {
     }
     const pn = projectName(t.projectId);
     const pc = projectColor(t.projectId);
-    const pm = projectMeta(t.projectId);
     return `<tr onclick="openTaskModal('${t.fbKey}')">
       <td class="td-title">${t.title||'Untitled'}${t.tag?`<small>🏷 ${t.tag}</small>`:''}</td>
-      <td>${pn ? `<span style="font-size:11px;font-weight:700;color:${pc}">${pn}</span>${pm?`<br><span style="font-size:10px;color:var(--muted)">${pm}</span>`:''}` : '<span style="color:var(--muted)">—</span>'}</td>
+      <td>${pn ? `<span style="font-size:11px;font-weight:700;color:${pc}">${pn}</span>` : '<span style="color:var(--muted)">—</span>'}</td>
       <td><span class="sbadge ${statusClass(t.status)}">${statusLabel(t.status)}</span></td>
       <td><span class="pbadge ${priorityClass(t.priority||'medium')}">${priorityLabel(t.priority||'medium')}</span></td>
       <td style="font-size:12px;color:var(--muted)">${t.assigned||'—'}</td>
+      <td style="font-size:12px;color:var(--muted);white-space:nowrap;">${t.startDate?fmtDate(t.startDate):'<span style="color:var(--muted)">—</span>'}</td>
       <td class="td-due ${dueClass}">${fmtDate(t.dueDate)}${daysPill}</td>
       <td style="font-size:12px;color:var(--muted);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.notes||'—'}</td>
       <td><button class="btn btn-sm" onclick="event.stopPropagation();openTaskModal('${t.fbKey}')">Edit</button></td>
@@ -770,6 +781,19 @@ function renderList() {
 }
 
 // ── GANTT ──────────────────────────────────────────────────────
+
+function scrollGanttToToday() {
+  var pane = document.getElementById('gantt-scroll-pane');
+  if (!pane) return;
+  var paneWidth = pane.clientWidth || 800;
+  // Find the amber today line and scroll to center it
+  var line = pane.querySelector('.gantt-today-line');
+  if (line) {
+    var left = parseInt(line.style.left) || 0;
+    pane.scrollLeft = Math.max(0, left - paneWidth / 2 + 18);
+  }
+}
+
 function renderGantt() {
   const tasks = filteredTasks().filter(t => t.dueDate);
   const wrap = document.getElementById('gantt-wrap');
@@ -780,65 +804,86 @@ function renderGantt() {
 
   const todayStr = today();
   const allDates = tasks.flatMap(t => [t.startDate, t.dueDate].filter(Boolean));
-  const minDate = new Date(Math.min(new Date(todayStr), new Date(allDates.reduce((a,b) => a < b ? a : b))));
+  const minDate = new Date(Math.min(
+    new Date(todayStr) - 14 * 86400000,
+    new Date(allDates.reduce((a,b) => a < b ? a : b))
+  ));
   minDate.setDate(minDate.getDate() - 7);
   const maxDate = new Date(allDates.reduce((a,b) => a > b ? a : b));
-  maxDate.setDate(maxDate.getDate() + 14);
+  maxDate.setDate(maxDate.getDate() + 21);
 
   const days = [];
   const d = new Date(minDate);
   while (d <= maxDate) { days.push(d.toISOString().split('T')[0]); d.setDate(d.getDate()+1); }
 
-  const cellW = 36;
-  const totalW = days.length * cellW;
+  const cellW   = 36;
+  const totalW  = days.length * cellW;
   const todayIdx = days.indexOf(todayStr);
+  const FIXED_W  = 500;
 
   const dateHeaders = days.map((ds, i) => {
     const dt = new Date(ds + 'T12:00:00');
-    const isToday = ds === todayStr;
-    const showLabel = dt.getDate() === 1 || i === 0 || dt.getDay() === 1;
-    return `<div class="gantt-date-cell${isToday ? ' today-col' : ''}" style="min-width:${cellW}px;flex:0 0 ${cellW}px;">${showLabel ? dt.toLocaleDateString('en-US',{month:'short',day:'numeric'}) : ''}</div>`;
+    const isToday  = ds === todayStr;
+    const isMonday = dt.getDay() === 1;
+    const isFirst  = dt.getDate() === 1;
+    const showLabel = isFirst || i === 0 || isMonday;
+    const label = showLabel ? dt.toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '';
+    return `<div class="gantt-date-cell${isToday ? ' today-col' : ''}${isMonday ? ' gantt-week-start' : ''}" style="min-width:${cellW}px;flex:0 0 ${cellW}px;">${label}</div>`;
   }).join('');
 
-  // Group tasks by client
-  const clientGroups = {};
+  // Group by project
+  const projectGroups = {};
   tasks.forEach(t => {
-    const proj = (window._projects||[]).find(x => x.fbKey === t.projectId);
-    const client = proj?.client || '— No Client —';
-    if (!clientGroups[client]) clientGroups[client] = [];
-    clientGroups[client].push(t);
+    const pn = projectName(t.projectId) || 'No Project';
+    if (!projectGroups[pn]) projectGroups[pn] = [];
+    projectGroups[pn].push(t);
   });
 
-  const todayLine = todayIdx >= 0 ? `<div class="gantt-today-line" style="left:${todayIdx * cellW}px"></div>` : '';
+  const todayLine = todayIdx >= 0
+    ? `<div class="gantt-today-line" style="left:${todayIdx * cellW}px"></div>`
+    : '';
 
-  const rows = Object.entries(clientGroups).sort((a,b) => a[0].localeCompare(b[0])).map(([client, clientTasks]) => {
-    const headerRow = `<div class="gantt-row" style="background:var(--cream);cursor:default;">
-      <div class="gantt-task-label" style="background:var(--cream);">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--navy);">👤 ${client}</div>
-        <div style="font-size:10px;color:var(--muted)">${clientTasks.length} task${clientTasks.length!==1?'s':''}</div>
+  // Column header row (sticky)
+  const colHeaders = `
+    <div class="gantt-col-header" style="width:200px;min-width:200px;">Task</div>
+    <div class="gantt-col-header" style="width:120px;min-width:120px;">Assigned To</div>
+    <div class="gantt-col-header" style="width:90px;min-width:90px;">Start</div>
+    <div class="gantt-col-header" style="width:90px;min-width:90px;">End</div>`;
+
+  const rows = Object.entries(projectGroups).sort((a,b) => a[0].localeCompare(b[0])).map(([projName, projTasks]) => {
+    const pc = projectColor(projTasks[0]?.projectId);
+    const headerRow = `<div class="gantt-row" style="background:var(--cream);">
+      <div class="gantt-fixed-cols-UNUSED" style="background:var(--cream);min-width:${FIXED_W}px;width:${FIXED_W}px;">
+        <div class="gantt-col gantt-col-task" style="width:200px;min-width:200px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:${pc||'var(--navy)'};">● ${projName}</div>
+          <div style="font-size:10px;color:var(--muted)">${projTasks.length} task${projTasks.length!==1?'s':''}</div>
+        </div>
+        <div class="gantt-col" style="width:120px;min-width:120px;"></div>
+        <div class="gantt-col" style="width:90px;min-width:90px;"></div>
+        <div class="gantt-col" style="width:90px;min-width:90px;"></div>
       </div>
       <div class="gantt-bar-area" style="width:${totalW}px;min-width:${totalW}px;background:var(--cream);">${todayLine}</div>
     </div>`;
 
-    const taskRows = clientTasks.map(t => {
+    const taskRows = projTasks.map(t => {
       const start = t.startDate || t.dueDate;
       const end   = t.dueDate;
       const si = days.indexOf(start);
       const ei = days.indexOf(end);
       const left  = Math.max(0, si) * cellW;
       const width = Math.max(cellW, (ei - Math.max(0,si) + 1) * cellW);
-      const pn = projectName(t.projectId);
-      const pc = projectColor(t.projectId);
-      const pm = projectMeta(t.projectId);
       const sc = statusClass(t.status);
       return `<div class="gantt-row">
-        <div class="gantt-task-label" onclick="openTaskModal('${t.fbKey}')">
-          <div class="gantt-task-name">${t.title||'Untitled'}</div>
-          <div class="gantt-task-sub">${pn ? `<span style="color:${pc};font-weight:600">${pn}</span>` : ''}${pm ? ` · ${pm}` : ''}${t.assigned ? ' · '+t.assigned : ''}</div>
+        <div class="gantt-fixed-cols-UNUSED" style="min-width:${FIXED_W}px;width:${FIXED_W}px;" onclick="openTaskModal('${t.fbKey}')">
+            <div class="gantt-task-name">${t.title||'Untitled'}</div>
+          </div>
+          <div class="gantt-col-assign">${t.assigned||'—'}</div>
+          <div class="gantt-col-start">${t.startDate?fmtDateShort(t.startDate):'—'}</div>
+          <div class="gantt-col-end">${fmtDateShort(t.dueDate)}
         </div>
         <div class="gantt-bar-area" style="width:${totalW}px;min-width:${totalW}px;">
           ${todayLine}
-          ${si >= 0 ? `<div class="gantt-bar ${sc}" style="left:${left}px;width:${width}px;" onclick="openTaskModal('${t.fbKey}')" title="${t.title} · ${fmtDate(start)} – ${fmtDate(end)}">${t.title||''}</div>` : ''}
+          ${si >= 0 ? `<div class="gantt-bar ${sc}" style="left:${left}px;width:${width}px;" onclick="openTaskModal('${t.fbKey}')" title="${t.title||''} · ${fmtDate(start)} – ${fmtDate(end)}">${t.title||''}</div>` : ''}
         </div>
       </div>`;
     }).join('');
@@ -847,14 +892,53 @@ function renderGantt() {
   }).join('');
 
   wrap.innerHTML = `
-    <div class="gantt-header-row">
-      <div class="gantt-label-col">Task / Client</div>
-      <div class="gantt-dates-header" style="width:${totalW}px;min-width:${totalW}px;">${dateHeaders}</div>
+    <div class="gantt-scroll-outer">
+      <div class="gantt-fixed-panel" style="width:${FIXED_W}px;min-width:${FIXED_W}px;">
+        <div class="gantt-fixed-header" style="width:${FIXED_W}px;">
+          ${colHeaders}
+        </div>
+      </div>
+      <div class="gantt-scroll-pane" id="gantt-scroll-pane">
+        <div class="gantt-dates-row" style="width:${totalW}px;">
+          ${dateHeaders}
+        </div>
+        <div style="position:relative;width:${totalW}px;">
+          <!-- bar areas only -->
+        </div>
+      </div>
     </div>
-    ${rows}`;
+    <!-- FULL ROWS (fixed + scroll together) -->
+    <div class="gantt-body-outer">
+      <div class="gantt-fixed-col-body" id="gantt-fixed-body" style="width:${FIXED_W}px;min-width:${FIXED_W}px;"></div>
+      <div class="gantt-bars-scroll" id="gantt-bars-scroll">
+        ${rows.split('</div><div class="gantt-row">').join('')}
+      </div>
+    </div>`;
+
+  // Simpler approach: single unified layout where fixed cols and bars scroll together
+  // Reset to the working unified approach
+  wrap.innerHTML = `
+    <div class="gantt-table-wrap">
+      <div class="gantt-head-row">
+        <div class="gantt-th" style="width:200px;min-width:200px;position:sticky;left:0;z-index:6;background:var(--surface2);">Task</div>
+        <div class="gantt-th" style="width:120px;min-width:120px;position:sticky;left:200px;z-index:6;background:var(--surface2);">Assigned To</div>
+        <div class="gantt-th" style="width:90px;min-width:90px;position:sticky;left:320px;z-index:6;background:var(--surface2);">Start</div>
+        <div class="gantt-th" style="width:90px;min-width:90px;position:sticky;left:410px;z-index:6;background:var(--surface2);border-right:2px solid var(--border);">End</div>
+        <div class="gantt-dates-header" style="width:${totalW}px;min-width:${totalW}px;display:flex;">${dateHeaders}</div>
+      </div>
+      ${rows}
+    </div>`;
+
+  requestAnimationFrame(() => {
+    const pane = wrap.querySelector('.gantt-table-wrap');
+    if (pane && todayIdx >= 0) {
+      const paneW = pane.clientWidth || 900;
+      const scrollTo = Math.max(0, (500 + todayIdx * cellW) - (paneW / 2) + (cellW * 2));
+      pane.scrollLeft = scrollTo;
+    }
+  });
 }
 
-// ── EXCEL EXPORT ───────────────────────────────────────────────
 function exportGanttExcel() {
   const tasks = filteredTasks();
   if (!tasks.length) { showToast('No tasks to export'); return; }
