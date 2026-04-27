@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Project Manager — Power of Public</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<!-- Georgia and Arial: system fonts, no import needed -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <script type="module">
@@ -123,16 +123,16 @@
 }
 
 * { box-sizing:border-box; margin:0; padding:0; }
-body { background:var(--bg); font-family:'Plus Jakarta Sans',sans-serif; color:var(--charcoal); min-height:100vh; font-size:14px; }
+body { background:var(--bg); font-family:Arial, sans-serif; color:var(--charcoal); min-height:100vh; font-size:14px; }
 
 /* ── LOGIN ─────────────────────────────── */
 #login-screen { position:fixed; inset:0; background:var(--navy); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:28px; z-index:9999; }
-.login-logo-main { font-family:'Playfair Display',serif; font-size:36px; font-weight:900; color:#fff; text-align:center; }
+.login-logo-main { font-family:Georgia, 'Times New Roman', serif; font-size:36px; font-weight:900; color:#fff; text-align:center; }
 .login-logo-sub  { font-size:11px; color:rgba(255,255,255,0.35); text-transform:uppercase; letter-spacing:0.12em; text-align:center; margin-top:4px; }
 .login-card { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:18px; padding:40px 48px; text-align:center; max-width:380px; width:90%; }
-.login-card h2 { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:#fff; margin-bottom:8px; }
+.login-card h2 { font-family:Georgia, 'Times New Roman', serif; font-size:20px; font-weight:700; color:#fff; margin-bottom:8px; }
 .login-card p  { font-size:13px; color:rgba(255,255,255,0.4); margin-bottom:28px; line-height:1.6; }
-.login-btn { background:var(--pink); color:#fff; border:none; border-radius:10px; padding:14px 24px; font-family:'Plus Jakarta Sans',sans-serif; font-size:14px; font-weight:600; cursor:pointer; width:100%; transition:background 0.2s; }
+.login-btn { background:var(--pink); color:#fff; border:none; border-radius:10px; padding:14px 24px; font-family:Arial, sans-serif; font-size:14px; font-weight:600; cursor:pointer; width:100%; transition:background 0.2s; }
 .login-btn:hover { background:#c41268; }
 
 /* ── APP ───────────────────────────────── */
@@ -141,29 +141,29 @@ body { background:var(--bg); font-family:'Plus Jakarta Sans',sans-serif; color:v
 /* ── HEADER ────────────────────────────── */
 header { background:var(--navy); border-bottom:3px solid transparent; border-image:linear-gradient(90deg,var(--pink),var(--amber),var(--emerald)) 1; position:sticky; top:0; z-index:100; }
 .header-inner { max-width:1400px; margin:0 auto; padding:0 28px; height:60px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
-.logo { font-family:'Playfair Display',serif; font-size:18px; font-weight:900; color:#fff; white-space:nowrap; }
+.logo { font-family:Georgia, 'Times New Roman', serif; font-size:18px; font-weight:900; color:#fff; white-space:nowrap; }
 .logo span { color:var(--pink); }
 
 /* VIEW TABS */
 .view-tabs { display:flex; gap:2px; background:rgba(255,255,255,0.07); border-radius:8px; padding:3px; }
-.view-tab { background:none; border:none; color:rgba(255,255,255,0.45); font-family:'Plus Jakarta Sans',sans-serif; font-size:12px; font-weight:500; padding:6px 14px; border-radius:6px; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; gap:5px; white-space:nowrap; }
+.view-tab { background:none; border:none; color:rgba(255,255,255,0.45); font-family:Arial, sans-serif; font-size:12px; font-weight:500; padding:6px 14px; border-radius:6px; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; gap:5px; white-space:nowrap; }
 .view-tab:hover { color:#fff; background:rgba(255,255,255,0.1); }
 .view-tab.active { background:var(--pink); color:#fff; font-weight:600; }
 
 .header-right { display:flex; align-items:center; gap:8px; }
 .user-pill { font-size:11px; color:rgba(255,255,255,0.4); background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12); border-radius:20px; padding:4px 10px; white-space:nowrap; }
-.hdr-btn { background:transparent; border:1px solid rgba(255,255,255,0.2); color:rgba(255,255,255,0.5); border-radius:6px; padding:5px 10px; font-size:11px; font-family:'Plus Jakarta Sans',sans-serif; cursor:pointer; text-decoration:none; display:inline-block; transition:all 0.15s; white-space:nowrap; }
+.hdr-btn { background:transparent; border:1px solid rgba(255,255,255,0.2); color:rgba(255,255,255,0.5); border-radius:6px; padding:5px 10px; font-size:11px; font-family:Arial, sans-serif; cursor:pointer; text-decoration:none; display:inline-block; transition:all 0.15s; white-space:nowrap; }
 .hdr-btn:hover { border-color:rgba(255,255,255,0.4); color:rgba(255,255,255,0.8); }
 
 /* ── TOOLBAR ───────────────────────────── */
 .toolbar { max-width:1400px; margin:0 auto; padding:20px 28px 16px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
 .toolbar-left { display:flex; align-items:center; gap:10px; flex:1; flex-wrap:wrap; }
 .search-wrap { position:relative; min-width:200px; max-width:280px; }
-.search-wrap input { width:100%; background:#fff; border:1.5px solid var(--border); border-radius:8px; padding:8px 12px 8px 32px; font-family:'Plus Jakarta Sans',sans-serif; font-size:13px; color:var(--charcoal); outline:none; transition:border-color 0.15s; }
+.search-wrap input { width:100%; background:#fff; border:1.5px solid var(--border); border-radius:8px; padding:8px 12px 8px 32px; font-family:Arial, sans-serif; font-size:13px; color:var(--charcoal); outline:none; transition:border-color 0.15s; }
 .search-wrap input:focus { border-color:var(--navy); }
 .search-icon { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:13px; pointer-events:none; }
-.filter-select { background:#fff; border:1.5px solid var(--border); border-radius:8px; padding:8px 12px; font-family:'Plus Jakarta Sans',sans-serif; font-size:13px; color:var(--charcoal); outline:none; cursor:pointer; }
-.btn { background:var(--surface); border:1.5px solid var(--border); color:var(--charcoal); font-family:'Plus Jakarta Sans',sans-serif; font-size:12.5px; font-weight:500; padding:8px 16px; border-radius:8px; cursor:pointer; transition:all 0.15s; display:inline-flex; align-items:center; gap:6px; }
+.filter-select { background:#fff; border:1.5px solid var(--border); border-radius:8px; padding:8px 12px; font-family:Arial, sans-serif; font-size:13px; color:var(--charcoal); outline:none; cursor:pointer; }
+.btn { background:var(--surface); border:1.5px solid var(--border); color:var(--charcoal); font-family:Arial, sans-serif; font-size:12.5px; font-weight:500; padding:8px 16px; border-radius:8px; cursor:pointer; transition:all 0.15s; display:inline-flex; align-items:center; gap:6px; }
 .btn:hover { border-color:var(--pink); color:var(--pink); background:#fff8fc; }
 .btn-primary { background:var(--pink); color:#fff; border-color:var(--pink); font-weight:600; }
 .btn-primary:hover { background:#c41268; color:#fff; border-color:#c41268; }
@@ -250,7 +250,7 @@ td { padding:12px 14px; vertical-align:middle; font-size:13px; }
 
 /* ── CALENDAR ───────────────────────────── */
 .cal-nav { display:flex; align-items:center; gap:12px; margin-bottom:16px; background:var(--surface); border:1.5px solid var(--border); border-radius:12px; padding:14px 20px; }
-.cal-month-label { font-family:'Playfair Display',serif; font-size:20px; font-weight:900; flex:1; color:var(--navy); }
+.cal-month-label { font-family:Georgia, 'Times New Roman', serif; font-size:20px; font-weight:900; flex:1; color:var(--navy); }
 .cal-grid-header { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:4px; }
 .cal-day-hdr { text-align:center; font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; padding:6px 0; }
 .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
@@ -271,10 +271,10 @@ td { padding:12px 14px; vertical-align:middle; font-size:13px; }
 .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:200; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
 .modal-overlay.open { display:flex; }
 .modal { background:var(--surface); border:1.5px solid var(--border); border-radius:18px; padding:32px; width:580px; max-height:90vh; overflow-y:auto; box-shadow:0 8px 40px rgba(0,0,0,0.15); }
-.modal-title { font-family:'Playfair Display',serif; font-size:22px; font-weight:900; margin-bottom:24px; color:var(--navy); }
+.modal-title { font-family:Georgia, 'Times New Roman', serif; font-size:22px; font-weight:900; margin-bottom:24px; color:var(--navy); }
 .form-group { margin-bottom:14px; }
 .form-label { display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:6px; }
-.form-input { width:100%; background:#faf9f7; border:1.5px solid var(--border); color:var(--charcoal); font-family:'Plus Jakarta Sans',sans-serif; font-size:13px; padding:9px 12px; border-radius:8px; outline:none; transition:border-color 0.15s; }
+.form-input { width:100%; background:#faf9f7; border:1.5px solid var(--border); color:var(--charcoal); font-family:Arial, sans-serif; font-size:13px; padding:9px 12px; border-radius:8px; outline:none; transition:border-color 0.15s; }
 .form-input:focus { border-color:var(--navy); box-shadow:0 0 0 3px rgba(26,26,46,0.06); }
 textarea.form-input { resize:vertical; min-height:80px; }
 .form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
@@ -291,7 +291,7 @@ textarea.form-input { resize:vertical; min-height:80px; }
 /* EMPTY STATE */
 .empty-state { text-align:center; padding:60px 20px; color:var(--muted); }
 .empty-state .icon { font-size:44px; margin-bottom:12px; }
-.empty-state h3 { font-family:'Playfair Display',serif; font-size:20px; color:var(--navy); margin-bottom:8px; }
+.empty-state h3 { font-family:Georgia, 'Times New Roman', serif; font-size:20px; color:var(--navy); margin-bottom:8px; }
 .empty-state p { font-size:13px; line-height:1.6; max-width:340px; margin:0 auto 20px; }
 
 /* TOAST */
@@ -313,6 +313,16 @@ textarea.form-input { resize:vertical; min-height:80px; }
   .cal-grid, .cal-grid-header { grid-template-columns:repeat(7,1fr); }
   .cal-cell { min-height:70px; padding:4px; }
 }
+
+    /* ── TYPOGRAPHY: Georgia headings, Arial body (consistent with hub) ── */
+    h1, h2, h3, .page-title, .card-title, .section-title,
+    .login-logo-main, .toc-title, .guide-hero h1 {
+      font-family: Georgia, 'Times New Roman', serif;
+    }
+    body, p, label, input, select, textarea, button, td, th, li, a {
+      font-family: Arial, sans-serif;
+    }
+
 </style>
 </head>
 <body>
@@ -564,7 +574,7 @@ textarea.form-input { resize:vertical; min-height:80px; }
 <div class="toast" id="toast"></div>
 
 <div style="text-align:center;padding:20px 28px;background:var(--navy);margin-top:40px;">
-  <a href="index.html" style="font-size:12px;color:rgba(255,255,255,0.35);text-decoration:none;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:0.02em;">← Back to Power of Public Operations Hub</a>
+  <a href="index.html" style="font-size:12px;color:rgba(255,255,255,0.35);text-decoration:none;font-family:Arial, sans-serif;letter-spacing:0.02em;">← Back to Power of Public Operations Hub</a>
 </div>
 
 </div><!-- /app -->

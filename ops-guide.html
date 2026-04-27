@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Operations Hub — User Guide · Power of Public</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<!-- Georgia and Arial: system fonts, no import needed -->
 <style>
 :root {
   --navy:#1A1A2E; --pink:#E8187A; --amber:#D4A017; --emerald:#1A8C5B;
@@ -13,11 +13,11 @@
   --blush:#FBF3F8; --blush-border:#F0C8DF;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;color:var(--dark);font-size:15px;line-height:1.75;}
+body{background:var(--bg);font-family:Arial, sans-serif;color:var(--dark);font-size:15px;line-height:1.75;}
 
 header{background:var(--navy);border-bottom:3px solid transparent;border-image:linear-gradient(90deg,var(--pink),var(--amber),var(--emerald)) 1;position:sticky;top:0;z-index:100;}
 .header-inner{max-width:1100px;margin:0 auto;padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;}
-.logo{font-family:'Playfair Display',serif;font-size:18px;font-weight:900;color:#fff;}
+.logo{font-family:Georgia, 'Times New Roman', serif;font-size:18px;font-weight:900;color:#fff;}
 .logo span{color:var(--pink);}
 .hdr-links{display:flex;gap:10px;}
 .hdr-btn{font-size:11px;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:5px 12px;text-decoration:none;transition:all .15s;}
@@ -27,7 +27,7 @@ header{background:var(--navy);border-bottom:3px solid transparent;border-image:l
 
 /* TOC */
 .toc{position:sticky;top:80px;background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px;font-size:13px;max-height:calc(100vh - 100px);overflow-y:auto;}
-.toc-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:900;color:var(--navy);margin-bottom:14px;padding-bottom:10px;border-bottom:1.5px solid var(--border);}
+.toc-title{font-family:Georgia, 'Times New Roman', serif;font-size:15px;font-weight:900;color:var(--navy);margin-bottom:14px;padding-bottom:10px;border-bottom:1.5px solid var(--border);}
 .toc-section{margin-bottom:2px;}
 .toc-section>a{display:block;color:var(--dark);text-decoration:none;padding:5px 8px;border-radius:6px;transition:all .12s;font-weight:600;font-size:12.5px;}
 .toc-section>a:hover,.toc-section>a.active{background:var(--blush);color:var(--pink);}
@@ -39,7 +39,7 @@ header{background:var(--navy);border-bottom:3px solid transparent;border-image:l
 
 /* CONTENT */
 .guide-hero{margin-bottom:36px;}
-.guide-hero h1{font-family:'Playfair Display',serif;font-size:40px;font-weight:900;color:var(--navy);line-height:1.15;margin-bottom:8px;}
+.guide-hero h1{font-family:Georgia, 'Times New Roman', serif;font-size:40px;font-weight:900;color:var(--navy);line-height:1.15;margin-bottom:8px;}
 .guide-hero h1 em{color:var(--pink);font-style:normal;}
 .guide-hero p{font-size:15px;color:var(--muted);max-width:580px;}
 .guide-hero .meta{font-size:12px;color:var(--muted);margin-top:10px;display:flex;gap:12px;flex-wrap:wrap;}
@@ -48,7 +48,7 @@ header{background:var(--navy);border-bottom:3px solid transparent;border-image:l
 .guide-section{margin-bottom:52px;scroll-margin-top:80px;}
 .section-hero{background:var(--navy);border-radius:14px;padding:24px 28px;margin-bottom:24px;display:flex;align-items:flex-start;gap:16px;}
 .section-hero-icon{font-size:32px;flex-shrink:0;}
-.section-hero-text h2{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;color:#fff;margin-bottom:4px;}
+.section-hero-text h2{font-family:Georgia, 'Times New Roman', serif;font-size:24px;font-weight:900;color:#fff;margin-bottom:4px;}
 .section-hero-text p{font-size:13px;color:rgba(255,255,255,0.5);line-height:1.5;}
 .section-hero-text .tool-url{font-size:11px;color:var(--pink);margin-top:6px;font-weight:600;}
 
@@ -88,6 +88,16 @@ footer a{color:var(--pink);text-decoration:none;}
   .toc{position:static;margin-bottom:20px;max-height:none;}
   .guide-hero h1{font-size:28px;}
 }
+
+    /* ── TYPOGRAPHY: Georgia headings, Arial body (consistent with hub) ── */
+    h1, h2, h3, .page-title, .card-title, .section-title,
+    .login-logo-main, .toc-title, .guide-hero h1 {
+      font-family: Georgia, 'Times New Roman', serif;
+    }
+    body, p, label, input, select, textarea, button, td, th, li, a {
+      font-family: Arial, sans-serif;
+    }
+
 </style>
 </head>
 <body>
