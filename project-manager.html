@@ -210,6 +210,20 @@ td { padding:12px 14px; vertical-align:middle; font-size:13px; }
 .dp-soon { background:#FEF7E8; color:#9A7312; }
 .dp-ok   { background:#EBF7F2; color:var(--emerald); }
 
+/* ── CALENDAR VIEW ── */
+    .cal-nav { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+    .cal-month-label { font-family:Georgia,serif; font-size:18px; font-weight:700; color:var(--navy); }
+    .cal-grid-header { display:grid; grid-template-columns:repeat(7,1fr); gap:1px; margin-bottom:4px; }
+    .cal-day-hdr { font-family:Arial,sans-serif; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); padding:4px 8px; text-align:center; }
+    .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+    .cal-cell { background:var(--surface); padding:8px; min-height:90px; display:flex; flex-direction:column; gap:3px; }
+    .cal-cell.other-month { background:var(--surface2); }
+    .cal-cell.today-cell { background:#fffbf0; }
+    .cal-cell-num { font-family:Arial,sans-serif; font-size:12px; font-weight:700; color:var(--muted); margin-bottom:3px; }
+    .cal-cell.today-cell .cal-cell-num { background:var(--pink); color:#fff; width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; }
+    .cal-task-chip { display:block; font-family:Arial,sans-serif; font-size:10px; font-weight:500; padding:2px 6px; border-radius:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; margin-bottom:1px; transition:opacity .12s; }
+    .cal-task-chip:hover { opacity:0.8; }
+
 /* ── KANBAN ─────────────────────────────── */
 .kanban-board { display:grid; grid-template-columns:repeat(5,1fr); gap:14px; align-items:start; }
 .kanban-col { background:var(--tan); border:1.5px solid var(--border); border-radius:12px; padding:14px; min-height:200px; }
@@ -266,53 +280,57 @@ textarea.form-input { resize:vertical; min-height:80px; }
 
 /* ── MISSING SURFACE2 VAR (used in gantt) ── */
 
-/* ── GANTT TIMELINE ── */
+/* ── GANTT TIMELINE (WEEKLY) ── */
     #gantt-wrap { border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--surface); }
     .gantt-table-wrap { display:block; overflow-x:auto; overflow-y:auto; max-height:560px; scroll-behavior:smooth; }
     .gantt-table-wrap::-webkit-scrollbar { height:5px; width:5px; }
     .gantt-table-wrap::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
 
-    /* Header row — sticky to top */
-    .gantt-head-row { display:flex; min-height:36px; background:var(--cream); border-bottom:2px solid var(--border); position:sticky; top:0; z-index:10; }
+    /* Header */
+    .gantt-head-row { display:flex; min-height:44px; background:var(--cream); border-bottom:2px solid var(--border); position:sticky; top:0; z-index:10; }
     .gantt-th { display:flex; align-items:center; padding:0 10px; font-family:Arial,sans-serif; font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.09em; color:var(--muted); border-right:1px solid var(--border); flex-shrink:0; background:var(--cream); white-space:nowrap; }
 
-    /* Data rows */
-    .gantt-row { display:flex; min-height:36px; border-bottom:1px solid var(--border); align-items:stretch; cursor:pointer; }
+    /* Week column headers */
+    .gantt-week-header { display:flex; }
+    .gantt-week-col { display:flex; flex-direction:column; justify-content:flex-end; padding:4px 6px 3px; border-right:1px solid var(--border); box-sizing:border-box; background:var(--cream); }
+    .gantt-week-col.gantt-week-today { background:#fffbf0; border-right-color:var(--amber); }
+    .gantt-week-month { font-family:Georgia,serif; font-size:11px; font-weight:700; color:var(--navy); line-height:1; min-height:14px; }
+    .gantt-week-num { font-family:Arial,sans-serif; font-size:9px; color:var(--muted); margin-top:2px; }
+
+    /* Rows */
+    .gantt-row { display:flex; min-height:38px; border-bottom:1px solid var(--border); align-items:stretch; cursor:pointer; }
     .gantt-row:hover { background:rgba(232,24,122,0.03); }
-    .gantt-group-row { background:var(--cream) !important; cursor:default; min-height:30px; border-bottom:1.5px solid var(--border); }
+    .gantt-group-row { background:var(--cream) !important; cursor:default; min-height:32px; border-bottom:1.5px solid var(--border); }
     .gantt-group-row:hover { background:var(--cream) !important; }
 
     /* Fixed sticky cells */
-    .gantt-cell { display:flex; flex-direction:column; justify-content:center; padding:5px 10px; border-right:1px solid var(--border); flex-shrink:0; font-family:Arial,sans-serif; font-size:11.5px; color:var(--muted); }
-    .gantt-cell-task   { width:200px; min-width:200px; position:sticky; left:0;    z-index:5; background:var(--surface); color:var(--charcoal); }
-    .gantt-cell-assign { width:120px; min-width:120px; position:sticky; left:200px; z-index:5; background:var(--surface); font-size:11px; }
-    .gantt-cell-start  { width:90px;  min-width:90px;  position:sticky; left:320px; z-index:5; background:var(--surface); font-size:10.5px; white-space:nowrap; }
-    .gantt-cell-end    { width:90px;  min-width:90px;  position:sticky; left:410px; z-index:5; background:var(--surface); font-size:10.5px; white-space:nowrap; border-right:2px solid var(--border); }
+    .gantt-cell { display:flex; flex-direction:column; justify-content:center; padding:5px 10px; border-right:1px solid var(--border); flex-shrink:0; font-family:Arial,sans-serif; font-size:11px; color:var(--muted); }
+    .gantt-cell-task   { width:200px; min-width:200px; position:sticky; left:0;    z-index:5; background:var(--surface); }
+    .gantt-cell-assign { width:110px; min-width:110px; position:sticky; left:200px; z-index:5; background:var(--surface); font-size:10.5px; }
+    .gantt-cell-start  { width:76px;  min-width:76px;  position:sticky; left:310px; z-index:5; background:var(--surface); font-size:10px; white-space:nowrap; }
+    .gantt-cell-end    { width:76px;  min-width:76px;  position:sticky; left:386px; z-index:5; background:var(--surface); font-size:10px; white-space:nowrap; border-right:2px solid var(--border); }
     .gantt-group-row .gantt-cell { background:var(--cream) !important; }
 
-    /* Project group label */
-    .gantt-group-label { font-family:Georgia,serif; font-size:11px; font-weight:700; letter-spacing:0.04em; line-height:1.2; }
-    .gantt-group-count { font-family:Arial,sans-serif; font-size:9.5px; color:var(--muted); font-weight:400; margin-top:1px; }
+    /* Group label */
+    .gantt-group-label { font-family:Georgia,serif; font-size:11.5px; font-weight:700; color:var(--navy); line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .gantt-group-count { font-family:Arial,sans-serif; font-size:9.5px; color:var(--muted); margin-top:1px; }
 
     /* Task name */
-    .gantt-task-name { font-family:Arial,sans-serif; font-size:12px; font-weight:600; color:var(--charcoal); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.3; }
+    .gantt-task-name { font-family:Arial,sans-serif; font-size:11.5px; font-weight:500; color:var(--charcoal); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.3; }
     .gantt-row:hover .gantt-task-name { color:var(--pink); }
 
-    /* Bar area — grid lines drawn via CSS repeating gradient in JS */
-    .gantt-bar-area { position:relative; flex:1; min-height:36px; }
+    /* Bar area with grid lines */
+    .gantt-bar-area { position:relative; flex:1; }
+    .gantt-week-grid { background-image:repeating-linear-gradient(90deg, transparent, transparent 79px, var(--border) 79px, var(--border) 80px); }
 
-    /* Date header */
-    .gantt-dates-header { display:flex; align-items:flex-end; padding-bottom:4px; }
-    .gantt-date-cell { font-family:Arial,sans-serif; font-size:9.5px; color:var(--muted); text-align:left; padding-left:3px; border-right:1px solid var(--border); box-sizing:border-box; white-space:nowrap; padding-top:3px; overflow:visible; }
-    .gantt-date-cell.today-col { background:rgba(212,160,23,0.1); color:var(--amber); font-weight:700; border-right-color:var(--amber); }
-    .gantt-date-cell.gantt-week-start { border-left:1px solid rgba(0,0,0,0.08); }
-
-    /* Today vertical line */
-    .gantt-today-line { position:absolute; top:0; bottom:0; width:1.5px; background:var(--amber); opacity:0.8; z-index:3; pointer-events:none; }
+    /* Today column highlight */
+    .gantt-today-col { position:absolute; top:0; bottom:0; background:rgba(212,160,23,0.07); border-left:1.5px solid rgba(212,160,23,0.5); border-right:1.5px solid rgba(212,160,23,0.5); z-index:0; pointer-events:none; }
 
     /* Task bars */
-    .gantt-bar { position:absolute; top:6px; height:22px; border-radius:4px; display:flex; align-items:center; padding:0 7px; font-family:Arial,sans-serif; font-size:10px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; z-index:1; box-shadow:0 1px 3px rgba(0,0,0,0.1); transition:opacity .15s, box-shadow .15s; }
+    .gantt-bar { position:absolute; top:7px; height:22px; border-radius:4px; display:flex; align-items:center; padding:0 8px; font-family:Arial,sans-serif; font-size:10.5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; z-index:2; box-shadow:0 1px 3px rgba(0,0,0,0.1); transition:opacity .15s, box-shadow .15s; }
     .gantt-bar:hover { opacity:0.82; box-shadow:0 2px 8px rgba(0,0,0,0.15); }
+    .gantt-bar-overdue { outline:2px solid var(--pink); outline-offset:1px; }
+
     .gantt-empty { text-align:center; padding:48px 24px; color:var(--muted); font-family:Arial,sans-serif; }
     .gantt-today-btn { background:var(--amber); color:#fff; border:none; border-radius:6px; padding:5px 12px; font-family:Arial,sans-serif; font-size:11px; font-weight:700; cursor:pointer; }
 
@@ -923,93 +941,123 @@ function scrollGanttToToday() {
 }
 
 function renderGantt() {
-  const tasks = filteredTasks().filter(t => t.dueDate);
+  const tasks = filteredTasks().filter(function(t){ return t.dueDate; });
   const wrap  = document.getElementById('gantt-wrap');
   if (!tasks.length) {
     wrap.innerHTML = '<div class="gantt-empty"><div style="font-size:40px;margin-bottom:12px">📊</div><div>No tasks with due dates to display on the timeline.</div></div>';
     return;
   }
 
-  const todayStr = today();
-  const allDates = tasks.flatMap(t => [t.startDate, t.dueDate].filter(Boolean));
-  const minDate  = new Date(Math.min(
-    new Date(todayStr).getTime() - 14 * 86400000,
-    new Date(allDates.reduce((a,b) => a < b ? a : b)).getTime()
-  ));
-  minDate.setDate(minDate.getDate() - 7);
-  const maxDate = new Date(allDates.reduce((a,b) => a > b ? a : b));
-  maxDate.setDate(maxDate.getDate() + 21);
+  const todayStr  = today();
+  const todayDate = new Date(todayStr + 'T12:00:00');
+  const allDates  = tasks.flatMap(function(t){ return [t.startDate, t.dueDate].filter(Boolean); });
+  const earliest  = new Date(allDates.reduce(function(a,b){ return a<b?a:b; }) + 'T12:00:00');
+  const latest    = new Date(allDates.reduce(function(a,b){ return a>b?a:b; }) + 'T12:00:00');
 
-  const days = [];
-  const cur  = new Date(minDate);
-  while (cur <= maxDate) { days.push(cur.toISOString().split('T')[0]); cur.setDate(cur.getDate() + 1); }
+  // Pad to week boundaries and add margin weeks
+  const startMon = new Date(earliest);
+  startMon.setDate(startMon.getDate() - startMon.getDay() + (startMon.getDay()===0?-6:1) - 7);
+  const endSun   = new Date(latest);
+  endSun.setDate(endSun.getDate() + (7 - endSun.getDay()) % 7 + 14);
 
-  const cellW    = 36;
-  const totalW   = days.length * cellW;
-  const todayIdx = days.indexOf(todayStr);
+  // Build weeks array
+  const weeks = [];
+  const cur   = new Date(startMon);
+  while (cur <= endSun) {
+    weeks.push(new Date(cur));
+    cur.setDate(cur.getDate() + 7);
+  }
 
-  // Date header cells
-  const dateHeaderHTML = days.map((ds, i) => {
-    const dt      = new Date(ds + 'T12:00:00');
-    const isToday = ds === todayStr;
-    const isMon   = dt.getDay() === 1;
-    const label   = (dt.getDate() === 1 || i === 0 || isMon)
-                    ? dt.toLocaleDateString('en-US', {month:'short', day:'numeric'}) : '';
-    return '<div class="gantt-date-cell' + (isToday ? ' today-col' : '') + (isMon ? ' gantt-week-start' : '') +
-           '" style="min-width:' + cellW + 'px;flex:0 0 ' + cellW + 'px;">' + label + '</div>';
+  const cellW     = 80; // px per week — wide enough for labels
+  const totalW    = weeks.length * cellW;
+  const todayWeekIdx = weeks.findIndex(function(w) {
+    const wEnd = new Date(w); wEnd.setDate(wEnd.getDate() + 6);
+    return todayDate >= w && todayDate <= wEnd;
+  });
+
+  // Week column headers
+  const weekHeaderHTML = weeks.map(function(w, i) {
+    const wEnd    = new Date(w); wEnd.setDate(wEnd.getDate() + 6);
+    const isCur   = todayDate >= w && todayDate <= wEnd;
+    const isNewMo = w.getDate() <= 7;
+    const mo      = w.toLocaleDateString('en-US',{month:'short'});
+    const day     = w.getDate();
+    return '<div class="gantt-week-col' + (isCur?' gantt-week-today':'') + '" style="min-width:'+cellW+'px;flex:0 0 '+cellW+'px;">' +
+      (isNewMo || i===0 ? '<div class="gantt-week-month">'+mo+'</div>' : '<div class="gantt-week-month"></div>') +
+      '<div class="gantt-week-num">W'+day+'</div>' +
+    '</div>';
   }).join('');
 
-  const todayLineHTML = todayIdx >= 0
-    ? '<div class="gantt-today-line" style="left:' + (todayIdx * cellW) + 'px;"></div>'
+  // Today indicator column
+  const todayColLeft = todayWeekIdx >= 0 ? todayWeekIdx * cellW : -1;
+  const todayColHTML = todayColLeft >= 0
+    ? '<div class="gantt-today-col" style="left:'+todayColLeft+'px;width:'+cellW+'px;"></div>'
     : '';
 
-  // Group by project
+  // Helper: week index for a date string
+  function weekIdxFor(ds) {
+    if (!ds) return -1;
+    const d = new Date(ds + 'T12:00:00');
+    return weeks.findIndex(function(w) {
+      const wEnd = new Date(w); wEnd.setDate(wEnd.getDate() + 6);
+      return d >= w && d <= wEnd;
+    });
+  }
+
+  // Group tasks by project
   const groups = {};
-  tasks.forEach(t => {
+  tasks.forEach(function(t) {
     const pn = projectName(t.projectId) || 'No Project';
     if (!groups[pn]) groups[pn] = { color: projectColor(t.projectId), tasks: [] };
     groups[pn].tasks.push(t);
   });
 
-  let rowsHTML = '';
-  Object.keys(groups).sort().forEach(pn => {
-    const g = groups[pn];
-    // Project group header row
-    rowsHTML += '<div class="gantt-row gantt-group-row">' +
-      '<div class="gantt-cell gantt-cell-task" style="color:' + (g.color||'var(--navy)') + '">' +
-        '<div class="gantt-group-label" style="color:' + (g.color||'var(--navy)') + ';">' + pn + '</div>' +
-        '<div class="gantt-group-count">' + g.tasks.length + ' task' + (g.tasks.length !== 1 ? 's' : '') + '</div>' +
-      '</div>' +
-      '<div class="gantt-cell gantt-cell-assign"></div>' +
-      '<div class="gantt-cell gantt-cell-start"></div>' +
-      '<div class="gantt-cell gantt-cell-end"></div>' +
-      '<div class="gantt-bar-area" style="width:' + totalW + 'px;min-width:' + totalW + 'px;background:var(--surface2);background-image:repeating-linear-gradient(90deg,transparent,transparent ' + (cellW-1) + 'px,var(--border) ' + (cellW-1) + 'px,var(--border) ' + cellW + 'px);">' + todayLineHTML + '</div>' +
-    '</div>';
-
-    // Task rows
-    g.tasks.forEach(t => {
-      const start = t.startDate || t.dueDate;
-      const end   = t.dueDate;
-      const si    = days.indexOf(start);
-      const ei    = days.indexOf(end);
-      const left  = Math.max(0, si) * cellW;
-      const width = Math.max(cellW, (ei - Math.max(0, si) + 1) * cellW);
-      const sc    = statusClass(t.status);
-      const barHTML = si >= 0
-        ? '<div class="gantt-bar ' + sc + '" style="left:' + left + 'px;width:' + width + 'px;" onclick="openTaskModal(\'' + t.fbKey + '\')" title="' + (t.title||'') + ' · ' + fmtDate(start) + ' – ' + fmtDate(end) + '">' + (t.title||'') + '</div>'
-        : '';
-
-      rowsHTML += '<div class="gantt-row" onclick="openTaskModal(\'' + t.fbKey + '\')">' +
+  // Build rows
+  var rowsHTML = '';
+  Object.keys(groups).sort().forEach(function(pn) {
+    var g = groups[pn];
+    // Group header
+    rowsHTML +=
+      '<div class="gantt-row gantt-group-row">' +
         '<div class="gantt-cell gantt-cell-task">' +
-          '<div class="gantt-task-name">' + (t.title||'Untitled') + '</div>' +
+          '<div class="gantt-group-label" style="color:'+(g.color||'var(--navy)')+';">'+pn+'</div>' +
+          '<div class="gantt-group-count">'+g.tasks.length+' task'+(g.tasks.length!==1?'s':'')+'</div>' +
         '</div>' +
-        '<div class="gantt-cell gantt-cell-assign">' + (t.assigned||'—') + '</div>' +
-        '<div class="gantt-cell gantt-cell-start">' + (t.startDate ? fmtDateShort(t.startDate) : '—') + '</div>' +
-        '<div class="gantt-cell gantt-cell-end">' + fmtDateShort(t.dueDate) + '</div>' +
-        '<div class="gantt-bar-area" style="width:' + totalW + 'px;min-width:' + totalW + 'px;background-image:repeating-linear-gradient(90deg,transparent,transparent ' + (cellW-1) + 'px,var(--border) ' + (cellW-1) + 'px,var(--border) ' + cellW + 'px);">' +
-          todayLineHTML + barHTML +
+        '<div class="gantt-cell gantt-cell-assign"></div>' +
+        '<div class="gantt-cell gantt-cell-start"></div>' +
+        '<div class="gantt-cell gantt-cell-end"></div>' +
+        '<div class="gantt-bar-area gantt-week-grid" style="width:'+totalW+'px;min-width:'+totalW+'px;">' +
+          todayColHTML +
         '</div>' +
       '</div>';
+
+    g.tasks.forEach(function(t) {
+      var si  = weekIdxFor(t.startDate || t.dueDate);
+      var ei  = weekIdxFor(t.dueDate);
+      if (si < 0) si = ei;
+      var left  = Math.max(0, si) * cellW + 4;
+      var width = Math.max(cellW - 8, (ei - Math.max(0,si) + 1) * cellW - 8);
+      var sc    = statusClass(t.status);
+      var overdue = t.dueDate < todayStr && t.status !== 'complete';
+
+      var barHTML = si >= 0
+        ? '<div class="gantt-bar '+sc+(overdue?' gantt-bar-overdue':'')+'" style="left:'+left+'px;width:'+width+'px;" onclick="openTaskModal(\''+t.fbKey+'\')" title="'+fmtDate(t.startDate||t.dueDate)+' – '+fmtDate(t.dueDate)+'">'+
+            (t.title||'') +
+          '</div>'
+        : '';
+
+      rowsHTML +=
+        '<div class="gantt-row" onclick="openTaskModal(\''+t.fbKey+'\')">' +
+          '<div class="gantt-cell gantt-cell-task">' +
+            '<div class="gantt-task-name">'+(t.title||'Untitled')+'</div>' +
+          '</div>' +
+          '<div class="gantt-cell gantt-cell-assign">'+(t.assigned||'—')+'</div>' +
+          '<div class="gantt-cell gantt-cell-start">'+(t.startDate?fmtDateShort(t.startDate):'—')+'</div>' +
+          '<div class="gantt-cell gantt-cell-end">'+fmtDateShort(t.dueDate)+'</div>' +
+          '<div class="gantt-bar-area gantt-week-grid" style="width:'+totalW+'px;min-width:'+totalW+'px;">' +
+            todayColHTML + barHTML +
+          '</div>' +
+        '</div>';
     });
   });
 
@@ -1017,22 +1065,20 @@ function renderGantt() {
     '<div class="gantt-table-wrap">' +
       '<div class="gantt-head-row">' +
         '<div class="gantt-th gantt-cell-task">Task</div>' +
-        '<div class="gantt-th gantt-cell-assign">Assigned To</div>' +
+        '<div class="gantt-th gantt-cell-assign">Assigned</div>' +
         '<div class="gantt-th gantt-cell-start">Start</div>' +
         '<div class="gantt-th gantt-cell-end">End</div>' +
-        '<div class="gantt-dates-header" style="width:' + totalW + 'px;min-width:' + totalW + 'px;display:flex;">' + dateHeaderHTML + '</div>' +
+        '<div class="gantt-week-header" style="width:'+totalW+'px;min-width:'+totalW+'px;display:flex;">'+weekHeaderHTML+'</div>' +
       '</div>' +
       rowsHTML +
     '</div>';
 
-  // Scroll to center today in the visible pane
+  // Scroll so today's week is visible near left
   requestAnimationFrame(function() {
     var pane = wrap.querySelector('.gantt-table-wrap');
-    if (pane && todayIdx >= 0) {
-      var fixedW  = 500;
-      var paneW   = pane.clientWidth || 900;
-      var scrollTo = Math.max(0, fixedW + todayIdx * cellW - (paneW - fixedW) / 2);
-      pane.scrollLeft = scrollTo;
+    if (pane && todayWeekIdx >= 0) {
+      var fixedW = 500;
+      pane.scrollLeft = Math.max(0, fixedW + todayWeekIdx * cellW - 80);
     }
   });
 }
