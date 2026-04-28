@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<title>Cost Estimate — Power of Public</title>
+<style>
+:root{
+  --navy:#1A1A2E;--pink:#E8187A;--amber:#D4A017;--emerald:#1A8C5B;
+  --cream:#F5F0E8;--tan:#EDE8DC;--bg:#F2EDE4;--surface:#FFFFFF;
+  --border:#D5CCBC;--muted:#6B6560;--text:#2D2D2D;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);font-family:Arial,sans-serif;color:var(--text);font-size:14px;}
+header{background:var(--navy);border-bottom:3px solid transparent;border-image:linear-gradient(90deg,#E8187A,#D4A017,#1A8C5B) 1;position:sticky;top:0;z-index:100;}
+.header-inner{max-width:1100px;margin:0 auto;padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;}
+.hdr-btn{font-size:11px;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:5px 12px;text-decoration:none;}
+.page{max-width:900px;margin:0 auto;padding:32px 24px 80px;}
+h1{font-family:Georgia,serif;font-size:28px;font-weight:700;color:var(--navy);margin-bottom:4px;}
+.subtitle{font-size:13px;color:var(--muted);margin-bottom:28px;}
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:24px;margin-bottom:20px;}
+.card-title{font-family:Georgia,serif;font-size:16px;font-weight:700;color:var(--navy);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;}
+.form-group{margin-bottom:14px;}
+.form-label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:5px;}
+.form-input{width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:Arial,sans-serif;background:var(--surface);}
+.form-input:focus{outline:none;border-color:var(--pink);}
+textarea.form-input{resize:vertical;min-height:70px;}
+.btn{padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--surface);font-family:Arial,sans-serif;}
+.btn:hover{border-color:var(--navy);}
+.btn-pink{background:var(--pink);color:#fff;border-color:var(--pink);}
+.btn-pink:hover{background:#c41268;border-color:#c41268;}
+.btn-sm{padding:5px 12px;font-size:12px;}
+.btn-danger{background:none;border-color:#fca5a5;color:#dc2626;}
+.btn-danger:hover{background:#fef2f2;}
+/* Line items */
+.items-table{width:100%;border-collapse:collapse;margin-bottom:12px;}
+.items-table th{background:var(--navy);color:#fff;padding:8px 10px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;text-align:left;}
+.items-table th:last-child{width:40px;text-align:center;}
+.items-table td{padding:8px 6px;border-bottom:1px solid var(--border);vertical-align:top;}
+.items-table input{width:100%;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:12.5px;font-family:Arial,sans-serif;}
+.items-table input:focus{outline:none;border-color:var(--pink);}
+.total-row td{font-weight:700;font-size:14px;color:var(--navy);background:var(--cream);padding:10px;}
+.item-del{background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;padding:2px 6px;}
+.item-del:hover{color:var(--pink);}
+/* Preview notice */
+.notice{background:#FBF3F8;border:1.5px solid #F0C8DF;border-left:4px solid var(--pink);border-radius:10px;padding:14px 18px;font-size:13px;color:#5A2040;margin-bottom:20px;}
+/* Saved estimates */
+.est-list{display:flex;flex-direction:column;gap:8px;}
+.est-item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--tan);border:1px solid var(--border);border-radius:8px;}
+.est-item-name{flex:1;font-size:13px;font-weight:600;color:var(--navy);}
+.est-item-meta{font-size:11px;color:var(--muted);}
+.est-empty{font-size:13px;color:var(--muted);padding:12px 0;}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <a href="index.html" style="display:flex;align-items:center;">
+      <svg id="Layer_3" height="32" style="display:block;" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 400 100"><rect x="25.327" y="18.311" width="384.77" height="80.172" fill="none"/><path d="M26.467,65.746l2.16-.24c1.92-.3,2.58-.601,2.58-1.08V31.488c0-.48-.36-.66-3.12-.96l-1.56-.24-.18-1.02h17.759c11.339,0,17.219,3.06,17.219,9.6,0,6.96-7.14,10.86-17.699,10.86-.9,0-1.86-.06-2.58-.18v14.999c0,.479.3.72,2.94.96l2.22.24.18,1.02H26.287l.18-1.02ZM43.366,48.828c7.32,0,10.8-3.061,10.8-8.341,0-5.46-3.3-8.22-10.08-8.22h-2.46v16.5c.6.061,1.14.061,1.74.061Z" fill="#fff"/><path d="M63.266,67.026c.54-.12,1.08-.18,1.62-.24,1.8-.24,2.4-.54,2.4-.96v-15.24c0-.9-.42-1.38-1.44-1.44l-2.58-.18-.12-.9,9.479-2.04.42.3-.12,5.04c1.74-3.12,4.26-5.28,7.26-5.28,1.74,0,2.76,1.02,2.76,2.52,0,1.62-1.02,2.76-2.52,2.76-1.26,0-2.1-.72-2.46-1.68-.12-.36-.3-.54-.66-.54-1.32,0-3.6,2.22-4.32,4.8v11.88c0,.42.3.66,2.46.9l2.16.24.12.96h-14.82l.12-.9Z" fill="#fff"/><path d="M85.146,62.986c0-4.08,3.9-6.84,14.459-8.46v-1.74c0-3.3-1.5-4.98-4.26-4.98-1.62,0-2.88.66-3.66,1.62-.54.66-.48,1.26.06,1.98.48.66.72,1.2.72,1.86,0,1.44-1.08,2.28-2.52,2.28-1.62,0-2.64-1.02-2.64-2.76,0-3.18,3.72-6.12,9.24-6.12,5.82,0,9.0,2.88,9.0,8.22v11.1c0,1.2.54,1.8,1.38,1.8.66,0,1.26-.36,1.74-.96l.66.6c-.9,1.62-2.52,2.7-4.62,2.7-2.4,0-4.08-1.32-4.44-3.72-1.62,2.28-4.02,3.72-6.6,3.72-3.66,0-6.06-2.22-6.06-5.1ZM99.605,61.006v-5.1c-6.48,1.08-8.22,3.18-8.22,6,0,2.28,1.32,3.48,3.3,3.48s3.96-1.56,4.92-4.38Z" fill="#fff"/><path d="M109.865,74.386l1.02-.3c1.68-.54,2.28-1.14,2.28-2.58v-21.42c0-.9-.36-1.38-1.38-1.44l-2.46-.18-.12-.9,9.24-2.04.42.3-.18,4.74c1.62-2.88,4.38-4.98,8.1-4.98,5.88,0,9.96,4.8,9.96,12.12,0,7.56-4.5,12.54-11.04,12.54-2.52,0-4.86-1.02-6.54-2.88l-.06,5.22v.36c0,1.38.6,2.04,2.28,2.58l1.86.6.12.96h-13.62l.12-.66ZM128.504,59.566c0-6.36-2.28-10.14-6.24-10.14-2.16,0-4.02,1.14-5.4,3.54v12.6c1.26,1.56,2.82,2.4,4.68,2.4,4.08,0,6.96-3.36,6.96-8.4Z" fill="#fff"/><path d="M138.404,66.006c0-.48.06-.96.24-1.44.42-1.38,1.56-2.22,2.88-2.22.78,0,1.44.24,1.92.78.54.6.66,1.32.3,2.34-.18.48-.24.9-.24,1.32,0,1.2.78,1.98,2.28,1.98,2.34,0,4.08-2.04,4.08-5.04,0-2.04-.84-3.54-3.18-5.04l-2.04-1.26c-2.88-1.8-4.26-3.78-4.26-6.48,0-4.2,3.42-7.26,8.46-7.26,4.44,0,7.08,2.22,7.08,5.34,0,1.8-1.08,3.0-2.7,3.0-1.44,0-2.46-.9-2.46-2.22,0-.54.18-1.02.48-1.5.3-.48.42-.9.42-1.26,0-.96-.78-1.62-2.22-1.62-2.1,0-3.54,1.56-3.54,3.84,0,1.74.9,3.0,3.06,4.38l2.04,1.26c3.12,1.92,4.56,4.02,4.56,6.84,0,4.56-3.48,7.86-8.7,7.86-4.62,0-7.44-2.28-7.44-5.34Z" fill="#fff"/><path d="M163.323,30.468c0-1.8,1.5-3.24,3.36-3.24s3.36,1.44,3.36,3.24-1.5,3.18-3.36,3.18-3.36-1.38-3.36-3.18ZM158.463,67.026c.54-.12,1.08-.18,1.62-.24,1.8-.24,2.4-.54,2.4-.96v-15.24c0-.9-.42-1.38-1.44-1.44l-2.58-.18-.12-.9,9.72-2.04.42.3v19.5c0,.42.3.66,2.16.9l1.92.24.12.96h-14.22l.12-.9Z" fill="#fff"/><path d="M173.962,57.706c0-7.08,4.8-11.94,11.76-11.94s11.76,4.86,11.76,11.94-4.8,11.94-11.76,11.94-11.76-4.86-11.76-11.94ZM191.062,57.706c0-6.54-2.04-10.26-5.34-10.26s-5.34,3.72-5.34,10.26,2.04,10.26,5.34,10.26,5.34-3.72,5.34-10.26Z" fill="#fff"/><path d="M198.841,67.026c.54-.12,1.08-.18,1.62-.24,1.8-.24,2.4-.54,2.4-.96v-15.24c0-.9-.42-1.38-1.44-1.44l-2.58-.18-.12-.9,9.48-2.04.42.3-.12,4.44c1.8-2.88,4.5-4.98,7.8-4.98,4.2,0,6.48,2.52,6.48,7.26v12.78c0,.42.3.66,2.16.9l1.74.24.12.96h-13.5l.12-.96,1.44-.18c1.8-.24,2.22-.54,2.22-.96v-12.3c0-3.24-1.26-4.8-3.78-4.8-2.04,0-3.9,1.2-5.22,3.42v13.68c0,.42.3.66,2.22.9l1.44.18.12.96h-13.14l.12-.9Z" fill="#fff"/><path d="M232.501,70.786c1.14-.24,2.16-.9,2.52-2.28l.24-.78-8.64-21.78c-.48-1.2-.9-1.62-2.4-1.98l-.78-.18-.12-.84h12.66l.06.84-1.62.24c-1.08.18-1.38.48-1.38.9,0,.3.12.72.36,1.32l5.82,15.0,4.44-12.9-.36-.9c-.54-1.44-1.08-2.28-2.7-2.7l-.84-.18-.06-.84h9.0l.06.84-.6.12c-1.62.3-2.1.84-2.7,2.52l-7.44,20.7c-1.14,3.12-2.88,5.04-6.18,5.04-1.98,0-3.48-.84-3.48-2.52s1.14-2.52,2.58-2.52c.6,0,1.14.18,1.62.6.48.42.78.48,1.02.3Z" fill="#fff"/></svg>
+    </a>
+    <div style="display:flex;gap:8px;">
+      <a href="index.html" class="hdr-btn">← Hub</a>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <h1>Cost Estimate</h1>
+  <p class="subtitle">Create a professional cost estimate to share with a potential client. Downloads as a Word document you can edit and send.</p>
+
+  <div class="notice">
+    <strong>How this works:</strong> Fill in the form below, add your line items, then click <strong>Generate Estimate</strong>. A branded Word document downloads instantly — ready to review, customize, and send.
+  </div>
+
+  <!-- YOUR INFORMATION -->
+  <div class="card">
+    <div class="card-title">Your Information</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Business Name</label>
+        <input class="form-input" id="firm-name" type="text" value="Power of Public, LLC">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Estimate Number</label>
+        <input class="form-input" id="est-num" type="text" placeholder="EST-2026-001">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Address / City, State</label>
+        <input class="form-input" id="firm-addr" type="text" placeholder="Washington, DC">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Phone</label>
+        <input class="form-input" id="firm-phone" type="text" placeholder="(202) 555-0100">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" id="firm-email" type="email" placeholder="hello@powerofpublic.co" value="hello@powerofpublic.co">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Website</label>
+        <input class="form-input" id="firm-web" type="text" placeholder="powerofpublic.co" value="powerofpublic.co">
+      </div>
+    </div>
+  </div>
+
+  <!-- CLIENT & PROJECT -->
+  <div class="card">
+    <div class="card-title">Client & Project</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Client Name</label>
+        <input class="form-input" id="client-name" type="text" placeholder="Dr. Sarah Johnson">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Organization</label>
+        <input class="form-input" id="client-org" type="text" placeholder="DC Department of Health">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Client Address</label>
+        <input class="form-input" id="client-addr" type="text" placeholder="123 Main St, Washington, DC 20001">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Client Email</label>
+        <input class="form-input" id="client-email" type="email" placeholder="contact@client.org">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Project / Engagement Name</label>
+        <input class="form-input" id="project-name" type="text" placeholder="Community Health Communications Campaign">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Brief Description</label>
+        <input class="form-input" id="project-desc" type="text" placeholder="One-line summary of the work">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Estimate Date</label>
+        <input class="form-input" id="issue-date" type="date">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Valid Through <span style="font-size:10px;font-weight:400;color:var(--muted);">(expiry)</span></label>
+        <input class="form-input" id="expiry-date" type="date">
+      </div>
+    </div>
+  </div>
+
+  <!-- LINE ITEMS -->
+  <div class="card">
+    <div class="card-title">Services & Deliverables</div>
+    <table class="items-table" id="items-table">
+      <thead>
+        <tr>
+          <th style="width:36%">Deliverable / Service</th>
+          <th style="width:22%">Description <span style="font-weight:400;font-size:9px;">(optional)</span></th>
+          <th style="width:10%;text-align:center;">Qty / Hrs</th>
+          <th style="width:12%;text-align:right;">Rate ($)</th>
+          <th style="width:14%;text-align:right;">Amount</th>
+          <th style="width:6%;text-align:center;"></th>
+        </tr>
+      </thead>
+      <tbody id="items-body"></tbody>
+    </table>
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:20px;">
+      <button class="btn btn-sm" onclick="addItem()">+ Add Line Item</button>
+      <span style="font-size:12px;color:var(--muted);">Click a row to edit it</span>
+    </div>
+
+    <!-- Totals -->
+    <div style="display:flex;justify-content:flex-end;">
+      <div style="width:280px;">
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--muted);">
+          <span>Subtotal</span><span id="sub-total">$0.00</span>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">
+          <span style="font-size:13px;color:var(--muted);flex:1;">Tax (%)</span>
+          <input class="form-input" id="tax-rate" type="number" min="0" max="100" step="0.1" value="0" style="width:70px;padding:4px 8px;font-size:13px;" oninput="recalc()">
+          <span id="tax-amt" style="font-size:13px;color:var(--muted);width:70px;text-align:right;">$0.00</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:16px;font-weight:700;font-family:Georgia,serif;color:var(--navy);">
+          <span>Total Estimate</span><span id="grand-total">$0.00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TERMS & NOTES -->
+  <div class="card">
+    <div class="card-title">Terms & Notes</div>
+    <div class="form-group">
+      <label class="form-label">Assumptions & Notes <span style="font-size:10px;font-weight:400;color:var(--muted);">(what's included, what's not, caveats)</span></label>
+      <textarea class="form-input" id="assumptions" rows="3" placeholder="This estimate is based on the scope described. Changes to scope may affect pricing. Travel expenses billed separately at cost if applicable."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Payment Terms</label>
+      <input class="form-input" id="payment-terms" type="text" value="50% due upon contract execution. Balance due Net 30 upon project completion.">
+    </div>
+  </div>
+
+  <!-- SAVED ESTIMATES -->
+  <div class="card">
+    <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;">
+      <span>Saved Drafts</span>
+      <button class="btn btn-sm" onclick="saveDraft()">Save Draft</button>
+    </div>
+    <div id="drafts-list" class="est-list"></div>
+  </div>
+
+  <!-- GENERATE -->
+  <div style="display:flex;gap:12px;align-items:center;">
+    <button class="btn btn-pink" onclick="generate()" id="gen-btn" style="padding:12px 28px;font-size:14px;">
+      ⬇ Generate Estimate (.docx)
+    </button>
+    <button class="btn" onclick="clearForm()">Clear Form</button>
+    <span id="gen-status" style="font-size:13px;color:var(--muted);"></span>
+  </div>
+</div>
+
+<script>
+// ── STATE ────────────────────────────────────────────────────────
+let items = [];
+let estNum = 1;
+
+// ── INIT ─────────────────────────────────────────────────────────
+(function init() {
+  // Set today and +30 days
+  const today = new Date().toISOString().split('T')[0];
+  const plus30 = new Date(Date.now() + 30*86400000).toISOString().split('T')[0];
+  document.getElementById('issue-date').value  = today;
+  document.getElementById('expiry-date').value = plus30;
+
+  // Auto-estimate number from saved counter
+  estNum = parseInt(localStorage.getItem('pop_est_num') || '1');
+  document.getElementById('est-num').value = 'EST-' + new Date().getFullYear() + '-' + String(estNum).padStart(3,'0');
+
+  // Load saved firm info
+  const fi = JSON.parse(localStorage.getItem('pop_est_firm') || '{}');
+  if (fi.firmName)  document.getElementById('firm-name').value  = fi.firmName;
+  if (fi.firmAddr)  document.getElementById('firm-addr').value  = fi.firmAddr;
+  if (fi.firmPhone) document.getElementById('firm-phone').value = fi.firmPhone;
+  if (fi.firmEmail) document.getElementById('firm-email').value = fi.firmEmail;
+  if (fi.firmWeb)   document.getElementById('firm-web').value   = fi.firmWeb;
+  if (fi.payTerms)  document.getElementById('payment-terms').value = fi.payTerms;
+
+  addItem(); // start with one empty row
+  renderDrafts();
+})();
+
+// ── LINE ITEMS ────────────────────────────────────────────────────
+function addItem(title, desc, qty, rate) {
+  items.push({ id: Date.now() + Math.random(), title: title||'', desc: desc||'', qty: qty||'', rate: rate||'' });
+  renderItems();
+}
+
+function renderItems() {
+  const tbody = document.getElementById('items-body');
+  tbody.innerHTML = items.map((it, i) =>
+    '<tr>' +
+    '<td><input class="form-input" style="width:100%;" value="' + esc(it.title) + '" oninput="setItem(' + i + ',\'title\',this.value)" placeholder="e.g. Strategic Communication Plan"></td>' +
+    '<td><input class="form-input" style="width:100%;" value="' + esc(it.desc) + '" oninput="setItem(' + i + ',\'desc\',this.value)" placeholder="Brief description"></td>' +
+    '<td><input class="form-input" style="text-align:center;" type="number" min="0" step="0.5" value="' + (it.qty||'') + '" oninput="setItem(' + i + ',\'qty\',this.value)" placeholder="0"></td>' +
+    '<td><input class="form-input" style="text-align:right;" type="number" min="0" step="5" value="' + (it.rate||'') + '" oninput="setItem(' + i + ',\'rate\',this.value)" placeholder="0.00"></td>' +
+    '<td style="text-align:right;font-weight:600;color:var(--navy);vertical-align:middle;">' + fmt(parseFloat(it.qty||0)*parseFloat(it.rate||0)) + '</td>' +
+    '<td style="text-align:center;"><button class="item-del" onclick="removeItem(' + i + ')">×</button></td>' +
+    '</tr>'
+  ).join('');
+  recalc();
+}
+
+function setItem(i, field, val) {
+  items[i][field] = val;
+  recalc();
+  // Update amount cell
+  const rows = document.getElementById('items-body').querySelectorAll('tr');
+  if (rows[i]) {
+    const amtCell = rows[i].querySelectorAll('td')[4];
+    if (amtCell) amtCell.textContent = fmt(parseFloat(items[i].qty||0)*parseFloat(items[i].rate||0));
+  }
+}
+
+function removeItem(i) {
+  items.splice(i, 1);
+  renderItems();
+}
+
+function esc(s) { return (s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+
+function fmt(n) {
+  return '$' + parseFloat(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+function recalc() {
+  const sub = items.reduce((s,it) => s + parseFloat(it.qty||0)*parseFloat(it.rate||0), 0);
+  const tax = sub * (parseFloat(document.getElementById('tax-rate').value)||0) / 100;
+  document.getElementById('sub-total').textContent  = fmt(sub);
+  document.getElementById('tax-amt').textContent    = fmt(tax);
+  document.getElementById('grand-total').textContent = fmt(sub + tax);
+}
+
+// ── DRAFTS ────────────────────────────────────────────────────────
+function getFormData() {
+  return {
+    firmName:     document.getElementById('firm-name').value,
+    firmAddr:     document.getElementById('firm-addr').value,
+    firmPhone:    document.getElementById('firm-phone').value,
+    firmEmail:    document.getElementById('firm-email').value,
+    firmWeb:      document.getElementById('firm-web').value,
+    estimateNum:  document.getElementById('est-num').value,
+    issueDate:    document.getElementById('issue-date').value,
+    expiryDate:   document.getElementById('expiry-date').value,
+    clientName:   document.getElementById('client-name').value,
+    clientOrg:    document.getElementById('client-org').value,
+    clientAddr:   document.getElementById('client-addr').value,
+    clientEmail:  document.getElementById('client-email').value,
+    projectName:  document.getElementById('project-name').value,
+    projectDesc:  document.getElementById('project-desc').value,
+    taxRate:      document.getElementById('tax-rate').value,
+    assumptions:  document.getElementById('assumptions').value,
+    paymentTerms: document.getElementById('payment-terms').value,
+    items:        items,
+  };
+}
+
+function saveDraft() {
+  const data = getFormData();
+  const drafts = JSON.parse(localStorage.getItem('pop_est_drafts') || '[]');
+  const existing = drafts.findIndex(d => d.estimateNum === data.estimateNum);
+  const entry = { ...data, savedAt: new Date().toISOString() };
+  if (existing >= 0) drafts[existing] = entry;
+  else drafts.unshift(entry);
+  localStorage.setItem('pop_est_drafts', JSON.stringify(drafts.slice(0, 20)));
+  // Save firm info for next time
+  localStorage.setItem('pop_est_firm', JSON.stringify({
+    firmName: data.firmName, firmAddr: data.firmAddr, firmPhone: data.firmPhone,
+    firmEmail: data.firmEmail, firmWeb: data.firmWeb, payTerms: data.paymentTerms
+  }));
+  renderDrafts();
+  document.getElementById('gen-status').textContent = 'Draft saved.';
+  setTimeout(() => { document.getElementById('gen-status').textContent = ''; }, 2000);
+}
+
+function renderDrafts() {
+  const drafts = JSON.parse(localStorage.getItem('pop_est_drafts') || '[]');
+  const el = document.getElementById('drafts-list');
+  if (!drafts.length) {
+    el.innerHTML = '<div class="est-empty">No saved drafts yet. Click Save Draft to save your work.</div>';
+    return;
+  }
+  el.innerHTML = drafts.map((d, i) =>
+    '<div class="est-item">' +
+      '<div class="est-item-name">' + (d.estimateNum||'Estimate') + ' — ' + (d.clientName||'No client') + '</div>' +
+      '<div class="est-item-meta">' + (d.projectName||'') + '</div>' +
+      '<button class="btn btn-sm" onclick="loadDraft(' + i + ')">Load</button>' +
+      '<button class="btn btn-sm btn-danger" onclick="deleteDraft(' + i + ')">Delete</button>' +
+    '</div>'
+  ).join('');
+}
+
+function loadDraft(i) {
+  const drafts = JSON.parse(localStorage.getItem('pop_est_drafts') || '[]');
+  const d = drafts[i];
+  if (!d) return;
+  document.getElementById('firm-name').value    = d.firmName||'';
+  document.getElementById('firm-addr').value    = d.firmAddr||'';
+  document.getElementById('firm-phone').value   = d.firmPhone||'';
+  document.getElementById('firm-email').value   = d.firmEmail||'';
+  document.getElementById('firm-web').value     = d.firmWeb||'';
+  document.getElementById('est-num').value      = d.estimateNum||'';
+  document.getElementById('issue-date').value   = d.issueDate||'';
+  document.getElementById('expiry-date').value  = d.expiryDate||'';
+  document.getElementById('client-name').value  = d.clientName||'';
+  document.getElementById('client-org').value   = d.clientOrg||'';
+  document.getElementById('client-addr').value  = d.clientAddr||'';
+  document.getElementById('client-email').value = d.clientEmail||'';
+  document.getElementById('project-name').value = d.projectName||'';
+  document.getElementById('project-desc').value = d.projectDesc||'';
+  document.getElementById('tax-rate').value     = d.taxRate||'0';
+  document.getElementById('assumptions').value  = d.assumptions||'';
+  document.getElementById('payment-terms').value= d.paymentTerms||'';
+  items = (d.items||[]).map(it => ({...it, id: Date.now()+Math.random()}));
+  renderItems();
+}
+
+function deleteDraft(i) {
+  const drafts = JSON.parse(localStorage.getItem('pop_est_drafts') || '[]');
+  drafts.splice(i, 1);
+  localStorage.setItem('pop_est_drafts', JSON.stringify(drafts));
+  renderDrafts();
+}
+
+function clearForm() {
+  if (!confirm('Clear all fields and start a new estimate?')) return;
+  estNum++;
+  localStorage.setItem('pop_est_num', estNum);
+  document.getElementById('est-num').value = 'EST-' + new Date().getFullYear() + '-' + String(estNum).padStart(3,'0');
+  ['client-name','client-org','client-addr','client-email','project-name','project-desc','assumptions'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('tax-rate').value = '0';
+  const today = new Date().toISOString().split('T')[0];
+  const plus30 = new Date(Date.now()+30*86400000).toISOString().split('T')[0];
+  document.getElementById('issue-date').value  = today;
+  document.getElementById('expiry-date').value = plus30;
+  items = [];
+  addItem();
+}
+
+// ── GENERATE ──────────────────────────────────────────────────────
+function generate() {
+  const data = getFormData();
+  if (!data.clientName && !data.projectName) {
+    alert('Please enter at least a client name or project name before generating.');
+    return;
+  }
+  const validItems = data.items.filter(it => it.title && (parseFloat(it.qty)||0) > 0);
+  if (!validItems.length) {
+    alert('Please add at least one line item with a title and quantity.');
+    return;
+  }
+
+  const btn = document.getElementById('gen-btn');
+  const status = document.getElementById('gen-status');
+  btn.disabled = true;
+  btn.textContent = 'Generating...';
+  status.textContent = '';
+
+  data.items = validItems;
+
+  // Auto-save firm info
+  localStorage.setItem('pop_est_firm', JSON.stringify({
+    firmName: data.firmName, firmAddr: data.firmAddr, firmPhone: data.firmPhone,
+    firmEmail: data.firmEmail, firmWeb: data.firmWeb, payTerms: data.paymentTerms
+  }));
+
+  // Increment estimate counter
+  localStorage.setItem('pop_est_num', estNum + 1);
+
+  // POST to a local generation endpoint — or use Anthropic API to generate
+  // Since this is a static site, we use a client-side approach with the
+  // docx library loaded from CDN
+  generateDocx(data).then(() => {
+    btn.disabled = false;
+    btn.textContent = '⬇ Generate Estimate (.docx)';
+    status.textContent = 'Downloaded successfully!';
+    status.style.color = 'var(--emerald)';
+    setTimeout(() => { status.textContent = ''; }, 3000);
+  }).catch(err => {
+    btn.disabled = false;
+    btn.textContent = '⬇ Generate Estimate (.docx)';
+    status.textContent = 'Error: ' + err.message;
+    status.style.color = 'var(--pink)';
+  });
+}
+
+async function generateDocx(data) {
+  // Load docx library from CDN
+  if (!window.docx) {
+    await new Promise((res, rej) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/docx.umd.min.js';
+      s.onload = res; s.onerror = () => rej(new Error('Could not load document library. Check internet connection.'));
+      document.head.appendChild(s);
+    });
+  }
+
+  const {
+    Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
+    AlignmentType, BorderStyle, WidthType, ShadingType, VerticalAlign
+  } = window.docx;
+
+  const NAVY='1A1A2E', PINK='E8187A', CREAM='F5F0E8', BORDER='D5CCBC',
+        WHITE='FFFFFF', MUTED='8A847C', GREEN='1A8C5B';
+
+  const CONTENT_W = 9360;
+  const cb = { style: BorderStyle.SINGLE, size: 4, color: BORDER };
+  const borders = { top:cb, bottom:cb, left:cb, right:cb };
+  const nb = { style: BorderStyle.NONE, size: 0, color: WHITE };
+  const noBorders = { top:nb, bottom:nb, left:nb, right:nb };
+
+  function f$(n) {
+    return '$' + parseFloat(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  }
+  function fd(ds) {
+    if (!ds) return '';
+    return new Date(ds+'T12:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  }
+
+  const items   = data.items||[];
+  const sub     = items.reduce((s,i)=>s+(parseFloat(i.qty||0)*parseFloat(i.rate||0)),0);
+  const taxAmt  = sub*(parseFloat(data.taxRate||0)/100);
+  const total   = sub+taxAmt;
+
+  function cell(children, w, opts={}) {
+    return new TableCell({
+      borders: opts.borders||borders,
+      width: { size:w, type:WidthType.DXA },
+      shading: { fill:opts.fill||WHITE, type:ShadingType.CLEAR },
+      margins: opts.margins||{ top:80,bottom:80,left:120,right:120 },
+      verticalAlign: opts.va||VerticalAlign.TOP,
+      children,
+    });
+  }
+
+  function p(text, opts={}) {
+    return new Paragraph({
+      alignment: opts.align||AlignmentType.LEFT,
+      spacing: { after:opts.after??40, before:opts.before??0 },
+      border: opts.border,
+      children: [new TextRun({
+        text: String(text), font:opts.font||'Arial', size:opts.size||20,
+        bold:!!opts.bold, color:opts.color||NAVY, italics:!!opts.italic
+      })]
+    });
+  }
+
+  // Header table
+  const headerTable = new Table({
+    width: { size:CONTENT_W, type:WidthType.DXA },
+    columnWidths: [4680,4680],
+    borders: { top:nb, bottom:{style:BorderStyle.SINGLE,size:8,color:NAVY}, left:nb, right:nb, insideH:nb, insideV:nb },
+    rows: [new TableRow({ children: [
+      cell([
+        p(data.firmName||'Power of Public, LLC', {font:'Georgia',size:28,bold:true,after:40}),
+        ...(data.firmAddr  ? [p(data.firmAddr,  {size:18,color:MUTED,after:0})] : []),
+        ...(data.firmPhone ? [p(data.firmPhone, {size:18,color:MUTED,after:0})] : []),
+        ...(data.firmEmail ? [p(data.firmEmail, {size:18,color:MUTED,after:0})] : []),
+        ...(data.firmWeb   ? [p(data.firmWeb,   {size:18,color:MUTED,after:0})] : []),
+      ], 4680, { borders:noBorders, margins:{top:0,bottom:120,left:0,right:120} }),
+      new TableCell({
+        borders:noBorders, width:{size:4680,type:WidthType.DXA},
+        margins:{top:0,bottom:120,left:120,right:0},
+        verticalAlign:VerticalAlign.BOTTOM,
+        children:[
+          new Paragraph({ alignment:AlignmentType.RIGHT, spacing:{after:40}, children:[new TextRun({text:'COST ESTIMATE',font:'Georgia',size:40,bold:true,color:PINK})] }),
+          new Paragraph({ alignment:AlignmentType.RIGHT, spacing:{after:20}, children:[new TextRun({text:'Estimate #'+(data.estimateNum||'EST-001'),font:'Arial',size:20,bold:true,color:NAVY})] }),
+          new Paragraph({ alignment:AlignmentType.RIGHT, spacing:{after:20}, children:[
+            new TextRun({text:'Date: ',font:'Arial',size:18,color:MUTED}),
+            new TextRun({text:fd(data.issueDate),font:'Arial',size:18,color:NAVY}),
+          ]}),
+          ...(data.expiryDate ? [new Paragraph({ alignment:AlignmentType.RIGHT, spacing:{after:0}, children:[
+            new TextRun({text:'Valid through: ',font:'Arial',size:18,color:MUTED}),
+            new TextRun({text:fd(data.expiryDate),font:'Arial',size:18,color:NAVY}),
+          ]})] : []),
+        ]
+      })
+    ]})]
+  });
+
+  // Meta table
+  const metaTable = new Table({
+    width:{size:CONTENT_W,type:WidthType.DXA}, columnWidths:[4680,4680],
+    borders:{top:nb,bottom:nb,left:nb,right:nb,insideH:nb,insideV:nb},
+    rows:[new TableRow({children:[
+      cell([
+        p('PREPARED FOR',{size:16,bold:true,color:MUTED,after:40}),
+        p(data.clientName||'',{font:'Georgia',size:24,bold:true,after:20}),
+        ...(data.clientOrg   ? [p(data.clientOrg,  {size:18,after:0})] : []),
+        ...(data.clientAddr  ? [p(data.clientAddr,  {size:18,color:MUTED,after:0})] : []),
+        ...(data.clientEmail ? [p(data.clientEmail, {size:18,color:MUTED,after:0})] : []),
+      ], 4680, {borders:noBorders,fill:CREAM,margins:{top:120,bottom:120,left:160,right:120}}),
+      cell([
+        p('PROJECT / ENGAGEMENT',{size:16,bold:true,color:MUTED,after:40}),
+        p(data.projectName||'',{font:'Georgia',size:22,bold:true,after:20}),
+        ...(data.projectDesc ? [p(data.projectDesc,{size:18,color:MUTED,after:0})] : []),
+      ], 4680, {borders:noBorders,fill:CREAM,margins:{top:120,bottom:120,left:120,right:160}}),
+    ]})]
+  });
+
+  // Line items
+  const headerRow = new TableRow({
+    tableHeader:true,
+    height:{value:440,rule:'exact'},
+    children:[
+      ['DELIVERABLE / SERVICE',3600,AlignmentType.LEFT],
+      ['QTY / HRS',840,AlignmentType.CENTER],
+      ['RATE',960,AlignmentType.RIGHT],
+      ['AMOUNT',1960,AlignmentType.RIGHT],
+    ].map(([txt,w,align])=>new TableCell({
+      borders, width:{size:w,type:WidthType.DXA},
+      shading:{fill:NAVY,type:ShadingType.CLEAR},
+      margins:{top:80,bottom:80,left:120,right:120},
+      verticalAlign:VerticalAlign.CENTER,
+      children:[new Paragraph({alignment:align,children:[new TextRun({text:txt,font:'Arial',size:17,bold:true,color:WHITE})]})]
+    }))
+  });
+
+  const itemRows = items.map((it,idx)=>{
+    const amt = parseFloat(it.qty||0)*parseFloat(it.rate||0);
+    const fill = idx%2===0?WHITE:CREAM;
+    return new TableRow({children:[
+      cell([
+        p(it.title||'',{bold:true,size:20,after:it.desc?20:0}),
+        ...(it.desc?[p(it.desc,{size:17,color:MUTED,after:0})]:[]),
+      ],3600,{fill}),
+      cell([new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:String(it.qty||0),font:'Arial',size:19,color:NAVY})]})],840,{fill,va:VerticalAlign.CENTER,margins:{top:80,bottom:80,left:80,right:80}}),
+      cell([new Paragraph({alignment:AlignmentType.RIGHT,children:[new TextRun({text:f$(it.rate),font:'Arial',size:19,color:NAVY})]})],960,{fill,va:VerticalAlign.CENTER,margins:{top:80,bottom:80,left:80,right:120}}),
+      cell([new Paragraph({alignment:AlignmentType.RIGHT,children:[new TextRun({text:f$(amt),font:'Arial',size:19,bold:true,color:NAVY})]})],1960,{fill,va:VerticalAlign.CENTER,margins:{top:80,bottom:80,left:80,right:120}}),
+    ]});
+  });
+
+  function totRow(label,value,bold,fill){
+    return new TableRow({children:[
+      new TableCell({borders:noBorders,width:{size:5400,type:WidthType.DXA},shading:{fill:fill||WHITE,type:ShadingType.CLEAR},children:[new Paragraph({children:[new TextRun('')]})]  }),
+      new TableCell({borders:{top:nb,bottom:nb,left:nb,right:cb},width:{size:1960,type:WidthType.DXA},shading:{fill:fill||WHITE,type:ShadingType.CLEAR},margins:{top:60,bottom:60,left:120,right:120},children:[new Paragraph({children:[new TextRun({text:label,font:'Arial',size:18,bold,color:MUTED})]})]}),
+      new TableCell({borders:{top:nb,bottom:nb,left:nb,right:cb},width:{size:2000,type:WidthType.DXA},shading:{fill:fill||WHITE,type:ShadingType.CLEAR},margins:{top:60,bottom:60,left:80,right:120},children:[new Paragraph({alignment:AlignmentType.RIGHT,children:[new TextRun({text:value,font:'Arial',size:bold?22:18,bold,color:bold?NAVY:MUTED})]})]}),
+    ]});
+  }
+
+  const totalsRows = [
+    totRow('Subtotal',f$(sub),false),
+    ...(parseFloat(data.taxRate||0)?[totRow('Tax ('+data.taxRate+'%)',f$(taxAmt),false)]:[]),
+    totRow('TOTAL ESTIMATE',f$(total),true,CREAM),
+  ];
+
+  const lineTable = new Table({
+    width:{size:CONTENT_W,type:WidthType.DXA},
+    columnWidths:[3600,840,960,1960],
+    rows:[headerRow,...itemRows,...totalsRows],
+  });
+
+  const notesParas = [];
+  if (data.assumptions) {
+    notesParas.push(
+      new Paragraph({spacing:{after:80,before:240},children:[new TextRun({text:'ASSUMPTIONS & NOTES',font:'Arial',size:17,bold:true,color:MUTED})]}),
+      new Paragraph({spacing:{after:0},children:[new TextRun({text:data.assumptions,font:'Arial',size:18,color:NAVY})]}),
+    );
+  }
+  if (data.paymentTerms) {
+    notesParas.push(
+      new Paragraph({spacing:{after:80,before:200},children:[new TextRun({text:'PAYMENT TERMS',font:'Arial',size:17,bold:true,color:MUTED})]}),
+      new Paragraph({spacing:{after:0},children:[new TextRun({text:data.paymentTerms,font:'Arial',size:18,color:NAVY})]}),
+    );
+  }
+
+  const footer = new Paragraph({
+    spacing:{before:320}, alignment:AlignmentType.CENTER,
+    border:{top:{style:BorderStyle.SINGLE,size:4,color:BORDER,space:8}},
+    children:[
+      new TextRun({text:(data.firmName||'Power of Public, LLC')+'  ·  This estimate is valid for 30 days from the date of issue.',font:'Arial',size:16,color:MUTED})
+    ]
+  });
+
+  const doc = new Document({
+    styles:{default:{document:{run:{font:'Arial',size:20}}}},
+    sections:[{
+      properties:{page:{size:{width:12240,height:15840},margin:{top:1080,right:1080,bottom:1080,left:1080}}},
+      children:[
+        headerTable,
+        new Paragraph({spacing:{before:280,after:200},children:[new TextRun('')]}),
+        metaTable,
+        new Paragraph({spacing:{before:240,after:0},children:[new TextRun('')]}),
+        lineTable,
+        ...notesParas,
+        footer,
+      ]
+    }]
+  });
+
+  const buf  = await Packer.toBuffer(doc);
+  const blob = new Blob([buf], {type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = (data.estimateNum||'Estimate') + ' — ' + (data.clientName||data.projectName||'Estimate') + '.docx';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

@@ -1208,6 +1208,8 @@ function openProjectModal(editId){
   document.getElementById('proj-type').value=p?p.projectType||'time-and-materials':'time-and-materials';
   document.getElementById('proj-retainer-amt').value=p?p.retainerAmt||'':'';
   toggleRetainerField();
+  const poEl=document.getElementById('proj-po-number'); if(poEl) poEl.value=p?p.poNumber||'':'';
+  const cnEl=document.getElementById('proj-contract-num'); if(cnEl) cnEl.value=p?p.contractNum||'':'';
   document.getElementById('modal-project').classList.add('open');
 }
 function saveProject(){
@@ -1223,13 +1225,15 @@ function saveProject(){
   const status=document.getElementById('proj-status').value;
   const projectType=document.getElementById('proj-type').value;
   const retainerAmt=projectType==='retainer'?parseFloat(document.getElementById('proj-retainer-amt').value)||0:0;
+  const poEl=document.getElementById('proj-po-number'); const poNumber=poEl?poEl.value.trim():'';
+  const cnEl=document.getElementById('proj-contract-num'); const contractNum=cnEl?cnEl.value.trim():'';
   if(!code||!name||!rate||tasks.length===0){showToast('Please fill all required fields');return;}
   if(editId){
     const p=projects.find(x=>x.id===editId);
-    if(p){Object.assign(p,{code,name,client,clientAddr,clientPhone,clientEmail,tasks,rate,status,projectType,retainerAmt});}
+    if(p){Object.assign(p,{code,name,client,clientAddr,clientPhone,clientEmail,tasks,rate,status,projectType,retainerAmt,poNumber,contractNum});}
     showToast('Project updated ✓');
   } else {
-    projects.push({id:'p'+Date.now(),code,name,client,clientAddr,clientPhone,clientEmail,tasks,rate,status,projectType,retainerAmt});
+    projects.push({id:'p'+Date.now(),code,name,client,clientAddr,clientPhone,clientEmail,tasks,rate,status,projectType,retainerAmt,poNumber,contractNum});
     showToast('Project created!');
   }
   sp(); closeModal('modal-project'); renderProjects(); populateTimerProjects();
@@ -1723,7 +1727,7 @@ function buildInvoice(){
           <strong style="display:block;font-family:Georgia, 'Times New Roman', serif;font-size:18px;font-weight:700;color:var(--text);letter-spacing:-.5px;margin:4px 0 6px;">${invNum}</strong>
           <div style="font-size:11px;color:var(--muted);line-height:1.7;">
             Issued: ${fmtDateLong(invDate)}<br>
-            Due: ${fmtDateLong(invDue)}
+            Due: ${fmtDateLong(invDue)}${pid&&gp(pid)&&gp(pid).poNumber?'<br>PO #: '+gp(pid).poNumber:''}${pid&&gp(pid)&&gp(pid).contractNum?'<br>Contract #: '+gp(pid).contractNum:''}
           </div>
         </div>
       </div>
