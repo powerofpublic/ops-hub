@@ -691,8 +691,7 @@ async function generateDocx(data) {
     }]
   });
 
-  const buf  = await Packer.toBuffer(doc);
-  const blob = new Blob([buf], {type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+  const blob = await Packer.toBlob(doc);
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
   a.href     = url;
