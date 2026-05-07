@@ -69,7 +69,7 @@ header{background:var(--navy);border-bottom:3px solid transparent;border-image:l
 .lane-tier-sec{border-top:1px solid var(--border);}
 .tier-sec-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:5px 10px 3px;display:flex;align-items:center;gap:5px;color:var(--muted);background:var(--cream);}
 .tier-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.lane-cards{padding:6px;display:flex;flex-direction:column;gap:5px;min-height:36px;}
+.lane-cards{padding:6px;display:flex;flex-direction:column;gap:5px;}
 .empty-lane{text-align:center;padding:14px 8px;font-size:11px;color:var(--muted);font-style:italic;}
 
 /* PARTNER CARD */
@@ -86,11 +86,11 @@ header{background:var(--navy);border-bottom:3px solid transparent;border-image:l
 .t-active{background:#FEF8E7;color:#8A5800;}
 .t-prospective{background:rgba(26,26,46,.08);color:var(--navy);}
 .t-inactive{background:var(--tan);color:var(--muted);}
-.exp-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px;}
-.etag{font-size:9px;padding:1px 6px;border-radius:5px;background:var(--cream);color:var(--muted);border:1px solid var(--border);cursor:pointer;transition:all .12s;}
+.exp-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px;max-height:none;}
+.etag{font-size:9px;padding:2px 6px;border-radius:5px;background:var(--cream);color:var(--muted);border:1px solid var(--border);cursor:pointer;transition:all .12s;line-height:1.4;}
 .etag:hover,.etag.on{background:var(--navy);color:#fff;border-color:var(--navy);}
 .pcard-icons{display:flex;gap:6px;margin-top:5px;}
-.pcard-ico{font-size:12px;color:var(--muted);text-decoration:none;transition:color .12s;}
+.pcard-ico{font-size:12px;color:var(--muted);text-decoration:none;transition:color .12s;font-family:Arial,sans-serif;}.pcard-ico[title="LinkedIn"]{font-size:10px;font-weight:700;background:var(--tan);padding:1px 4px;border-radius:3px;}
 .pcard-ico:hover{color:var(--pink);}
 
 /* TIER VIEW */
@@ -140,7 +140,168 @@ header{background:var(--navy);border-bottom:3px solid transparent;border-image:l
 .form-input:focus{outline:none;border-color:var(--pink);}
 select.form-input{cursor:pointer;}
 textarea.form-input{resize:vertical;min-height:70px;}
-.cats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;max-height:165px;overflow-y:auto;padding:6px 8px;border:1.5px solid var(--border);border-radius:8px;background:var(--cream);}
+.cats-grid{border:1.5px solid var(--border);border-radius:8px;background:var(--cream);max-height:260px;overflow-y:auto;padding:4px 6px;}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
+.btn{padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--surface);font-family:Arial,sans-serif;}
+.btn:hover{border-color:var(--navy);}
+.btn-primary{background:var(--pink);color:#fff;border-color:var(--pink);}
+.btn-primary:hover{background:#c41268;}
+.btn-danger{background:none;border-color:#fca5a5;color:#dc2626;margin-right:auto;}
+.btn-danger:hover{background:#fef2f2;}
+
+/* EMPTY / TOAST */
+.empty-state{text-align:center;padding:60px 24px;color:var(--muted);}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;opacity:0;transition:all .3s;z-index:9999;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.ok{background:var(--emerald);}
+.tier-pill{font-size:11.5px;font-weight:600;font-family:Arial,sans-serif;padding:4px 11px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;color:var(--muted);transition:all .15s;white-space:nowrap;}
+.tier-pill:hover{border-color:var(--charcoal);color:var(--charcoal);}
+.tier-pill.on[data-tier=""]{background:var(--navy);color:#fff;border-color:var(--navy);}
+.tier-pill.on[data-tier="preferred"]{background:#1A8C5B;color:#fff;border-color:#1A8C5B;}
+.tier-pill.on[data-tier="active"]{background:#D4A017;color:#fff;border-color:#D4A017;}
+.tier-pill.on[data-tier="prospective"]{background:#1A1A2E;color:#fff;border-color:#1A1A2E;}
+.tier-pill.on[data-tier="inactive"]{background:#8A847C;color:#fff;border-color:#8A847C;}
+.cat-group{display:flex;align-items:flex-start;gap:6px;padding:4px 0;border-bottom:1px solid var(--border);}
+.cat-group:last-child{border-bottom:none;}
+.cat-group-name{font-size:10px;font-weight:700;color:var(--pink);width:100px;min-width:100px;flex-shrink:0;padding:3px 4px 0 2px;line-height:1.3;}
+.cat-group-cols{display:grid;grid-template-columns:1fr 1fr 1fr;flex:1;gap:0;}
+.cat-group-chips{display:flex;flex-wrap:wrap;gap:0;flex:1;}
+.cat-group-ct{display:none;}<style>
+/* RESET */
+*{box-sizing:border-box;margin:0;padding:0;}
+
+/* BRAND PALETTE */
+:root{
+  --navy:   #1A1A2E;
+  --pink:   #E8187A;
+  --amber:  #D4A017;
+  --emerald:#1A8C5B;
+  --cream:  #F5F0E8;
+  --tan:    #EDE8DC;
+  --charcoal:#2D2D2D;
+  --bg:     #F2EDE4;
+  --surface:#FFFFFF;
+  --border: #D5CCBC;
+  --muted:  #8A847C;
+  --text:   #2D2D2D;
+}
+
+body{background:var(--bg);font-family:Arial,sans-serif;color:var(--text);font-size:14px;min-height:100vh;}
+
+/* HEADER */
+header{background:var(--navy);border-bottom:3px solid transparent;border-image:linear-gradient(90deg,#E8187A,#D4A017,#1A8C5B) 1;position:sticky;top:0;z-index:200;}
+.hdr{max-width:100%;padding:0 28px;height:60px;display:flex;align-items:center;gap:16px;}
+.hdr-title{font-family:Georgia,serif;font-size:15px;font-weight:700;color:#fff;margin-left:12px;padding-left:12px;border-left:1px solid rgba(255,255,255,.2);}
+.hdr-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.hdr-btn{font-size:11px;color:rgba(255,255,255,.55);background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:6px;padding:5px 12px;text-decoration:none;cursor:pointer;font-family:Arial,sans-serif;}
+.hdr-btn:hover{color:#fff;background:rgba(255,255,255,.12);}
+
+/* TOOLBAR */
+.toolbar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:60px;z-index:100;}
+.search-wrap{position:relative;flex:0 0 210px;}
+.search-wrap input{width:100%;padding:7px 10px 7px 30px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:Arial,sans-serif;background:var(--surface);}
+.search-wrap input:focus{outline:none;border-color:var(--pink);}
+.search-icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--muted);}
+.filter-sel{padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:12.5px;font-family:Arial,sans-serif;background:var(--surface);cursor:pointer;color:var(--text);}
+.filter-sel:focus{outline:none;border-color:var(--pink);}
+.view-pills{display:flex;gap:2px;background:var(--tan);border:1.5px solid var(--border);border-radius:10px;padding:3px;}
+.vp{font-size:11.5px;font-weight:600;font-family:Arial,sans-serif;padding:5px 13px;border-radius:7px;border:none;background:none;cursor:pointer;color:var(--muted);transition:all .15s;}
+.vp.on{background:var(--surface);color:var(--pink);box-shadow:0 1px 4px rgba(0,0,0,.10);}
+.btn-add{margin-left:auto;background:var(--pink);color:#fff;border:none;border-radius:8px;padding:7px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:Arial,sans-serif;white-space:nowrap;}
+.btn-add:hover{background:#c41268;}
+
+/* SERVICE FILTER PILLS */
+.svc-bar{padding:10px 24px;background:var(--cream);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.svc-bar-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);white-space:nowrap;margin-right:2px;}
+.svc-pill{font-size:11.5px;font-weight:600;font-family:Arial,sans-serif;padding:4px 13px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;color:var(--muted);transition:all .15s;white-space:nowrap;}
+.svc-pill:hover{border-color:var(--navy);color:var(--navy);}
+.svc-pill.on{background:var(--navy);color:#fff;border-color:var(--navy);}
+
+/* VIEWS */
+.view{display:none;padding:20px 24px 60px;}
+.view.on{display:block;}
+
+/* MAP VIEW */
+.map-scroll{overflow-x:auto;padding-bottom:12px;}
+.map-lanes{display:flex;gap:14px;align-items:flex-start;min-width:max-content;}
+.lane{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;width:210px;flex-shrink:0;overflow:hidden;}
+.lane-hdr{background:var(--navy);padding:10px 14px;border-bottom:3px solid var(--pink);}
+.lane-title{font-family:Georgia,serif;font-size:12px;font-weight:700;color:#fff;line-height:1.3;}
+.lane-tier-sec{border-top:1px solid var(--border);}
+.tier-sec-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:5px 10px 3px;display:flex;align-items:center;gap:5px;color:var(--muted);background:var(--cream);}
+.tier-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.lane-cards{padding:6px;display:flex;flex-direction:column;gap:5px;}
+.empty-lane{text-align:center;padding:14px 8px;font-size:11px;color:var(--muted);font-style:italic;}
+
+/* PARTNER CARD */
+.pcard{background:var(--surface);border:1.5px solid var(--border);border-radius:9px;padding:9px 10px;cursor:pointer;transition:border-color .15s,box-shadow .15s;user-select:none;}
+.pcard:hover{border-color:var(--pink);box-shadow:0 2px 8px rgba(232,24,122,.1);}
+.pcard-top{display:flex;align-items:center;gap:7px;margin-bottom:3px;}
+.pcard-avt{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;font-family:Georgia,serif;}
+.pcard-name{font-family:Georgia,serif;font-size:12.5px;font-weight:700;color:var(--navy);line-height:1.25;}
+.pcard-creds{font-size:10px;color:var(--muted);font-style:italic;}
+.pcard-role{font-size:10.5px;color:var(--text);margin-top:2px;line-height:1.3;}
+.pcard-org{font-size:10px;color:var(--muted);}
+.tier-badge{display:inline-block;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:8px;margin:4px 1px 0 0;letter-spacing:.02em;}
+.t-preferred{background:#E8F5EE;color:#0D6644;}
+.t-active{background:#FEF8E7;color:#8A5800;}
+.t-prospective{background:rgba(26,26,46,.08);color:var(--navy);}
+.t-inactive{background:var(--tan);color:var(--muted);}
+.exp-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px;max-height:none;}
+.etag{font-size:9px;padding:2px 6px;border-radius:5px;background:var(--cream);color:var(--muted);border:1px solid var(--border);cursor:pointer;transition:all .12s;line-height:1.4;}
+.etag:hover,.etag.on{background:var(--navy);color:#fff;border-color:var(--navy);}
+.pcard-icons{display:flex;gap:6px;margin-top:5px;}
+.pcard-ico{font-size:12px;color:var(--muted);text-decoration:none;transition:color .12s;font-family:Arial,sans-serif;}.pcard-ico[title="LinkedIn"]{font-size:10px;font-weight:700;background:var(--tan);padding:1px 4px;border-radius:3px;}
+.pcard-ico:hover{color:var(--pink);}
+
+/* TIER VIEW */
+.tier-section{margin-bottom:28px;}
+.tier-section-hdr{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--border);}
+.tier-section-name{font-family:Georgia,serif;font-size:16px;font-weight:700;}
+.tier-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;}
+
+/* DIRECTORY VIEW */
+.dir-table{width:100%;border-collapse:collapse;}
+.dir-table th{text-align:left;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:8px 10px;border-bottom:2px solid var(--border);}
+.dir-table td{padding:9px 10px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;}
+.dir-table tr:hover td{background:var(--cream);}
+.dir-avt{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-family:Georgia,serif;}
+
+/* CATEGORIES VIEW */
+.cat-manager{max-width:640px;}
+.cat-manager h2{font-family:Georgia,serif;font-size:20px;color:var(--navy);margin-bottom:6px;}
+.cat-manager p{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6;}
+.cat-list{display:flex;flex-direction:column;gap:5px;margin-bottom:16px;}
+.cat-item{display:flex;align-items:center;gap:10px;padding:9px 14px;background:var(--surface);border:1.5px solid var(--border);border-radius:8px;transition:border-color .12s;}
+.cat-item:focus-within{border-color:var(--pink);}
+.cat-swatch{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.cat-name-input{flex:1;border:none;background:transparent;font-size:13px;font-weight:600;color:var(--navy);font-family:Arial,sans-serif;padding:2px 4px;border-radius:4px;outline:none;}
+.cat-name-input:focus{background:var(--cream);}
+.cat-del{background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;padding:0 4px;line-height:1;}
+.cat-del:hover{color:var(--pink);}
+.cat-add-row{display:flex;gap:8px;}
+.cat-add-row input{flex:1;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:Arial,sans-serif;}
+.cat-add-row input:focus{outline:none;border-color:var(--pink);}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border-radius:16px;padding:28px 30px;max-width:560px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+.modal-title{font-family:Georgia,serif;font-size:19px;font-weight:700;color:var(--navy);margin-bottom:18px;}
+.modal-tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:2px solid var(--border);}
+.modal-tab{font-size:12px;font-weight:600;font-family:Arial,sans-serif;padding:6px 14px;border:none;background:none;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .12s;}
+.modal-tab.on{color:var(--pink);border-bottom-color:var(--pink);}
+.modal-section{display:none;}
+.modal-section.on{display:block;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.form-group{margin-bottom:12px;}
+.form-label{display:block;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px;}
+.form-label small{font-size:9.5px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);}
+.form-input{width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:Arial,sans-serif;background:var(--surface);color:var(--text);}
+.form-input:focus{outline:none;border-color:var(--pink);}
+select.form-input{cursor:pointer;}
+textarea.form-input{resize:vertical;min-height:70px;}
+.cats-grid{border:1.5px solid var(--border);border-radius:8px;background:var(--cream);max-height:260px;overflow-y:auto;padding:4px 6px;}
 .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
 .btn{padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--surface);font-family:Arial,sans-serif;}
 .btn:hover{border-color:var(--navy);}
@@ -218,19 +379,19 @@ textarea.form-input{resize:vertical;min-height:70px;}
 
 <div class="svc-bar" id="svc-bar">
   <span class="svc-bar-label">Service area:</span>
-  <button class="svc-pill on" onclick="filterSvc('',this)">All</button>
-  <button class="svc-pill" onclick="filterSvc('Business Development',this)">Business Development</button>
-  <button class="svc-pill" onclick="filterSvc('Community Engagement',this)">Community Engagement</button>
-  <button class="svc-pill" onclick="filterSvc('Communications Strategy',this)">Communications Strategy</button>
-  <button class="svc-pill" onclick="filterSvc('Creative Services',this)">Creative Services</button>
-  <button class="svc-pill" onclick="filterSvc('Digital Media Strategy',this)">Digital Media Strategy</button>
-  <button class="svc-pill" onclick="filterSvc('Grant Writing',this)">Grant Writing</button>
-  <button class="svc-pill" onclick="filterSvc('Health Education',this)">Health Education</button>
-  <button class="svc-pill" onclick="filterSvc('Media Relations',this)">Media Relations</button>
-  <button class="svc-pill" onclick="filterSvc('Program Evaluation',this)">Program Evaluation</button>
-  <button class="svc-pill" onclick="filterSvc('Project Management',this)">Project Management</button>
-  <button class="svc-pill" onclick="filterSvc('Research',this)">Research</button>
-  <button class="svc-pill" onclick="filterSvc('Science &amp; Medical Writing',this)">Science &amp; Medical Writing</button>
+  <button class="svc-pill on" data-svc="" onclick="filterSvc('',this)">All</button>
+  <button class="svc-pill" data-svc="Business Development" onclick="filterSvc('Business Development',this)">Business Development</button>
+  <button class="svc-pill" data-svc="Community Engagement" onclick="filterSvc('Community Engagement',this)">Community Engagement</button>
+  <button class="svc-pill" data-svc="Communications Strategy" onclick="filterSvc('Communications Strategy',this)">Communications Strategy</button>
+  <button class="svc-pill" data-svc="Creative Services" onclick="filterSvc('Creative Services',this)">Creative Services</button>
+  <button class="svc-pill" data-svc="Digital Media Strategy" onclick="filterSvc('Digital Media Strategy',this)">Digital Media Strategy</button>
+  <button class="svc-pill" data-svc="Grant Writing" onclick="filterSvc('Grant Writing',this)">Grant Writing</button>
+  <button class="svc-pill" data-svc="Health Education" onclick="filterSvc('Health Education',this)">Health Education</button>
+  <button class="svc-pill" data-svc="Media Relations" onclick="filterSvc('Media Relations',this)">Media Relations</button>
+  <button class="svc-pill" data-svc="Program Evaluation" onclick="filterSvc('Program Evaluation',this)">Program Evaluation</button>
+  <button class="svc-pill" data-svc="Project Management" onclick="filterSvc('Project Management',this)">Project Management</button>
+  <button class="svc-pill" data-svc="Research" onclick="filterSvc('Research',this)">Research</button>
+  <button class="svc-pill" data-svc="Science &amp; Medical Writing" onclick="filterSvc('Science &amp; Medical Writing',this)">Science &amp; Medical Writing</button>
 </div>
 
 <div id="view-map" class="view on"><div class="map-scroll"><div class="map-lanes" id="map-lanes"></div></div></div>
@@ -282,19 +443,35 @@ textarea.form-input{resize:vertical;min-height:70px;}
         <input class="form-input" id="p-name" type="text" placeholder="Dr. Jane Smith / Organization Name">
       </div>
       <div id="individual-fields">
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Credentials</label>
-            <input class="form-input" id="p-creds" type="text" placeholder="PhD, MPH, APR">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Title / Role</label>
-            <input class="form-input" id="p-title" type="text" placeholder="Director of Health Equity">
+        <div class="form-group">
+          <label class="form-label">Credentials</label>
+          <input class="form-input" id="p-creds" type="text" placeholder="PhD, MPH, APR">
+        </div>
+        <div style="border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:12px;background:var(--cream);">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px;">Primary Affiliation</div>
+          <div class="form-row">
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Title / Role</label>
+              <input class="form-input" id="p-title" type="text" placeholder="Director of Health Equity">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Organization</label>
+              <input class="form-input" id="p-org" type="text" placeholder="American Heart Association">
+            </div>
           </div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Organization / Affiliation</label>
-          <input class="form-input" id="p-org" type="text" placeholder="CDC, Johns Hopkins, Freelance...">
+        <div style="border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:12px;background:var(--cream);">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px;">Secondary Affiliation <span style="font-weight:400;font-size:9.5px;">(independent practice, consulting firm, etc.)</span></div>
+          <div class="form-row">
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Title / Role</label>
+              <input class="form-input" id="p-title2" type="text" placeholder="Independent Consultant">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Organization</label>
+              <input class="form-input" id="p-org2" type="text" placeholder="Own firm / Freelance">
+            </div>
+          </div>
         </div>
       </div>
       <div class="form-group">
@@ -317,6 +494,12 @@ textarea.form-input{resize:vertical;min-height:70px;}
       </div>
       <div class="form-group">
         <label class="form-label">Subject Matter Expertise <small>(select all that apply)</small></label>
+        <div style="position:relative;margin-bottom:4px;">
+          <input type="text" id="p-cats-search" placeholder="Search expertise..."
+            style="width:100%;padding:6px 10px 6px 28px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;font-family:Arial,sans-serif;"
+            oninput="onCatSearch(this.value)">
+          <span style="position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--muted);">&#128269;</span>
+        </div>
         <div class="cats-grid" id="p-cats-grid"></div>
         <div id="p-cats-count" style="font-size:10.5px;color:var(--muted);margin-top:4px;">0 selected</div>
       </div>
@@ -336,9 +519,13 @@ textarea.form-input{resize:vertical;min-height:70px;}
           <input class="form-input" id="p-phone" type="tel" placeholder="(202) 555-0100">
         </div>
         <div class="form-group">
-          <label class="form-label">Website / LinkedIn</label>
+          <label class="form-label">Website</label>
           <input class="form-input" id="p-web" type="url" placeholder="https://...">
         </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">LinkedIn</label>
+        <input class="form-input" id="p-linkedin" type="url" placeholder="https://linkedin.com/in/...">
       </div>
       <div class="form-group">
         <label class="form-label">Preferred Contact Method</label>
@@ -367,11 +554,25 @@ textarea.form-input{resize:vertical;min-height:70px;}
         <div class="form-group">
           <label class="form-label">Available to Subcontract</label>
           <select class="form-input" id="p-subcon">
-            <option value="">Unknown</option>
+            <option value="">Undetermined</option>
             <option value="yes">Yes</option>
             <option value="no">No</option>
             <option value="sometimes">Project-dependent</option>
           </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Available to Prime</label>
+          <select class="form-input" id="p-prime">
+            <option value="">Undetermined</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">State Registrations <small>(e.g. MD, VA, DC)</small></label>
+          <input class="form-input" id="p-states" type="text" placeholder="MD, VA, DC, TX...">
         </div>
       </div>
     </div>
@@ -416,45 +617,80 @@ onAuthStateChanged(auth, user => {
 });
 </script>
 
-<script>var _tierFilter = new Set();
+<script>
+var _tierFilter = new Set();
 
 
 var partners   = [];
 var categories = [];
 var _view      = 'map';
-var _svcFilter = '';
+var _svcFilter = new Set();
 var _tagFilter = '';
 
 var DEFAULT_CATS = [
+  'Account Management',
+  'Administrative Support',
   'Advocacy',
+  'Animation',
   'Behavioral Health',
+  'Business Strategy',
+  'Capture',
   'Child Health',
   'Chronic Disease',
-  'Climate & Health',
-  'Community Health',
-  'Digital Health',
+  'Climate & Environment',
+  'Communicable Disease',
+  'Community Health Assessments',
+  'Community Health Education',
+  'Digital Media: Social & Community',
+  'Digital: Paid Media Buying',
   'Environmental Health',
+  'Evaluation',
+  'Experiential Marketing',
+  'Finance & Budgeting',
+  'Government Relations',
   'Grant Writing',
+  'Graphic Design',
   'Health Communications',
   'Health Equity',
   'Health Literacy',
   'Health Policy',
   'Health Technology',
+  'Legal & Compliance',
   'Maternal Health',
+  'Media Relations',
+  'Meeting Facilitation',
   'Mental Health',
+  'Multicultural Marketing & Communications',
+  'Multimedia Production',
   'Nutrition',
+  'Out of Home Marketing',
   'Physical Activity',
+  'Plain Language Writing',
+  'Product Development',
+  'Production',
+  'Project Management',
+  'Proposal Development',
+  'Provider Education',
+  'PSA Distribution',
+  'Public Relations',
+  'Racial Equity',
   'Racial Justice',
   'Research & Data',
+  'Science & Medical Writing',
+  'Sleep Health',
+  'Social Impact',
+  'Social Marketing',
+  'Strategic Communications',
+  'Strategic Planning',
   'Substance Use',
+  'Traditional Paid Media',
+  'Training',
+  'Video Production',
   'Workforce Development'
 ];
 
 var CAT_COLORS = [
-  '#E8187A','#1A8C5B','#D4A017','#1A1A2E','#C73060','#0D6644',
-  '#8A5800','#0D4F3C','#5B1A5E','#1A4FA0','#7A1A1A','#4A6B1A',
-  '#6B3A1A','#1A5F7A','#7A3F1A','#2D6B1A','#5B3A7A','#1A6B5B',
-  '#7A1A4A','#3A5B1A','#1A3A7A','#6B5B1A'
+  '#E8187A','#1A8C5B','#D4A017','#1A1A2E','#C73060','#0D6644','#8A5800','#0D4F3C','#5B1A5E','#1A4FA0','#7A1A1A','#4A6B1A','#6B3A1A','#1A5F7A','#7A3F1A','#2D6B1A','#5B3A7A','#1A6B5B','#7A1A4A','#3A5B1A','#1A3A7A','#6B5B1A','#3A1A7A','#1A7A4A','#7A4A1A','#4A1A6B','#1A7A6B','#6B1A4A','#4A6B3A','#3A4A6B','#6B4A3A','#1A4A6B','#6B3A4A','#4A3A6B','#3A6B4A','#6B4A1A','#1A6B4A','#4A1A3A','#3A1A4A','#4A3A1A','#1A3A4A','#4A1A6B','#6B1A3A','#3A6B1A','#1A6B3A','#6B1A6B','#3A4A1A','#1A4A3A','#4A6B1A','#3A1A6B','#6B4A6B','#1A3A6B','#4A6B6B','#6B6B1A','#1A6B6B','#6B1A1A','#6B6B4A','#4A1A4A','#1A4A6B'
 ];
 
 var TIERS = [
@@ -549,7 +785,7 @@ function filtered() {
   var q    = (document.getElementById('search').value || '').toLowerCase();
   var org_f  = document.getElementById('f-org').value;
   return partners.filter(function(p) {
-    if (_svcFilter && (p.svc || '') !== _svcFilter) return false;
+    if (_svcFilter.size > 0 && !_svcFilter.has(p.svc || '')) return false;
     if (_tierFilter.size > 0 && !_tierFilter.has(p.tier)) return false;
     if (org_f  && (p.org||'') !== org_f) return false;
     if (_tagFilter && partnerCats(p).indexOf(_tagFilter) < 0) return false;
@@ -582,7 +818,8 @@ function cardHTML(p) {
   var contact = '';
   if (p.email) contact += '<a class="pcard-ico" href="mailto:'+p.email+'" onclick="event.stopPropagation()" title="'+p.email+'">&#9993;</a>';
   if (p.phone) contact += '<a class="pcard-ico" href="tel:'+p.phone+'" onclick="event.stopPropagation()" title="'+p.phone+'">&#128222;</a>';
-  if (p.web)   contact += '<a class="pcard-ico" href="'+p.web+'" target="_blank" onclick="event.stopPropagation()" title="Website">&#127760;</a>';
+  if (p.web)      contact += '<a class="pcard-ico" href="'+p.web+'" target="_blank" onclick="event.stopPropagation()" title="Website">&#127760;</a>';
+  if (p.linkedin) contact += '<a class="pcard-ico" href="'+p.linkedin+'" target="_blank" onclick="event.stopPropagation()" title="LinkedIn">in</a>';
   var tags = pc.map(function(c){
     var on = c === _tagFilter ? ' on' : '';
     return '<span class="etag'+on+'" onclick="event.stopPropagation();tagFilter(\''+c.replace(/'/g,"\\'")+'\')" >'+c+'</span>';
@@ -595,6 +832,7 @@ function cardHTML(p) {
     '</div></div>'+
     (p.title?'<div class="pcard-role">'+p.title+'</div>':'')+
     (p.org?'<div class="pcard-org">'+p.org+'</div>':'')+
+    (p.org2?'<div class="pcard-org" style="color:var(--muted);font-style:italic;">'+p.org2+'</div>':'')+
     '<div style="margin-top:4px;"><span class="tier-badge t-'+p.tier+'" style="background:'+t_info.bg+';color:'+t_info.color+';">'+t_info.label+'</span>'+subBadge+'</div>'+
     (tags?'<div class="exp-tags">'+tags+'</div>':'')+
     (contact?'<div class="pcard-icons">'+contact+'</div>':'')+
@@ -610,12 +848,27 @@ window.tagFilter = tagFilter;
 
 // -- SERVICE FILTER ---------------------------------------------
 function filterSvc(svc, btn) {
-  _svcFilter = svc;
-  document.querySelectorAll('.svc-pill').forEach(function(p){ p.classList.remove('on'); });
-  if (btn) btn.classList.add('on');
-  else if (!svc) {
-    var allBtn = document.querySelector('.svc-pill');
+  if (svc === '') {
+    // All - clear selections
+    _svcFilter.clear();
+    document.querySelectorAll('.svc-pill').forEach(function(p){ p.classList.remove('on'); });
+    var allBtn = document.querySelector('.svc-pill[data-svc=""]');
     if (allBtn) allBtn.classList.add('on');
+  } else {
+    // Toggle this service
+    var allBtn = document.querySelector('.svc-pill[data-svc=""]');
+    if (_svcFilter.has(svc)) {
+      _svcFilter.delete(svc);
+      if (btn) btn.classList.remove('on');
+    } else {
+      _svcFilter.add(svc);
+      if (btn) btn.classList.add('on');
+    }
+    if (_svcFilter.size === 0) {
+      if (allBtn) allBtn.classList.add('on');
+    } else {
+      if (allBtn) allBtn.classList.remove('on');
+    }
   }
   renderAll();
 }
@@ -631,7 +884,7 @@ var SVC_AREAS = [
 
 function renderMap() {
   var data = filtered();
-  var areas = _svcFilter ? [_svcFilter] : SVC_AREAS;
+  var areas = (_svcFilter && _svcFilter.size > 0) ? Array.from(_svcFilter) : SVC_AREAS;
   var html = areas.map(function(svc) {
     var ap = data.filter(function(p){ return (p.svc||'') === svc; });
     var tiers_html = TIERS.map(function(t) {
@@ -673,7 +926,7 @@ function renderDir() {
   var html = data.map(function(p) {
     var t_info = tier(p.tier);
     var avt_bg = avatarColor(p);
-    var pc = partnerCats(p).slice(0,3).map(function(c){
+    var pc = partnerCats(p).slice(0,5).map(function(c){
       return '<span class="etag">'+c+'</span>';
     }).join(' ');
     return '<tr onclick="openModal(\''+p.fbKey+'\')" style="cursor:pointer;">'+
@@ -748,22 +1001,87 @@ function deleteCategory(idx) {
 window.deleteCategory = deleteCategory;
 
 // -- CATS GRID IN MODAL -----------------------------------------
+var CAT_GROUPS = [
+  {label:'Communications & Media',cats:['Animation','Digital Media: Social & Community','Digital: Paid Media Buying','Experiential Marketing','Graphic Design','Health Communications','Health Literacy','Media Relations','Multicultural Marketing & Communications','Multimedia Production','Out of Home Marketing','Plain Language Writing','Production','PSA Distribution','Public Relations','Science & Medical Writing','Social Marketing','Strategic Communications','Strategic Planning','Traditional Paid Media','Video Production']},
+  {label:'Health & Social Topics',cats:['Behavioral Health','Child Health','Chronic Disease','Climate & Environment','Communicable Disease','Environmental Health','Health Equity','Maternal Health','Mental Health','Nutrition','Physical Activity','Racial Equity','Racial Justice','Sleep Health','Social Impact','Substance Use']},
+  {label:'Operations',cats:['Account Management','Administrative Support','Finance & Budgeting','Legal & Compliance','Meeting Facilitation','Project Management','Training']},
+  {label:'Public Health',cats:['Community Health Assessments','Community Health Education','Health Technology','Product Development','Provider Education','Workforce Development']},
+  {label:'Business Development & Growth',cats:['Business Strategy','Capture','Grant Writing','Proposal Development']},
+  {label:'Policy & Advocacy',cats:['Advocacy','Government Relations','Health Policy']},
+  {label:'Research & Evaluation',cats:['Evaluation','Research & Data']},
+];
+
+
+function onCatSearch(val) {
+  var grid = document.getElementById('p-cats-grid');
+  if (!grid) return;
+  grid._searchVal = val;
+  var sel = getSelectedCats();
+  populateCatsGrid(sel);
+}
+window.onCatSearch = onCatSearch;
+
 function populateCatsGrid(selected) {
   var grid = document.getElementById('p-cats-grid');
   if (!grid) return;
-  var sorted = categories.slice().sort(function(a,b){ return a.toLowerCase()<b.toLowerCase()?-1:1; });
-  grid.innerHTML = sorted.map(function(c) {
-    var checked = selected.indexOf(c) >= 0;
-    var color   = catColor(c);
-    var bg = checked ? 'background:'+color+'18;border:1.5px solid '+color+'66;' : 'background:transparent;border:1.5px solid transparent;';
-    return '<label style="display:flex;align-items:center;gap:5px;padding:3px 6px;border-radius:5px;cursor:pointer;'+bg+'transition:background .12s;">'+
-      '<input type="checkbox" value="'+c+'" '+(checked?'checked':'')+
-      ' onchange="updateCatCount()" style="width:12px;height:12px;accent-color:'+color+';cursor:pointer;flex-shrink:0;">'+
-      '<span style="font-size:11px;color:var(--text);line-height:1.25;">'+c+'</span>'+
-      '</label>';
-  }).join('');
+  var sel  = selected || [];
+  var q    = (grid._searchVal || '').toLowerCase();
+
+  if (q) {
+    var matches = categories.slice()
+      .sort(function(a,b){ return a.toLowerCase()<b.toLowerCase()?-1:1; })
+      .filter(function(c){ return c.toLowerCase().includes(q); });
+    grid.innerHTML = matches.map(function(c){
+      return catCheckbox(c, sel.indexOf(c) >= 0);
+    }).join('');
+  } else {
+    if (typeof CAT_GROUPS === 'undefined' || !CAT_GROUPS.length) {
+      // Fallback: flat alphabetical
+      var sorted = categories.slice().sort(function(a,b){return a.toLowerCase()<b.toLowerCase()?-1:1;});
+      grid.innerHTML = sorted.map(function(c){ return catCheckbox(c, sel.indexOf(c)>=0); }).join('');
+    } else {
+      grid.innerHTML = CAT_GROUPS.map(function(grp) {
+        var inGroup = (grp.cats||[]).filter(function(c){ return categories.indexOf(c) >= 0; });
+        if (!inGroup.length) return '';
+        var anyChecked = inGroup.some(function(c){ return sel.indexOf(c) >= 0; });
+        var key = 'grp_' + grp.label.replace(/[^a-z]/gi,'_');
+        var open = anyChecked || grid['_open_'+key] !== false;
+        return '<div class="cat-group">' +
+          '<div class="cat-group-name">'+grp.label+'</div>' +
+          '<div class="cat-group-cols">' +
+          inGroup.map(function(c){ return catCheckbox(c, sel.indexOf(c)>=0); }).join('') +
+          '</div>' +
+          '</div>';
+      }).join('');
+    }
+  }
   updateCatCount();
 }
+
+function catCheckbox(c, checked) {
+  var color = catColor(c);
+  var bg = checked
+    ? 'background:'+color+'18;border:1.5px solid '+color+'66;'
+    : 'background:transparent;border:1.5px solid transparent;';
+  return '<label style="display:flex;align-items:center;gap:4px;padding:1px 4px;border-radius:4px;cursor:pointer;white-space:nowrap;'+bg+'transition:background .12s;">' +
+    '<input type="checkbox" value="'+c+'" '+(checked?'checked':'')+
+    ' onchange="updateCatCount()" style="width:12px;height:12px;accent-color:'+color+';cursor:pointer;flex-shrink:0;">' +
+    '<span style="font-size:11px;color:var(--text);line-height:1.25;">'+c+'</span>' +
+    '</label>';
+}
+window.catCheckbox = catCheckbox;
+
+function toggleCatGroup(hdr, key, e) {
+  var body = hdr.nextElementSibling;
+  var arrow = hdr.querySelector('.cat-group-arrow');
+  var grid = document.getElementById('p-cats-grid');
+  var open = body.style.display === 'none';
+  body.style.display = open ? 'flex' : 'none'; if (open) { body.style.flexWrap='wrap'; body.style.padding='2px 4px 4px'; }
+  arrow.innerHTML = open ? '&#9660;' : '&#9654;';
+  if (grid) grid['_open_'+key] = open;
+}
+window.toggleCatGroup = toggleCatGroup;
+
 
 function updateCatCount() {
   var grid = document.getElementById('p-cats-grid');
@@ -822,11 +1140,18 @@ function openModal(fbKey) {
   document.getElementById('p-email').value      = p ? (p.email||'') : '';
   document.getElementById('p-phone').value      = p ? (p.phone||'') : '';
   document.getElementById('p-web').value        = p ? (p.web||'') : '';
+  var liEl = document.getElementById('p-linkedin'); if (liEl) liEl.value = p ? (p.linkedin||'') : '';
+  var t2El = document.getElementById('p-title2');   if (t2El) t2El.value = p ? (p.title2||'') : '';
+  var o2El = document.getElementById('p-org2');     if (o2El) o2El.value = p ? (p.org2||'') : '';
   document.getElementById('p-pref').value       = p ? (p.pref||'') : '';
   document.getElementById('p-source').value     = p ? (p.source||'') : '';
   document.getElementById('p-notes').value      = p ? (p.notes||'') : '';
   document.getElementById('p-lastcontact').value= p ? (p.lastContact||'') : '';
   document.getElementById('p-subcon').value     = p ? (p.subcon||'') : '';
+  var prEl = document.getElementById('p-prime');  if (prEl) prEl.value = p ? (p.prime||'') : '';
+  var stEl = document.getElementById('p-states'); if (stEl) stEl.value = p ? (p.states||'') : '';
+  var prEl = document.getElementById('p-prime');   if (prEl) prEl.value = p ? (p.prime||'') : '';
+  var stEl = document.getElementById('p-states');  if (stEl) stEl.value = p ? (p.states||'') : '';
   if (!categories.length) categories = DEFAULT_CATS.slice();
   populateCatsGrid(p ? partnerCats(p) : []);
   toggleOrgFields();
@@ -851,7 +1176,8 @@ window.switchModalTab = switchModalTab;
 
 function toggleOrgFields() {
   var isInd = document.getElementById('p-type').value === 'individual';
-  document.getElementById('individual-fields').style.display = isInd ? '' : 'none';
+  var el = document.getElementById('individual-fields');
+  if (el) el.style.display = isInd ? '' : 'none';
 }
 window.toggleOrgFields = toggleOrgFields;
 
@@ -873,11 +1199,16 @@ function savePartner() {
     email:      document.getElementById('p-email').value.trim(),
     phone:      document.getElementById('p-phone').value.trim(),
     web:        document.getElementById('p-web').value.trim(),
+    linkedin:   document.getElementById('p-linkedin') ? document.getElementById('p-linkedin').value.trim() : '',
+    title2:     document.getElementById('p-title2')   ? document.getElementById('p-title2').value.trim()   : '',
+    org2:       document.getElementById('p-org2')     ? document.getElementById('p-org2').value.trim()     : '',
     pref:       document.getElementById('p-pref').value,
     source:     document.getElementById('p-source').value.trim(),
     notes:      document.getElementById('p-notes').value.trim(),
     lastContact:document.getElementById('p-lastcontact').value,
     subcon:     document.getElementById('p-subcon').value,
+    prime:       document.getElementById('p-prime') ? document.getElementById('p-prime').value : '',
+    states:      document.getElementById('p-states') ? document.getElementById('p-states').value.trim() : '',
     updatedAt:  new Date().toISOString(),
   };
   var id = document.getElementById('p-edit-id').value;
@@ -925,7 +1256,276 @@ document.addEventListener('keydown', function(e){
   if (e.key === 'Enter' && e.target.classList.contains('cat-name-input')) e.target.blur();
 });
 
-</script>
+function deletePartner() {
+  var id = document.getElementById('p-edit-id').value;
+  var p  = partners.find(function(x){ return x.fbKey===id; });
+  if (!p || !confirm('Remove '+( p.name||'this partner')+'?')) return;
+  window._fbRemove('partners/'+id)
+    .then(function(){ closeModal(); showToast('Removed'); })
+    .catch(function(){ showToast('Delete failed'); });
+}
+window.deletePartner = deletePartner;
 
+// Backdrop and Enter key
+document.getElementById('modal-partner').addEventListener('click', function(e){
+  if (e.target === this) closeModal();
+});
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Enter' && e.target.classList.contains('cat-name-input')) e.target.blur();
+});
+
+function deletePartner() {
+  var id = document.getElementById('p-edit-id').value;
+  var p  = partners.find(function(x){ return x.fbKey===id; });
+  if (!p || !confirm('Remove '+( p.name||'this partner')+'?')) return;
+  window._fbRemove('partners/'+id)
+    .then(function(){ closeModal(); showToast('Removed'); })
+    .catch(function(){ showToast('Delete failed'); });
+}
+window.deletePartner = deletePartner;
+
+// Backdrop and Enter key
+document.getElementById('modal-partner').addEventListener('click', function(e){
+  if (e.target === this) closeModal();
+});
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Enter' && e.target.classList.contains('cat-name-input')) e.target.blur();
+});
+
+function catCheckbox(c, checked) {
+  var color = catColor(c);
+  var bg = checked
+    ? 'background:'+color+'18;border:1.5px solid '+color+'66;'
+    : 'background:transparent;border:1.5px solid transparent;';
+  return '<label style="display:flex;align-items:center;gap:4px;padding:1px 4px;border-radius:4px;cursor:pointer;white-space:nowrap;'+bg+'transition:background .12s;">' +
+    '<input type="checkbox" value="'+c+'" '+(checked?'checked':'')+
+    ' onchange="updateCatCount()" style="width:12px;height:12px;accent-color:'+color+';cursor:pointer;flex-shrink:0;">' +
+    '<span style="font-size:11px;color:var(--text);line-height:1.25;">'+c+'</span>' +
+    '</label>';
+}
+window.catCheckbox = catCheckbox;
+
+function toggleCatGroup(hdr, key, e) {
+  var body = hdr.nextElementSibling;
+  var arrow = hdr.querySelector('.cat-group-arrow');
+  var grid = document.getElementById('p-cats-grid');
+  var open = body.style.display === 'none';
+  body.style.display = open ? 'flex' : 'none'; if (open) { body.style.flexWrap='wrap'; body.style.padding='2px 4px 4px'; }
+  arrow.innerHTML = open ? '&#9660;' : '&#9654;';
+  if (grid) grid['_open_'+key] = open;
+}
+window.toggleCatGroup = toggleCatGroup;
+
+
+function updateCatCount() {
+  var grid = document.getElementById('p-cats-grid');
+  var cnt  = document.getElementById('p-cats-count');
+  if (!grid||!cnt) return;
+  var n = grid.querySelectorAll('input:checked').length;
+  cnt.textContent = n + ' selected';
+  cnt.style.color = n > 0 ? 'var(--emerald)' : 'var(--muted)';
+}
+window.updateCatCount = updateCatCount;
+
+function getSelectedCats() {
+  var grid = document.getElementById('p-cats-grid');
+  if (!grid) return [];
+  return Array.from(grid.querySelectorAll('input:checked')).map(function(cb){ return cb.value; });
+}
+
+// -- RENDER ALL -------------------------------------------------
+function renderAll() {
+  if (_view === 'map')  renderMap();
+  if (_view === 'tier') renderTier();
+  if (_view === 'dir')  renderDir();
+  if (_view === 'cats') renderCatManager();
+}
+window.renderAll = renderAll;
+
+// -- SWITCH VIEW ------------------------------------------------
+function switchView(name, btn) {
+  _view = name;
+  ['map','tier','dir','cats'].forEach(function(v){
+    document.getElementById('view-'+v).classList.toggle('on', v===name);
+  });
+  document.querySelectorAll('.vp').forEach(function(b){ b.classList.remove('on'); });
+  if (btn) btn.classList.add('on');
+  // Show svc-bar only on map view
+  var svcBar = document.getElementById('svc-bar');
+  if (svcBar) svcBar.style.display = name === 'map' ? '' : 'none';
+  renderAll();
+}
+window.switchView = switchView;
+
+// -- MODAL ------------------------------------------------------
+function openModal(fbKey) {
+  var p = fbKey ? partners.find(function(x){ return x.fbKey===fbKey; }) : null;
+  document.getElementById('modal-title').textContent = p ? 'Edit Partner' : 'Add Partner';
+  document.getElementById('p-del-btn').style.display = p ? 'inline-block' : 'none';
+  document.getElementById('p-edit-id').value = fbKey||'';
+  document.getElementById('p-type').value       = p ? (p.type||'individual') : 'individual';
+  document.getElementById('p-tier').value       = p ? (p.tier||'prospective') : 'prospective';
+  document.getElementById('p-name').value       = p ? (p.name||'') : '';
+  document.getElementById('p-creds').value      = p ? (p.creds||'') : '';
+  document.getElementById('p-title').value      = p ? (p.title||'') : '';
+  document.getElementById('p-org').value        = p ? (p.org||'') : '';
+  document.getElementById('p-svc').value        = p ? (p.svc||'') : '';
+  document.getElementById('p-expertise').value  = p ? (p.expertise||'') : '';
+  document.getElementById('p-email').value      = p ? (p.email||'') : '';
+  document.getElementById('p-phone').value      = p ? (p.phone||'') : '';
+  document.getElementById('p-web').value        = p ? (p.web||'') : '';
+  var liEl = document.getElementById('p-linkedin'); if (liEl) liEl.value = p ? (p.linkedin||'') : '';
+  var t2El = document.getElementById('p-title2');   if (t2El) t2El.value = p ? (p.title2||'') : '';
+  var o2El = document.getElementById('p-org2');     if (o2El) o2El.value = p ? (p.org2||'') : '';
+  document.getElementById('p-pref').value       = p ? (p.pref||'') : '';
+  document.getElementById('p-source').value     = p ? (p.source||'') : '';
+  document.getElementById('p-notes').value      = p ? (p.notes||'') : '';
+  document.getElementById('p-lastcontact').value= p ? (p.lastContact||'') : '';
+  document.getElementById('p-subcon').value     = p ? (p.subcon||'') : '';
+  var prEl = document.getElementById('p-prime');  if (prEl) prEl.value = p ? (p.prime||'') : '';
+  var stEl = document.getElementById('p-states'); if (stEl) stEl.value = p ? (p.states||'') : '';
+  var prEl = document.getElementById('p-prime');   if (prEl) prEl.value = p ? (p.prime||'') : '';
+  var stEl = document.getElementById('p-states');  if (stEl) stEl.value = p ? (p.states||'') : '';
+  if (!categories.length) categories = DEFAULT_CATS.slice();
+  populateCatsGrid(p ? partnerCats(p) : []);
+  toggleOrgFields();
+  switchModalTab('identity', document.querySelector('.modal-tab'));
+  document.getElementById('modal-partner').classList.add('open');
+}
+window.openModal = openModal;
+
+function closeModal() {
+  document.getElementById('modal-partner').classList.remove('open');
+}
+window.closeModal = closeModal;
+
+function switchModalTab(tab, btn) {
+  ['identity','contact','network'].forEach(function(t){
+    document.getElementById('tab-'+t).classList.toggle('on', t===tab);
+  });
+  document.querySelectorAll('.modal-tab').forEach(function(b){ b.classList.remove('on'); });
+  if (btn) btn.classList.add('on');
+}
+window.switchModalTab = switchModalTab;
+
+function toggleOrgFields() {
+  var isInd = document.getElementById('p-type').value === 'individual';
+  var el = document.getElementById('individual-fields');
+  if (el) el.style.display = isInd ? '' : 'none';
+}
+window.toggleOrgFields = toggleOrgFields;
+
+function savePartner() {
+  var name = document.getElementById('p-name').value.trim();
+  if (!name) { showToast('Name is required'); return; }
+  var cats = getSelectedCats();
+  var rec = {
+    type:       document.getElementById('p-type').value,
+    tier:       document.getElementById('p-tier').value,
+    name:       name,
+    creds:      document.getElementById('p-creds').value.trim(),
+    title:      document.getElementById('p-title').value.trim(),
+    org:        document.getElementById('p-org').value.trim(),
+    svc:        document.getElementById('p-svc').value,
+    cats:       cats,
+    cat:        cats[0]||'',
+    expertise:  document.getElementById('p-expertise').value.trim(),
+    email:      document.getElementById('p-email').value.trim(),
+    phone:      document.getElementById('p-phone').value.trim(),
+    web:        document.getElementById('p-web').value.trim(),
+    linkedin:   document.getElementById('p-linkedin') ? document.getElementById('p-linkedin').value.trim() : '',
+    title2:     document.getElementById('p-title2')   ? document.getElementById('p-title2').value.trim()   : '',
+    org2:       document.getElementById('p-org2')     ? document.getElementById('p-org2').value.trim()     : '',
+    pref:       document.getElementById('p-pref').value,
+    source:     document.getElementById('p-source').value.trim(),
+    notes:      document.getElementById('p-notes').value.trim(),
+    lastContact:document.getElementById('p-lastcontact').value,
+    subcon:     document.getElementById('p-subcon').value,
+    prime:       document.getElementById('p-prime') ? document.getElementById('p-prime').value : '',
+    states:      document.getElementById('p-states') ? document.getElementById('p-states').value.trim() : '',
+    updatedAt:  new Date().toISOString(),
+  };
+  var id = document.getElementById('p-edit-id').value;
+  var prom = id
+    ? window._fbUpdate('partners/'+id, rec)
+    : window._fbPush('partners', Object.assign(rec, {createdAt:new Date().toISOString()}));
+  prom.then(function(){ closeModal(); showToast(id?'Partner updated':'Partner added', true); })
+     .catch(function(){ showToast('Save failed - try again'); });
+}
+window.savePartner = savePartner;
+
+function deletePartner() {
+  var id = document.getElementById('p-edit-id').value;
+  var p  = partners.find(function(x){ return x.fbKey===id; });
+  if (!p || !confirm('Remove '+( p.name||'this partner')+'?')) return;
+  window._fbRemove('partners/'+id)
+    .then(function(){ closeModal(); showToast('Removed'); })
+    .catch(function(){ showToast('Delete failed'); });
+}
+window.deletePartner = deletePartner;
+
+// Backdrop and Enter key
+document.getElementById('modal-partner').addEventListener('click', function(e){
+  if (e.target === this) closeModal();
+});
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Enter' && e.target.classList.contains('cat-name-input')) e.target.blur();
+});
+
+function deletePartner() {
+  var id = document.getElementById('p-edit-id').value;
+  var p  = partners.find(function(x){ return x.fbKey===id; });
+  if (!p || !confirm('Remove '+( p.name||'this partner')+'?')) return;
+  window._fbRemove('partners/'+id)
+    .then(function(){ closeModal(); showToast('Removed'); })
+    .catch(function(){ showToast('Delete failed'); });
+}
+window.deletePartner = deletePartner;
+
+// Backdrop and Enter key
+document.getElementById('modal-partner').addEventListener('click', function(e){
+  if (e.target === this) closeModal();
+});
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Enter' && e.target.classList.contains('cat-name-input')) e.target.blur();
+});
+
+function deletePartner() {
+  var id = document.getElementById('p-edit-id').value;
+  var p  = partners.find(function(x){ return x.fbKey===id; });
+  if (!p || !confirm('Remove '+( p.name||'this partner')+'?')) return;
+  window._fbRemove('partners/'+id)
+    .then(function(){ closeModal(); showToast('Removed'); })
+    .catch(function(){ showToast('Delete failed'); });
+}
+window.deletePartner = deletePartner;
+
+// Backdrop and Enter key
+document.getElementById('modal-partner').addEventListener('click', function(e){
+  if (e.target === this) closeModal();
+});
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Enter' && e.target.classList.contains('cat-name-input')) e.target.blur();
+});
+
+function deletePartner() {
+  var id = document.getElementById('p-edit-id').value;
+  var p  = partners.find(function(x){ return x.fbKey===id; });
+  if (!p || !confirm('Remove '+( p.name||'this partner')+'?')) return;
+  window._fbRemove('partners/'+id)
+    .then(function(){ closeModal(); showToast('Removed'); })
+    .catch(function(){ showToast('Delete failed'); });
+}
+window.deletePartner = deletePartner;
+
+// Backdrop and Enter key
+document.getElementById('modal-partner').addEventListener('click', function(e){
+  if (e.target === this) closeModal();
+});
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Enter' && e.target.classList.contains('cat-name-input')) e.target.blur();
+});
+
+</script>
 </body>
 </html>
