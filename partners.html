@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<title>Partner Collaboration Map - Power of Public</title>
+<style>
+/* RESET */
+*{box-sizing:border-box;margin:0;padding:0;}
+
+/* BRAND PALETTE */
+:root{
+  --navy:   #1A1A2E;
+  --pink:   #E8187A;
+  --amber:  #D4A017;
+  --emerald:#1A8C5B;
+  --cream:  #F5F0E8;
+  --tan:    #EDE8DC;
+  --charcoal:#2D2D2D;
+  --bg:     #F2EDE4;
+  --surface:#FFFFFF;
+  --border: #D5CCBC;
+  --muted:  #8A847C;
+  --text:   #2D2D2D;
+}
+
+body{background:var(--bg);font-family:Arial,sans-serif;color:var(--text);font-size:14px;min-height:100vh;}
+
+/* HEADER */
+header{background:var(--navy);border-bottom:3px solid transparent;border-image:linear-gradient(90deg,#E8187A,#D4A017,#1A8C5B) 1;position:sticky;top:0;z-index:200;}
+.hdr{max-width:100%;padding:0 28px;height:60px;display:flex;align-items:center;gap:16px;}
+.hdr-title{font-family:Georgia,serif;font-size:15px;font-weight:700;color:#fff;margin-left:12px;padding-left:12px;border-left:1px solid rgba(255,255,255,.2);}
+.hdr-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.hdr-btn{font-size:11px;color:rgba(255,255,255,.55);background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:6px;padding:5px 12px;text-decoration:none;cursor:pointer;font-family:Arial,sans-serif;}
+.hdr-btn:hover{color:#fff;background:rgba(255,255,255,.12);}
+
+/* TOOLBAR */
+.toolbar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:60px;z-index:100;}
+.search-wrap{position:relative;flex:0 0 210px;}
+.search-wrap input{width:100%;padding:7px 10px 7px 30px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:Arial,sans-serif;background:var(--surface);}
+.search-wrap input:focus{outline:none;border-color:var(--pink);}
+.search-icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--muted);}
+.filter-sel{padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:12.5px;font-family:Arial,sans-serif;background:var(--surface);cursor:pointer;color:var(--text);}
+.filter-sel:focus{outline:none;border-color:var(--pink);}
+.view-pills{display:flex;gap:2px;background:var(--tan);border:1.5px solid var(--border);border-radius:10px;padding:3px;}
+.vp{font-size:11.5px;font-weight:600;font-family:Arial,sans-serif;padding:5px 13px;border-radius:7px;border:none;background:none;cursor:pointer;color:var(--muted);transition:all .15s;}
+.vp.on{background:var(--surface);color:var(--pink);box-shadow:0 1px 4px rgba(0,0,0,.10);}
+.btn-add{margin-left:auto;background:var(--pink);color:#fff;border:none;border-radius:8px;padding:7px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:Arial,sans-serif;white-space:nowrap;}
+.btn-add:hover{background:#c41268;}
+
+/* SERVICE FILTER PILLS */
+.svc-bar{padding:10px 24px;background:var(--cream);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.svc-bar-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);white-space:nowrap;margin-right:2px;}
+.svc-pill{font-size:11.5px;font-weight:600;font-family:Arial,sans-serif;padding:4px 13px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;color:var(--muted);transition:all .15s;white-space:nowrap;}
+.svc-pill:hover{border-color:var(--navy);color:var(--navy);}
+.svc-pill.on{background:var(--navy);color:#fff;border-color:var(--navy);}
+
+/* VIEWS */
+.view{display:none;padding:20px 24px 60px;}
+.view.on{display:block;}
+
+/* MAP VIEW */
+.map-scroll{overflow-x:auto;padding-bottom:12px;}
+.map-lanes{display:flex;gap:14px;align-items:flex-start;min-width:max-content;}
+.lane{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;width:210px;flex-shrink:0;overflow:hidden;}
+.lane-hdr{background:var(--navy);padding:10px 14px;border-bottom:3px solid var(--pink);}
+.lane-title{font-family:Georgia,serif;font-size:12px;font-weight:700;color:#fff;line-height:1.3;}
+.lane-tier-sec{border-top:1px solid var(--border);}
+.tier-sec-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:5px 10px 3px;display:flex;align-items:center;gap:5px;color:var(--muted);background:var(--cream);}
+.tier-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.lane-cards{padding:6px;display:flex;flex-direction:column;gap:5px;min-height:36px;}
+.empty-lane{text-align:center;padding:14px 8px;font-size:11px;color:var(--muted);font-style:italic;}
+
+/* PARTNER CARD */
+.pcard{background:var(--surface);border:1.5px solid var(--border);border-radius:9px;padding:9px 10px;cursor:pointer;transition:border-color .15s,box-shadow .15s;user-select:none;}
+.pcard:hover{border-color:var(--pink);box-shadow:0 2px 8px rgba(232,24,122,.1);}
+.pcard-top{display:flex;align-items:center;gap:7px;margin-bottom:3px;}
+.pcard-avt{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;font-family:Georgia,serif;}
+.pcard-name{font-family:Georgia,serif;font-size:12.5px;font-weight:700;color:var(--navy);line-height:1.25;}
+.pcard-creds{font-size:10px;color:var(--muted);font-style:italic;}
+.pcard-role{font-size:10.5px;color:var(--text);margin-top:2px;line-height:1.3;}
+.pcard-org{font-size:10px;color:var(--muted);}
+.tier-badge{display:inline-block;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:8px;margin:4px 1px 0 0;letter-spacing:.02em;}
+.t-preferred{background:#E8F5EE;color:#0D6644;}
+.t-active{background:#FEF8E7;color:#8A5800;}
+.t-prospective{background:rgba(26,26,46,.08);color:var(--navy);}
+.t-inactive{background:var(--tan);color:var(--muted);}
+.exp-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px;}
+.etag{font-size:9px;padding:1px 6px;border-radius:5px;background:var(--cream);color:var(--muted);border:1px solid var(--border);cursor:pointer;transition:all .12s;}
+.etag:hover,.etag.on{background:var(--navy);color:#fff;border-color:var(--navy);}
+.pcard-icons{display:flex;gap:6px;margin-top:5px;}
+.pcard-ico{font-size:12px;color:var(--muted);text-decoration:none;transition:color .12s;}
+.pcard-ico:hover{color:var(--pink);}
+
+/* TIER VIEW */
+.tier-section{margin-bottom:28px;}
+.tier-section-hdr{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--border);}
+.tier-section-name{font-family:Georgia,serif;font-size:16px;font-weight:700;}
+.tier-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;}
+
+/* DIRECTORY VIEW */
+.dir-table{width:100%;border-collapse:collapse;}
+.dir-table th{text-align:left;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:8px 10px;border-bottom:2px solid var(--border);}
+.dir-table td{padding:9px 10px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;}
+.dir-table tr:hover td{background:var(--cream);}
+.dir-avt{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-family:Georgia,serif;}
+
+/* CATEGORIES VIEW */
+.cat-manager{max-width:640px;}
+.cat-manager h2{font-family:Georgia,serif;font-size:20px;color:var(--navy);margin-bottom:6px;}
+.cat-manager p{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6;}
+.cat-list{display:flex;flex-direction:column;gap:5px;margin-bottom:16px;}
+.cat-item{display:flex;align-items:center;gap:10px;padding:9px 14px;background:var(--surface);border:1.5px solid var(--border);border-radius:8px;transition:border-color .12s;}
+.cat-item:focus-within{border-color:var(--pink);}
+.cat-swatch{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.cat-name-input{flex:1;border:none;background:transparent;font-size:13px;font-weight:600;color:var(--navy);font-family:Arial,sans-serif;padding:2px 4px;border-radius:4px;outline:none;}
+.cat-name-input:focus{background:var(--cream);}
+.cat-del{background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;padding:0 4px;line-height:1;}
+.cat-del:hover{color:var(--pink);}
+.cat-add-row{display:flex;gap:8px;}
+.cat-add-row input{flex:1;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:Arial,sans-serif;}
+.cat-add-row input:focus{outline:none;border-color:var(--pink);}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border-radius:16px;padding:28px 30px;max-width:560px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+.modal-title{font-family:Georgia,serif;font-size:19px;font-weight:700;color:var(--navy);margin-bottom:18px;}
+.modal-tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:2px solid var(--border);}
+.modal-tab{font-size:12px;font-weight:600;font-family:Arial,sans-serif;padding:6px 14px;border:none;background:none;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .12s;}
+.modal-tab.on{color:var(--pink);border-bottom-color:var(--pink);}
+.modal-section{display:none;}
+.modal-section.on{display:block;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.form-group{margin-bottom:12px;}
+.form-label{display:block;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px;}
+.form-label small{font-size:9.5px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);}
+.form-input{width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:Arial,sans-serif;background:var(--surface);color:var(--text);}
+.form-input:focus{outline:none;border-color:var(--pink);}
+select.form-input{cursor:pointer;}
+textarea.form-input{resize:vertical;min-height:70px;}
+.cats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;max-height:165px;overflow-y:auto;padding:6px 8px;border:1.5px solid var(--border);border-radius:8px;background:var(--cream);}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
+.btn{padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--surface);font-family:Arial,sans-serif;}
+.btn:hover{border-color:var(--navy);}
+.btn-primary{background:var(--pink);color:#fff;border-color:var(--pink);}
+.btn-primary:hover{background:#c41268;}
+.btn-danger{background:none;border-color:#fca5a5;color:#dc2626;margin-right:auto;}
+.btn-danger:hover{background:#fef2f2;}
+
+/* EMPTY / TOAST */
+.empty-state{text-align:center;padding:60px 24px;color:var(--muted);}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;opacity:0;transition:all .3s;z-index:9999;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.ok{background:var(--emerald);}
+.tier-pill{font-size:11.5px;font-weight:600;font-family:Arial,sans-serif;padding:4px 11px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;color:var(--muted);transition:all .15s;white-space:nowrap;}
+.tier-pill:hover{border-color:var(--charcoal);color:var(--charcoal);}
+.tier-pill.on[data-tier=""]{background:var(--navy);color:#fff;border-color:var(--navy);}
+.tier-pill.on[data-tier="preferred"]{background:#1A8C5B;color:#fff;border-color:#1A8C5B;}
+.tier-pill.on[data-tier="active"]{background:#D4A017;color:#fff;border-color:#D4A017;}
+.tier-pill.on[data-tier="prospective"]{background:#1A1A2E;color:#fff;border-color:#1A1A2E;}
+.tier-pill.on[data-tier="inactive"]{background:#8A847C;color:#fff;border-color:#8A847C;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr">
+    <a href="index.html" style="display:flex;align-items:center;"><svg id="Layer_3" height="32" style="display:block;" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 400 100">
+  <!-- Generator: Adobe Illustrator 30.2.1, SVG Export Plug-In . SVG Version: 2.1.1 Build 1)  -->
+  <rect x="25.327" y="18.311" width="384.77" height="80.172" fill="none"/>
+  <path d="M26.467,65.746l2.16-.24c1.92-.3,2.58-.601,2.58-1.08V31.488c0-.48-.36-.66-3.12-.96l-1.56-.24-.18-1.02h17.759c11.339,0,17.219,3.06,17.219,9.6,0,6.96-7.14,10.86-17.699,10.86-.9,0-1.86-.06-2.58-.18v14.999c0,.479.3.72,2.94.96l2.22.24.18,1.02h-20.099l.18-1.02ZM50.766,39.707c0-5.879-2.64-9.06-7.68-9.179l-2.04.12v17.52c.66.06,1.44.3,2.28.3,4.319,0,7.439-3.6,7.439-8.76Z" fill="#f7f5f6"/>
+  <path d="M57.066,53.626c0-7.799,6.24-14.099,15.359-14.099,9.24,0,14.64,6.36,14.64,13.859,0,7.919-6.18,14.219-15.359,14.219-9.3,0-14.64-6.359-14.64-13.979ZM77.585,54.106c0-7.08-1.2-10.62-2.76-12.179-.78-.78-1.62-1.02-2.7-1.02-3.72,0-5.7,4.68-5.7,12.06,0,7.199,1.14,10.679,2.7,12.358.72.721,1.74,1.021,2.82,1.021,3.66,0,5.64-4.979,5.64-12.239Z" fill="#f7f5f6"/>
+  <path d="M85.926,44.567c-.9-2.16-1.32-2.7-3.06-2.88l-1.02-.24-.12-1.02h16.08l-.12,1.02-1.38.24c-1.44.18-1.86.9-1.2,2.58l5.279,14.579,4.32-11.939-.84-2.4c-.84-2.16-1.98-2.64-3-2.82l-1.14-.24-.12-1.02h16.319l-.12,1.02-1.32.24c-2.04.3-1.92.9-1.38,2.58l4.86,14.099,3.24-9.839c1.68-4.74,1.26-6.18-1.92-6.72l-1.2-.36-.18-1.02h11.04l-.18,1.02-1.26.3c-2.34.3-2.76,1.14-4.68,6.66l-6.6,18.958h-3.6l-7.14-18.539-6.96,18.539h-3.54l-9.06-22.798Z" fill="#f7f5f6"/>
+  <path d="M123.486,54.227c0-8.459,6.48-14.819,14.879-14.819,7.08,0,10.74,4.5,10.74,9,0,.6-.06,1.26-.18,1.8,0,0-13.859-.18-16.199-.3-.06.54-.06,1.5-.06,2.04.06,6.3,3.3,10.68,8.58,10.68,3.3,0,5.76-1.62,7.38-4.62l.72.36c-2.1,6-6.3,9.359-12.899,9.359-7.32,0-12.959-5.64-12.959-13.499ZM141.065,48.767c.06-3.96-.78-7.86-3.54-7.86-2.34,0-4.38,2.76-4.8,7.919l8.339-.06Z" fill="#f7f5f6"/>
+  <path d="M147.065,65.746l.78-.061c1.74-.12,2.4-.3,2.4-1.02v-15.719c0-3.72-.48-4.2-2.52-4.8l-1.2-.3.06-.78,12.479-3.479-.12,8.879h.18c1.92-5.64,4.38-8.939,8.1-8.939,2.76,0,4.8,1.68,4.8,4.8,0,2.04-1.74,4.2-4.02,4.2-2.64,0-3.959-1.8-4.62-3.72-1.68.42-3.12,2.46-4.44,6.78v13.079c0,.54.48.84,3,1.02l1.08.061.18,1.02h-16.319l.18-1.02Z" fill="#f7f5f6"/>
+  <path d="M172.384,57.526c0-7.68,5.88-17.399,12.359-17.399,4.68,0,7.26,4.68,7.26,10.619,0,7.86-5.88,16.799-12.66,16.799-5.22,0-6.959-5.22-6.959-10.02ZM188.043,56.146c.72-2.34,1.2-5.58,1.2-7.8,0-4.379-1.32-7.2-4.14-7.2-3.78,0-7.14,6-8.879,11.519-.72,2.4-1.14,5.641-1.14,7.14,0,3.84,1.2,6.78,3.9,6.78,3.84,0,7.32-4.8,9.06-10.439Z" fill="#f7f5f6"/>
+  <path d="M178.923,77.566c0-1.728,1.224-2.808,2.592-2.808,1.944,0,3.312,2.16,1.512,4.608.72.359,2.664-.576,3.168-.576,3.24-.648,4.824-3.601,7.849-19.226l3.888-21.53-5.616-.072.504-1.944,5.76-.36c1.584-7.057,3.601-11.521,5.977-13.969,2.16-2.304,4.681-3.168,7.345-3.168,2.952,0,5.328,1.728,5.328,3.816,0,1.8-1.152,2.88-2.521,2.88-1.943,0-3.384-2.088-1.512-4.608,0,0-2.809-.144-3.816-.144-3.672.864-5.328,4.536-7.417,15.337l7.633.072-.359,2.16h-7.705l-4.392,21.385c-2.304,10.657-4.608,16.346-7.489,19.226-1.8,1.801-3.744,2.521-5.833,2.521-3.312,0-4.896-1.656-4.896-3.601Z" fill="#f7f5f6"/>
+  <path d="M209.943,65.746l2.16-.24c1.92-.3,2.58-.601,2.58-1.08V31.488c0-.48-.36-.66-3.12-.96l-1.56-.24-.181-1.02h17.76c11.34,0,17.219,3.06,17.219,9.6,0,6.96-7.14,10.86-17.699,10.86-.899,0-1.859-.06-2.579-.18v14.999c0,.479.3.72,2.939.96l2.22.24.181,1.02h-20.1l.18-1.02ZM234.243,39.707c0-5.879-2.641-9.06-7.68-9.179l-2.04.12v17.52c.659.06,1.439.3,2.279.3,4.32,0,7.44-3.6,7.44-8.76Z" fill="#f7f5f6"/>
+  <path d="M263.702,62.326h-.18c-3.18,2.76-6.72,5.279-10.439,5.279-2.04,0-3.24-.78-4.74-2.22-1.439-1.5-2.1-4.08-1.979-7.199l.12-15.839c0-.3-.24-.54-3-.84l-.9-.06-.18-1.02h12.84l-.181,16.079c-.12,4.44,1.8,5.64,4.74,5.64,1.62,0,2.88-.66,3.84-1.199v-18.479c0-.6-.42-.78-2.88-.96l-.9-.06-.239-1.02h12.659v19.079c0,2.88.359,3.6,2.1,4.08l1.68.42-.119.72-12.36,3,.12-5.399Z" fill="#f7f5f6"/>
+  <path d="M275.042,34.728c0-3-.359-3.54-2.16-4.08l-1.56-.6.06-.78,12.3-3.3v18.959l.3.12c2.101-2.82,5.4-5.28,9.12-5.28,6,0,10.919,5.58,10.919,12.959,0,9.539-7.68,14.879-15.239,14.879-2.939,0-5.699-.78-8.459-1.8h-.061l-4.68,2.28h-.54v-33.358ZM294.602,55.126c0-6.179-2.58-10.499-6.6-10.499-1.86,0-3.181.84-4.32,1.68v15.119c1.92,2.94,4.14,4.92,5.94,4.92,3.06,0,4.979-4.8,4.979-11.22Z" fill="#f7f5f6"/>
+  <path d="M302.282,65.746l.841-.061c1.739-.12,2.1-.3,2.1-1.02v-29.878c0-2.94-.42-3.48-2.1-4.02l-1.561-.66.12-.72,12.3-3.36v38.698c0,.54.479.78,2.46.96l.72.061.18,1.02h-15.299l.239-1.02Z" fill="#f7f5f6"/>
+  <path d="M315.724,65.746l.84-.061c1.74-.12,2.4-.3,2.4-1.02v-15.719c0-3.72-.48-4.2-2.521-4.8l-1.2-.3.061-.78,12.359-3.479v25.138c0,.54.36.66,2.88.96l.54.061.18,1.02h-15.719l.18-1.02ZM317.823,31.368c0-2.58,2.04-5.04,5.16-5.04,3.24,0,5.22,2.46,5.22,5.04s-1.979,5.1-5.22,5.1c-3.12,0-5.16-2.52-5.16-5.1Z" fill="#f7f5f6"/>
+  <path d="M329.583,54.467c0-8.58,6.239-14.939,15.119-14.939,5.939,0,10.079,2.58,10.079,6.3,0,2.52-1.8,4.2-4.14,4.2-2.7,0-4.439-2.34-4.2-4.92,0-1.2,1.261-2.46,1.261-2.76-.061-.72-1.261-1.32-2.641-1.32-3.6,0-6.06,3.66-6.06,10.499,0,7.02,2.88,11.1,8.22,11.1,3.24,0,5.7-1.62,7.32-4.62l.659.36c-2.159,6-6.539,9.359-12.659,9.359-7.38,0-12.959-5.46-12.959-13.259Z" fill="#f7f5f6"/>
+</svg></a>
+    <span class="hdr-title">Partner Collaboration Map</span>
+    <div class="hdr-right">
+      <a href="index.html" class="hdr-btn">- Hub</a>
+    </div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="search-wrap">
+    <span class="search-icon">&#128269;</span>
+    <input type="text" id="search" placeholder="Search name, org, expertise..." oninput="renderAll()">
+  </div>
+  <div style="display:flex;gap:4px;align-items:center;">
+    <span style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);white-space:nowrap;margin-right:2px;">Tier:</span>
+    <button class="tier-pill on" data-tier="" onclick="toggleTierPill(this)">All</button>
+    <button class="tier-pill" data-tier="preferred"   onclick="toggleTierPill(this)" style="--tc:#1A8C5B;">Preferred</button>
+    <button class="tier-pill" data-tier="active"      onclick="toggleTierPill(this)" style="--tc:#8A5800;">Active</button>
+    <button class="tier-pill" data-tier="prospective" onclick="toggleTierPill(this)" style="--tc:#1A1A2E;">Prospective</button>
+    <button class="tier-pill" data-tier="inactive"    onclick="toggleTierPill(this)" style="--tc:#8A847C;">Inactive</button>
+  </div>
+  <select class="filter-sel" id="f-org" onchange="renderAll()">
+    <option value="">All Organizations</option>
+  </select>
+  <div class="view-pills">
+    <button class="vp on" onclick="switchView('map',this)">Map</button>
+    <button class="vp" onclick="switchView('tier',this)">By Tier</button>
+    <button class="vp" onclick="switchView('dir',this)">Directory</button>
+    <button class="vp" onclick="switchView('cats',this)">&#9881; Categories</button>
+  </div>
+  <button class="btn-add" onclick="openModal()">+ Add Partner</button>
+</div>
+
+<div class="svc-bar" id="svc-bar">
+  <span class="svc-bar-label">Service area:</span>
+  <button class="svc-pill on" onclick="filterSvc('',this)">All</button>
+  <button class="svc-pill" onclick="filterSvc('Business Development',this)">Business Development</button>
+  <button class="svc-pill" onclick="filterSvc('Community Engagement',this)">Community Engagement</button>
+  <button class="svc-pill" onclick="filterSvc('Communications Strategy',this)">Communications Strategy</button>
+  <button class="svc-pill" onclick="filterSvc('Creative Services',this)">Creative Services</button>
+  <button class="svc-pill" onclick="filterSvc('Digital Media Strategy',this)">Digital Media Strategy</button>
+  <button class="svc-pill" onclick="filterSvc('Grant Writing',this)">Grant Writing</button>
+  <button class="svc-pill" onclick="filterSvc('Health Education',this)">Health Education</button>
+  <button class="svc-pill" onclick="filterSvc('Media Relations',this)">Media Relations</button>
+  <button class="svc-pill" onclick="filterSvc('Program Evaluation',this)">Program Evaluation</button>
+  <button class="svc-pill" onclick="filterSvc('Project Management',this)">Project Management</button>
+  <button class="svc-pill" onclick="filterSvc('Research',this)">Research</button>
+  <button class="svc-pill" onclick="filterSvc('Science &amp; Medical Writing',this)">Science &amp; Medical Writing</button>
+</div>
+
+<div id="view-map" class="view on"><div class="map-scroll"><div class="map-lanes" id="map-lanes"></div></div></div>
+<div id="view-tier" class="view"></div>
+<div id="view-dir"  class="view"><table class="dir-table" id="dir-table"><thead><tr><th>Name</th><th>Service Area</th><th>Subject Matter Expertise</th><th>Tier</th></tr></thead><tbody id="dir-body"></tbody></table></div>
+<div id="view-cats" class="view">
+  <div class="cat-manager">
+    <h2>Subject Matter Categories</h2>
+    <p>These are expertise tags shown on partner cards. Click any name to rename it. Changes sync to Firebase and persist across HTML updates.</p>
+    <div class="cat-list" id="cat-list"></div>
+    <div class="cat-add-row">
+      <input type="text" id="cat-input" placeholder="New category name...">
+      <button class="btn btn-primary" onclick="addCategory()">+ Add</button>
+    </div>
+  </div>
+</div>
+
+<!-- PARTNER MODAL -->
+<div class="modal-overlay" id="modal-partner">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">Add Partner</div>
+    <input type="hidden" id="p-edit-id">
+    <div class="modal-tabs">
+      <button class="modal-tab on" onclick="switchModalTab('identity',this)">Identity</button>
+      <button class="modal-tab" onclick="switchModalTab('contact',this)">Contact</button>
+      <button class="modal-tab" onclick="switchModalTab('network',this)">Network</button>
+    </div>
+    <div class="modal-section on" id="tab-identity">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Type</label>
+          <select class="form-input" id="p-type" onchange="toggleOrgFields()">
+            <option value="individual">Individual</option>
+            <option value="org">Organization</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tier</label>
+          <select class="form-input" id="p-tier">
+            <option value="prospective">Prospective</option>
+            <option value="active">Active Collaborator</option>
+            <option value="preferred">Preferred Partner</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Full Name *</label>
+        <input class="form-input" id="p-name" type="text" placeholder="Dr. Jane Smith / Organization Name">
+      </div>
+      <div id="individual-fields">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Credentials</label>
+            <input class="form-input" id="p-creds" type="text" placeholder="PhD, MPH, APR">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Title / Role</label>
+            <input class="form-input" id="p-title" type="text" placeholder="Director of Health Equity">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Organization / Affiliation</label>
+          <input class="form-input" id="p-org" type="text" placeholder="CDC, Johns Hopkins, Freelance...">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Primary Service Area</label>
+        <select class="form-input" id="p-svc">
+          <option value="">Select service area...</option>
+          <option value="Business Development">Business Development</option>
+          <option value="Community Engagement">Community Engagement</option>
+          <option value="Communications Strategy">Communications Strategy</option>
+          <option value="Creative Services">Creative Services</option>
+          <option value="Digital Media Strategy">Digital Media Strategy</option>
+          <option value="Grant Writing">Grant Writing</option>
+          <option value="Health Education">Health Education</option>
+          <option value="Media Relations">Media Relations</option>
+          <option value="Program Evaluation">Program Evaluation</option>
+          <option value="Project Management">Project Management</option>
+          <option value="Research">Research</option>
+          <option value="Science &amp; Medical Writing">Science &amp; Medical Writing</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Subject Matter Expertise <small>(select all that apply)</small></label>
+        <div class="cats-grid" id="p-cats-grid"></div>
+        <div id="p-cats-count" style="font-size:10.5px;color:var(--muted);margin-top:4px;">0 selected</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Expertise Notes <small>(free text)</small></label>
+        <textarea class="form-input" id="p-expertise" rows="2" placeholder="e.g. Spanish-language outreach, FQHC experience, Section 508 compliance"></textarea>
+      </div>
+    </div>
+    <div class="modal-section" id="tab-contact">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" id="p-email" type="email" placeholder="jane@example.org">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Phone</label>
+          <input class="form-input" id="p-phone" type="tel" placeholder="(202) 555-0100">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Website / LinkedIn</label>
+          <input class="form-input" id="p-web" type="url" placeholder="https://...">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Preferred Contact Method</label>
+        <select class="form-input" id="p-pref">
+          <option value="">No preference noted</option>
+          <option value="email">Email</option>
+          <option value="phone">Phone</option>
+          <option value="linkedin">LinkedIn</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-section" id="tab-network">
+      <div class="form-group">
+        <label class="form-label">How we connected</label>
+        <input class="form-input" id="p-source" type="text" placeholder="APHA 2024, referral from...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Relationship Notes</label>
+        <textarea class="form-input" id="p-notes" rows="3" placeholder="Context, preferences, past projects..."></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Last Contact</label>
+          <input class="form-input" id="p-lastcontact" type="date">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Available to Subcontract</label>
+          <select class="form-input" id="p-subcon">
+            <option value="">Unknown</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+            <option value="sometimes">Project-dependent</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-danger" id="p-del-btn" style="display:none;" onclick="deletePartner()">Delete</button>
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="savePartner()">Save Partner</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getDatabase, ref, set, push, onValue, remove, update }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+const cfg = {
+  apiKey:"AIzaSyCVtM9NP3VmP6y0zCCaXNO1PbqRRMfOrcs",
+  authDomain:"time-entry-tracker.firebaseapp.com",
+  databaseURL:"https://time-entry-tracker-default-rtdb.firebaseio.com",
+  projectId:"time-entry-tracker",
+  storageBucket:"time-entry-tracker.firebasestorage.app",
+  messagingSenderId:"991742086851",
+  appId:"1:991742086851:web:47d3813f5c1e3b10d5dc76"
+};
+const app = initializeApp(cfg, "partners-app");
+const auth = getAuth(app);
+const db   = getDatabase(app);
+window._fbSet    = (p,v)  => set(ref(db,p),v);
+window._fbPush   = (p,v)  => push(ref(db,p),v);
+window._fbRemove = (p)    => remove(ref(db,p));
+window._fbUpdate = (p,v)  => update(ref(db,p),v);
+window._fbSignOut= ()     => signOut(auth);
+window._fbListen = (p,cb) => onValue(ref(db,p), s => cb(s.val()));
+const provider = new GoogleAuthProvider();
+onAuthStateChanged(auth, user => {
+  if (user) { window._fbReady = true; initData(); }
+  else { signInWithPopup(auth, provider).catch(() => {}); }
+});
+</script>
+
+<script>var _tierFilter = new Set();
+
+
+var partners   = [];
+var categories = [];
+var _view      = 'map';
+var _svcFilter = '';
+var _tagFilter = '';
+
+var DEFAULT_CATS = [
+  'Advocacy',
+  'Behavioral Health',
+  'Child Health',
+  'Chronic Disease',
+  'Climate & Health',
+  'Community Health',
+  'Digital Health',
+  'Environmental Health',
+  'Grant Writing',
+  'Health Communications',
+  'Health Equity',
+  'Health Literacy',
+  'Health Policy',
+  'Health Technology',
+  'Maternal Health',
+  'Mental Health',
+  'Nutrition',
+  'Physical Activity',
+  'Racial Justice',
+  'Research & Data',
+  'Substance Use',
+  'Workforce Development'
+];
+
+var CAT_COLORS = [
+  '#E8187A','#1A8C5B','#D4A017','#1A1A2E','#C73060','#0D6644',
+  '#8A5800','#0D4F3C','#5B1A5E','#1A4FA0','#7A1A1A','#4A6B1A',
+  '#6B3A1A','#1A5F7A','#7A3F1A','#2D6B1A','#5B3A7A','#1A6B5B',
+  '#7A1A4A','#3A5B1A','#1A3A7A','#6B5B1A'
+];
+
+var TIERS = [
+  {key:'preferred',  label:'Preferred Partner',   color:'#1A8C5B', bg:'#E8F5EE'},
+  {key:'active',     label:'Active Collaborator',  color:'#8A5800', bg:'#FEF8E7'},
+  {key:'prospective',label:'Prospective',          color:'#1A1A2E', bg:'rgba(26,26,46,.07)'},
+  {key:'inactive',   label:'Inactive',             color:'#8A847C', bg:'#EDE8DC'},
+];
+
+// -- INIT -------------------------------------------------------
+categories = DEFAULT_CATS.slice();
+populateCatsGrid([]);
+
+function initData() {
+  window._fbListen('partners', function(data) {
+    partners = data ? Object.entries(data).map(function(e){ return Object.assign({fbKey:e[0]}, e[1]); }) : [];
+    updateOrgFilter();
+    renderAll();
+  });
+  window._fbListen('partner_categories', function(data) {
+    if (data) {
+      categories = Array.isArray(data) ? data.filter(Boolean) : Object.values(data).filter(Boolean);
+    } else {
+      window._fbSet('partner_categories', DEFAULT_CATS);
+      categories = DEFAULT_CATS.slice();
+    }
+    renderAll();
+    renderCatManager();
+  });
+}
+
+// -- HELPERS ----------------------------------------------------
+function tier(key) {
+  return TIERS.find(function(t){ return t.key === key; }) || TIERS[2];
+}
+
+function initials(name) {
+  if (!name) return '?';
+  var parts = name.trim().split(' ').filter(function(p){ return p.length > 0; });
+  if (parts.length === 1) return parts[0].slice(0,2).toUpperCase();
+  return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
+}
+
+function catColor(cat) {
+  var idx = categories.indexOf(cat);
+  return idx >= 0 ? CAT_COLORS[idx % CAT_COLORS.length] : '#8A847C';
+}
+
+function partnerCats(p) {
+  if (Array.isArray(p.cats) && p.cats.length) return p.cats;
+  return [p.cat, p.cat2].filter(Boolean);
+}
+
+function avatarColor(p) {
+  var svc = p.svc || p.svcs && p.svcs[0] || '';
+  var colors = ['#E8187A','#1A8C5B','#D4A017','#1A1A2E','#C73060','#8A5800','#5B1A5E','#1A4FA0','#7A1A1A','#4A6B1A','#0D4F3C','#1A5F7A'];
+  var svcs = ['Business Development','Community Engagement','Communications Strategy','Creative Services','Digital Media Strategy','Grant Writing','Health Education','Media Relations','Program Evaluation','Project Management','Research','Science & Medical Writing'];
+  var idx = svcs.indexOf(svc);
+  return idx >= 0 ? colors[idx] : '#1A1A2E';
+}
+
+
+function toggleTierPill(btn) {
+  var tier = btn.dataset.tier;
+  if (tier === '') {
+    // "All" selected - clear individual selections
+    _tierFilter.clear();
+    document.querySelectorAll('.tier-pill').forEach(function(b){ b.classList.remove('on'); });
+    btn.classList.add('on');
+  } else {
+    // Toggle this tier
+    var allBtn = document.querySelector('.tier-pill[data-tier=""]');
+    if (_tierFilter.has(tier)) {
+      _tierFilter.delete(tier);
+      btn.classList.remove('on');
+    } else {
+      _tierFilter.add(tier);
+      btn.classList.add('on');
+    }
+    // If nothing selected, revert to All
+    if (_tierFilter.size === 0) {
+      if (allBtn) allBtn.classList.add('on');
+    } else {
+      if (allBtn) allBtn.classList.remove('on');
+    }
+  }
+  renderAll();
+}
+window.toggleTierPill = toggleTierPill;
+
+function filtered() {
+  var q    = (document.getElementById('search').value || '').toLowerCase();
+  var org_f  = document.getElementById('f-org').value;
+  return partners.filter(function(p) {
+    if (_svcFilter && (p.svc || '') !== _svcFilter) return false;
+    if (_tierFilter.size > 0 && !_tierFilter.has(p.tier)) return false;
+    if (org_f  && (p.org||'') !== org_f) return false;
+    if (_tagFilter && partnerCats(p).indexOf(_tagFilter) < 0) return false;
+    if (q && !((p.name||'')+(p.org||'')+(p.expertise||'')+(p.title||'')).toLowerCase().includes(q)) return false;
+    return true;
+  });
+}
+
+function showToast(msg, ok) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show' + (ok?' ok':'');
+  clearTimeout(el._t);
+  el._t = setTimeout(function(){ el.className='toast'; }, 2500);
+}
+
+function updateOrgFilter() {
+  var orgs = Array.from(new Set(partners.map(function(p){ return p.org||''; }).filter(Boolean))).sort();
+  var sel  = document.getElementById('f-org');
+  var cur  = sel.value;
+  sel.innerHTML = '<option value="">All Organizations</option>' +
+    orgs.map(function(o){ return '<option value="'+o+'"'+(o===cur?' selected':'')+'>'+o+'</option>'; }).join('');
+}
+
+// -- CARD HTML --------------------------------------------------
+function cardHTML(p) {
+  var t_info  = tier(p.tier);
+  var avt_bg  = avatarColor(p);
+  var pc      = partnerCats(p);
+  var contact = '';
+  if (p.email) contact += '<a class="pcard-ico" href="mailto:'+p.email+'" onclick="event.stopPropagation()" title="'+p.email+'">&#9993;</a>';
+  if (p.phone) contact += '<a class="pcard-ico" href="tel:'+p.phone+'" onclick="event.stopPropagation()" title="'+p.phone+'">&#128222;</a>';
+  if (p.web)   contact += '<a class="pcard-ico" href="'+p.web+'" target="_blank" onclick="event.stopPropagation()" title="Website">&#127760;</a>';
+  var tags = pc.map(function(c){
+    var on = c === _tagFilter ? ' on' : '';
+    return '<span class="etag'+on+'" onclick="event.stopPropagation();tagFilter(\''+c.replace(/'/g,"\\'")+'\')" >'+c+'</span>';
+  }).join('');
+  var subBadge = p.subcon === 'yes' ? '<span style="font-size:9px;background:#E8F5EE;color:#0D6644;padding:1px 5px;border-radius:5px;font-weight:700;margin-left:3px;">sub</span>' : '';
+  return '<div class="pcard" onclick="openModal(\''+p.fbKey+'\')">' +
+    '<div class="pcard-top"><div class="pcard-avt" style="background:'+avt_bg+'22;color:'+avt_bg+';">'+initials(p.name)+'</div>'+
+    '<div><div class="pcard-name">'+( p.name||'Unnamed')+'</div>'+
+    (p.creds?'<div class="pcard-creds">'+p.creds+'</div>':'')+
+    '</div></div>'+
+    (p.title?'<div class="pcard-role">'+p.title+'</div>':'')+
+    (p.org?'<div class="pcard-org">'+p.org+'</div>':'')+
+    '<div style="margin-top:4px;"><span class="tier-badge t-'+p.tier+'" style="background:'+t_info.bg+';color:'+t_info.color+';">'+t_info.label+'</span>'+subBadge+'</div>'+
+    (tags?'<div class="exp-tags">'+tags+'</div>':'')+
+    (contact?'<div class="pcard-icons">'+contact+'</div>':'')+
+    '</div>';
+}
+
+// -- TAG FILTER -------------------------------------------------
+function tagFilter(tag) {
+  _tagFilter = _tagFilter === tag ? '' : tag;
+  renderAll();
+}
+window.tagFilter = tagFilter;
+
+// -- SERVICE FILTER ---------------------------------------------
+function filterSvc(svc, btn) {
+  _svcFilter = svc;
+  document.querySelectorAll('.svc-pill').forEach(function(p){ p.classList.remove('on'); });
+  if (btn) btn.classList.add('on');
+  else if (!svc) {
+    var allBtn = document.querySelector('.svc-pill');
+    if (allBtn) allBtn.classList.add('on');
+  }
+  renderAll();
+}
+window.filterSvc = filterSvc;
+
+// -- MAP VIEW ---------------------------------------------------
+var SVC_AREAS = [
+  'Business Development','Community Engagement','Communications Strategy',
+  'Creative Services','Digital Media Strategy','Grant Writing',
+  'Health Education','Media Relations','Program Evaluation',
+  'Project Management','Research','Science & Medical Writing'
+];
+
+function renderMap() {
+  var data = filtered();
+  var areas = _svcFilter ? [_svcFilter] : SVC_AREAS;
+  var html = areas.map(function(svc) {
+    var ap = data.filter(function(p){ return (p.svc||'') === svc; });
+    var tiers_html = TIERS.map(function(t) {
+      var tp = ap.filter(function(p){ return p.tier === t.key; });
+      if (!tp.length) return '';
+      return '<div class="lane-tier-sec">'+
+        '<div class="tier-sec-label"><div class="tier-dot" style="background:'+t.color+';"></div>'+t.label+'</div>'+
+        '<div class="lane-cards">'+tp.map(cardHTML).join('')+'</div>'+
+        '</div>';
+    }).join('');
+    var empty = !ap.length ? '<div class="empty-lane">No partners yet</div>' : '';
+    return '<div class="lane">'+
+      '<div class="lane-hdr"><div class="lane-title">'+svc+'</div></div>'+
+      tiers_html + empty +
+      '</div>';
+  }).join('');
+  document.getElementById('map-lanes').innerHTML = html;
+}
+
+// -- TIER VIEW --------------------------------------------------
+function renderTier() {
+  var data = filtered();
+  var html = TIERS.map(function(t) {
+    var tp = data.filter(function(p){ return p.tier === t.key; });
+    if (!tp.length) return '';
+    return '<div class="tier-section">'+
+      '<div class="tier-section-hdr">'+
+      '<div class="tier-section-name" style="color:'+t.color+';">'+t.label+'</div>'+
+      '</div>'+
+      '<div class="tier-cards-grid">'+tp.map(cardHTML).join('')+'</div>'+
+      '</div>';
+  }).join('');
+  document.getElementById('view-tier').innerHTML = html || '<div class="empty-state">No partners match current filters.</div>';
+}
+
+// -- DIRECTORY VIEW ---------------------------------------------
+function renderDir() {
+  var data = filtered().slice().sort(function(a,b){ return (a.name||'').localeCompare(b.name||''); });
+  var html = data.map(function(p) {
+    var t_info = tier(p.tier);
+    var avt_bg = avatarColor(p);
+    var pc = partnerCats(p).slice(0,3).map(function(c){
+      return '<span class="etag">'+c+'</span>';
+    }).join(' ');
+    return '<tr onclick="openModal(\''+p.fbKey+'\')" style="cursor:pointer;">'+
+      '<td><div style="display:flex;align-items:center;gap:8px;">'+
+      '<div class="dir-avt" style="background:'+avt_bg+'22;color:'+avt_bg+';">'+initials(p.name)+'</div>'+
+      '<div><div style="font-weight:600;color:var(--navy);">'+( p.name||'')+'</div>'+
+      (p.creds?'<div style="font-size:10.5px;color:var(--muted);">'+p.creds+'</div>':'')+
+      '</div></div></td>'+
+      '<td style="font-size:12px;color:var(--muted);">'+(p.svc||'')+'</td>'+
+      '<td>'+(pc||'<span style="color:var(--muted);font-size:11px;">-</span>')+'</td>'+
+      '<td><span class="tier-badge t-'+p.tier+'" style="background:'+t_info.bg+';color:'+t_info.color+';">'+t_info.label+'</span></td>'+
+      '</tr>';
+  }).join('');
+  document.getElementById('dir-body').innerHTML = html || '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:30px;">No partners match current filters.</td></tr>';
+}
+
+// -- CAT MANAGER ------------------------------------------------
+function renderCatManager() {
+  var el = document.getElementById('cat-list');
+  if (!el) return;
+  el.innerHTML = categories.map(function(cat, i) {
+    var color = CAT_COLORS[i % CAT_COLORS.length];
+    return '<div class="cat-item">'+
+      '<div class="cat-swatch" style="background:'+color+';"></div>'+
+      '<input class="cat-name-input" type="text" value="'+cat.replace(/"/g,'&quot;')+'" '+
+        'onblur="renameCategory('+i+',this.value)" data-enter-blur="1">'+
+      '<button class="cat-del" onclick="deleteCategory('+i+')" title="Remove">x</button>'+
+      '</div>';
+  }).join('');
+}
+window.renderCatManager = renderCatManager;
+
+function addCategory() {
+  var inp = document.getElementById('cat-input');
+  var val = inp.value.trim();
+  if (!val || categories.includes(val)) return;
+  categories.push(val);
+  inp.value = '';
+  if (window._fbReady) window._fbSet('partner_categories', categories);
+  populateCatsGrid([]);
+  renderAll();
+  renderCatManager();
+  showToast('Category added', true);
+}
+window.addCategory = addCategory;
+
+function renameCategory(idx, newName) {
+  newName = newName.trim();
+  if (!newName || newName === categories[idx]) return;
+  var old = categories[idx];
+  categories[idx] = newName;
+  partners.forEach(function(p) {
+    var pc = partnerCats(p); var changed = {};
+    var ci = pc.indexOf(old);
+    if (ci >= 0) { pc[ci] = newName; p.cats = pc; changed = {cats:pc}; }
+    if (Object.keys(changed).length && window._fbReady) window._fbUpdate('partners/'+p.fbKey, changed);
+  });
+  if (window._fbReady) window._fbSet('partner_categories', categories);
+  renderAll(); renderCatManager();
+  showToast('Renamed', true);
+}
+window.renameCategory = renameCategory;
+
+function deleteCategory(idx) {
+  var cat = categories[idx];
+  if (!confirm('Remove "'+cat+'"?')) return;
+  categories.splice(idx, 1);
+  if (window._fbReady) window._fbSet('partner_categories', categories);
+  renderAll(); renderCatManager();
+  showToast('Category removed');
+}
+window.deleteCategory = deleteCategory;
+
+// -- CATS GRID IN MODAL -----------------------------------------
+function populateCatsGrid(selected) {
+  var grid = document.getElementById('p-cats-grid');
+  if (!grid) return;
+  var sorted = categories.slice().sort(function(a,b){ return a.toLowerCase()<b.toLowerCase()?-1:1; });
+  grid.innerHTML = sorted.map(function(c) {
+    var checked = selected.indexOf(c) >= 0;
+    var color   = catColor(c);
+    var bg = checked ? 'background:'+color+'18;border:1.5px solid '+color+'66;' : 'background:transparent;border:1.5px solid transparent;';
+    return '<label style="display:flex;align-items:center;gap:5px;padding:3px 6px;border-radius:5px;cursor:pointer;'+bg+'transition:background .12s;">'+
+      '<input type="checkbox" value="'+c+'" '+(checked?'checked':'')+
+      ' onchange="updateCatCount()" style="width:12px;height:12px;accent-color:'+color+';cursor:pointer;flex-shrink:0;">'+
+      '<span style="font-size:11px;color:var(--text);line-height:1.25;">'+c+'</span>'+
+      '</label>';
+  }).join('');
+  updateCatCount();
+}
+
+function updateCatCount() {
+  var grid = document.getElementById('p-cats-grid');
+  var cnt  = document.getElementById('p-cats-count');
+  if (!grid||!cnt) return;
+  var n = grid.querySelectorAll('input:checked').length;
+  cnt.textContent = n + ' selected';
+  cnt.style.color = n > 0 ? 'var(--emerald)' : 'var(--muted)';
+}
+window.updateCatCount = updateCatCount;
+
+function getSelectedCats() {
+  var grid = document.getElementById('p-cats-grid');
+  if (!grid) return [];
+  return Array.from(grid.querySelectorAll('input:checked')).map(function(cb){ return cb.value; });
+}
+
+// -- RENDER ALL -------------------------------------------------
+function renderAll() {
+  if (_view === 'map')  renderMap();
+  if (_view === 'tier') renderTier();
+  if (_view === 'dir')  renderDir();
+  if (_view === 'cats') renderCatManager();
+}
+window.renderAll = renderAll;
+
+// -- SWITCH VIEW ------------------------------------------------
+function switchView(name, btn) {
+  _view = name;
+  ['map','tier','dir','cats'].forEach(function(v){
+    document.getElementById('view-'+v).classList.toggle('on', v===name);
+  });
+  document.querySelectorAll('.vp').forEach(function(b){ b.classList.remove('on'); });
+  if (btn) btn.classList.add('on');
+  // Show svc-bar only on map view
+  var svcBar = document.getElementById('svc-bar');
+  if (svcBar) svcBar.style.display = name === 'map' ? '' : 'none';
+  renderAll();
+}
+window.switchView = switchView;
+
+// -- MODAL ------------------------------------------------------
+function openModal(fbKey) {
+  var p = fbKey ? partners.find(function(x){ return x.fbKey===fbKey; }) : null;
+  document.getElementById('modal-title').textContent = p ? 'Edit Partner' : 'Add Partner';
+  document.getElementById('p-del-btn').style.display = p ? 'inline-block' : 'none';
+  document.getElementById('p-edit-id').value = fbKey||'';
+  document.getElementById('p-type').value       = p ? (p.type||'individual') : 'individual';
+  document.getElementById('p-tier').value       = p ? (p.tier||'prospective') : 'prospective';
+  document.getElementById('p-name').value       = p ? (p.name||'') : '';
+  document.getElementById('p-creds').value      = p ? (p.creds||'') : '';
+  document.getElementById('p-title').value      = p ? (p.title||'') : '';
+  document.getElementById('p-org').value        = p ? (p.org||'') : '';
+  document.getElementById('p-svc').value        = p ? (p.svc||'') : '';
+  document.getElementById('p-expertise').value  = p ? (p.expertise||'') : '';
+  document.getElementById('p-email').value      = p ? (p.email||'') : '';
+  document.getElementById('p-phone').value      = p ? (p.phone||'') : '';
+  document.getElementById('p-web').value        = p ? (p.web||'') : '';
+  document.getElementById('p-pref').value       = p ? (p.pref||'') : '';
+  document.getElementById('p-source').value     = p ? (p.source||'') : '';
+  document.getElementById('p-notes').value      = p ? (p.notes||'') : '';
+  document.getElementById('p-lastcontact').value= p ? (p.lastContact||'') : '';
+  document.getElementById('p-subcon').value     = p ? (p.subcon||'') : '';
+  if (!categories.length) categories = DEFAULT_CATS.slice();
+  populateCatsGrid(p ? partnerCats(p) : []);
+  toggleOrgFields();
+  switchModalTab('identity', document.querySelector('.modal-tab'));
+  document.getElementById('modal-partner').classList.add('open');
+}
+window.openModal = openModal;
+
+function closeModal() {
+  document.getElementById('modal-partner').classList.remove('open');
+}
+window.closeModal = closeModal;
+
+function switchModalTab(tab, btn) {
+  ['identity','contact','network'].forEach(function(t){
+    document.getElementById('tab-'+t).classList.toggle('on', t===tab);
+  });
+  document.querySelectorAll('.modal-tab').forEach(function(b){ b.classList.remove('on'); });
+  if (btn) btn.classList.add('on');
+}
+window.switchModalTab = switchModalTab;
+
+function toggleOrgFields() {
+  var isInd = document.getElementById('p-type').value === 'individual';
+  document.getElementById('individual-fields').style.display = isInd ? '' : 'none';
+}
+window.toggleOrgFields = toggleOrgFields;
+
+function savePartner() {
+  var name = document.getElementById('p-name').value.trim();
+  if (!name) { showToast('Name is required'); return; }
+  var cats = getSelectedCats();
+  var rec = {
+    type:       document.getElementById('p-type').value,
+    tier:       document.getElementById('p-tier').value,
+    name:       name,
+    creds:      document.getElementById('p-creds').value.trim(),
+    title:      document.getElementById('p-title').value.trim(),
+    org:        document.getElementById('p-org').value.trim(),
+    svc:        document.getElementById('p-svc').value,
+    cats:       cats,
+    cat:        cats[0]||'',
+    expertise:  document.getElementById('p-expertise').value.trim(),
+    email:      document.getElementById('p-email').value.trim(),
+    phone:      document.getElementById('p-phone').value.trim(),
+    web:        document.getElementById('p-web').value.trim(),
+    pref:       document.getElementById('p-pref').value,
+    source:     document.getElementById('p-source').value.trim(),
+    notes:      document.getElementById('p-notes').value.trim(),
+    lastContact:document.getElementById('p-lastcontact').value,
+    subcon:     document.getElementById('p-subcon').value,
+    updatedAt:  new Date().toISOString(),
+  };
+  var id = document.getElementById('p-edit-id').value;
+  var prom = id
+    ? window._fbUpdate('partners/'+id, rec)
+    : window._fbPush('partners', Object.assign(rec, {createdAt:new Date().toISOString()}));
+  prom.then(function(){ closeModal(); showToast(id?'Partner updated':'Partner added', true); })
+     .catch(function(){ showToast('Save failed - try again'); });
+}
+window.savePartner = savePartner;
+
+function deletePartner() {
+  var id = document.getElementById('p-edit-id').value;
+  var p  = partners.find(function(x){ return x.fbKey===id; });
+  if (!p || !confirm('Remove '+( p.name||'this partner')+'?')) return;
+  window._fbRemove('partners/'+id)
+    .then(function(){ closeModal(); showToast('Removed'); })
+    .catch(function(){ showToast('Delete failed'); });
+}
+window.deletePartner = deletePartner;
+
+// Backdrop and Enter key
+document.getElementById('modal-partner').addEventListener('click', function(e){
+  if (e.target === this) closeModal();
+});
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Enter' && e.target.classList.contains('cat-name-input')) e.target.blur();
+});
+
+function deletePartner() {
+  var id = document.getElementById('p-edit-id').value;
+  var p  = partners.find(function(x){ return x.fbKey===id; });
+  if (!p || !confirm('Remove '+( p.name||'this partner')+'?')) return;
+  window._fbRemove('partners/'+id)
+    .then(function(){ closeModal(); showToast('Removed'); })
+    .catch(function(){ showToast('Delete failed'); });
+}
+window.deletePartner = deletePartner;
+
+// Backdrop and Enter key
+document.getElementById('modal-partner').addEventListener('click', function(e){
+  if (e.target === this) closeModal();
+});
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Enter' && e.target.classList.contains('cat-name-input')) e.target.blur();
+});
+
+</script>
+
+</body>
+</html>
